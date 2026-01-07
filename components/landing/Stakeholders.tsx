@@ -41,26 +41,35 @@ export default function Stakeholders() {
         { name: "AU", fullName: "African Union", flag: "🌍" }
     ];
 
+    const colorMap: Record<string, string> = {
+        "stakeholder-business": "border-l-4 border-gold",
+        "stakeholder-investor": "border-l-4 border-primary-green",
+        "stakeholder-regulator": "border-l-4 border-accent-blue",
+        "stakeholder-trade": "border-l-4 border-dark-green"
+    };
+
     return (
-        <section className="stakeholders-section">
-            <div className="container">
-                <div className="section-header">
-                    <h2 className="section-title">Who We Serve</h2>
-                    <p className="section-subtitle">
+        <section className="py-24 bg-bg-secondary relative">
+            <div className="container mx-auto px-6 md:px-8 max-w-7xl">
+                <div className="text-center mb-16">
+                    <h2 className="text-3xl md:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4">
+                        Who We Serve
+                    </h2>
+                    <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto">
                         A unified platform connecting all stakeholders in Africa's investment ecosystem
                     </p>
                 </div>
 
-                <div className="stakeholders-grid">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
                     {stakeholders.map((stakeholder, index) => (
-                        <div key={index} className={`stakeholder-card ${stakeholder.color}`}>
-                            <div className="stakeholder-icon">{stakeholder.icon}</div>
-                            <h3 className="stakeholder-title">{stakeholder.category}</h3>
-                            <p className="stakeholder-description">{stakeholder.description}</p>
-                            <ul className="stakeholder-features">
+                        <div key={index} className={`bg-white p-8 rounded-2xl shadow-sm hover:translate-y-[-5px] hover:shadow-md transition-all duration-300 ${colorMap[stakeholder.color] || ''}`}>
+                            <div className="text-4xl mb-6">{stakeholder.icon}</div>
+                            <h3 className="text-2xl font-bold mb-4 text-text-primary">{stakeholder.category}</h3>
+                            <p className="text-text-secondary mb-8 leading-relaxed h-[3rem]">{stakeholder.description}</p>
+                            <ul className="space-y-3">
                                 {stakeholder.features.map((feature, idx) => (
-                                    <li key={idx} className="stakeholder-feature">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="feature-check">
+                                    <li key={idx} className="flex items-center gap-3 text-sm font-medium text-text-primary/80">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5 text-primary-green flex-shrink-0">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
                                         {feature}
@@ -71,15 +80,15 @@ export default function Stakeholders() {
                     ))}
                 </div>
 
-                <div className="partners-section">
-                    <h3 className="partners-title">Supported By</h3>
-                    <div className="partners-grid">
+                <div className="text-center">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-text-muted mb-8">Supported By</h3>
+                    <div className="flex flex-wrap justify-center gap-6 md:gap-8">
                         {partners.map((partner, index) => (
-                            <div key={index} className="partner-card">
-                                <div className="partner-flag">{partner.flag}</div>
-                                <div className="partner-info">
-                                    <div className="partner-name">{partner.name}</div>
-                                    <div className="partner-full-name">{partner.fullName}</div>
+                            <div key={index} className="flex items-center gap-3 bg-white px-5 py-3 rounded-xl shadow-sm border border-bg-tertiary transition-transform hover:-translate-y-1">
+                                <div className="text-2xl">{partner.flag}</div>
+                                <div className="text-left">
+                                    <div className="font-bold text-text-primary leading-tight">{partner.name}</div>
+                                    <div className="text-[10px] text-text-muted max-w-[150px] leading-tight mt-0.5">{partner.fullName}</div>
                                 </div>
                             </div>
                         ))}
