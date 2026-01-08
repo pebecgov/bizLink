@@ -20,7 +20,6 @@ function AuthenticatedContent() {
   const currentUser = useQuery(api.users.getCurrentUser);
   const ensureUserExists = useMutation(api.users.ensureUserExists);
   const [isSyncing, setIsSyncing] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     async function syncUser() {
@@ -42,18 +41,16 @@ function AuthenticatedContent() {
     syncUser();
   }, [user, currentUser, ensureUserExists, isSyncing]);
 
-  // Redirect to dashboard after user is synced
-  useEffect(() => {
-    if (currentUser && currentUser !== null) {
-      router.push("/dashboard");
-    }
-  }, [currentUser, router]);
-
   return (
-    <div className="loading-container">
-      <div className="loading-spinner"></div>
-      <p className="loading-text">Redirecting to dashboard...</p>
-    </div>
+    <>
+      <Navbar />
+      <Hero isAuthenticated={true} />
+      <Features />
+      <Stakeholders />
+      <Stats />
+      <CTA />
+      <Footer />
+    </>
   );
 }
 
@@ -83,9 +80,11 @@ export default function Home() {
       </Unauthenticated>
 
       <AuthLoading>
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p className="loading-text">Loading...</p>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-bg-dark">
+          <h1 className="text-4xl md:text-5xl font-bold mb-8 tracking-wider">
+            <span className="bg-gradient-gold bg-clip-text text-transparent">PEBEC BIZLINK</span>
+          </h1>
+          <div className="w-12 h-12 rounded-full border-4 border-primary-green border-t-gold animate-spin"></div>
         </div>
       </AuthLoading>
     </>

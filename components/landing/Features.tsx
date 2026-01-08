@@ -59,26 +59,28 @@ export default function Features() {
     ];
 
     return (
-        <section className="features-section">
-            <div className="container">
-                <div className="section-header">
-                    <h2 className="section-title">Platform Features</h2>
-                    <p className="section-subtitle">
+        <section className="py-24 bg-bg-primary">
+            <div className="container mx-auto px-6 md:px-8 max-w-7xl">
+                <div className="text-center mb-24">
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
+                        Platform Features
+                    </h2>
+                    <p className="text-lg md:text-xl text-text-secondary max-w-3xl mx-auto">
                         Comprehensive tools designed to facilitate investment and business growth across Africa
                     </p>
                 </div>
 
-                <div className="features-grid">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {features.map((feature, index) => (
-                        <div key={index} className="feature-card">
-                            <div className="feature-icon-wrapper">
+                        <div key={index} className="bg-bg-secondary p-8 rounded-2xl border-2 border-transparent transition-all duration-300 cursor-pointer hover:border-primary-green hover:-translate-y-1.5 hover:shadow-xl group">
+                            <div className="w-[60px] h-[60px] bg-gradient-primary rounded-xl flex items-center justify-center mb-6 text-white shadow-md">
                                 {feature.icon}
                             </div>
-                            <h3 className="feature-title">{feature.title}</h3>
-                            <p className="feature-description">{feature.description}</p>
-                            <div className="feature-link">
+                            <h3 className="text-xl font-bold mb-4 text-text-primary group-hover:text-primary-green transition-colors">{feature.title}</h3>
+                            <p className="text-text-secondary mb-6 leading-relaxed">{feature.description}</p>
+                            <div className="text-primary-green font-semibold flex items-center gap-1 transition-all duration-300 group-hover:gap-2">
                                 Learn more
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="link-arrow">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                 </svg>
                             </div>

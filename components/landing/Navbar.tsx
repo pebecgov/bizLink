@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { SignInButton } from "@clerk/nextjs";
+import { SignInButton, useUser, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { isSignedIn } = useUser();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -33,12 +35,9 @@ export default function Navbar() {
                     {/* Logo Section */}
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col leading-none">
-                            <span className={`text-2xl font-extrabold tracking-[-0.5px] transition-colors duration-300 text-white ${isScrolled ? "text-primary-green" : ""
+                            <span className={`text-2xl font-extrabold tracking-[-0.5px] transition-colors duration-300 ${isScrolled ? "text-primary-green" : "text-white"
                                 }`}>
-                                PEBEC
-                            </span>
-                            <span className="text-sm font-bold text-gold tracking-[2px]">
-                                BIZ LINK
+                                PEBEC BIZ<span className="text-gold">LINK</span>
                             </span>
                         </div>
                         <div className={`hidden md:flex h-8 w-px ${isScrolled ? "bg-black/10" : "bg-white/30"}`}></div>
@@ -83,14 +82,26 @@ export default function Navbar() {
                             <span className="opacity-60">|</span>
                             <span className="cursor-pointer opacity-60 transition-opacity duration-200 hover:opacity-100">FR</span>
                         </div>
-                        <SignInButton mode="modal">
-                            <button className={`px-6 py-2.5 rounded-[2rem] text-sm font-semibold shadow-[0_4px_10px_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-px ${isScrolled
+                        {isSignedIn ? (
+                            <div className="flex items-center gap-4">
+                                <Link href="/dashboard" className={`px-6 py-2.5 rounded-[2rem] text-sm font-semibold shadow-[0_4px_10px_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-px ${isScrolled
                                     ? "bg-primary-green text-white hover:bg-dark-green hover:shadow-[0_4px_12px_rgba(0,135,81,0.3)]"
                                     : "bg-white text-primary-green hover:bg-gold hover:text-primary-green"
-                                }`}>
-                                Sign In
-                            </button>
-                        </SignInButton>
+                                    }`}>
+                                    Dashboard
+                                </Link>
+                                <UserButton afterSignOutUrl="/" />
+                            </div>
+                        ) : (
+                            <SignInButton mode="modal">
+                                <button className={`px-6 py-2.5 rounded-[2rem] text-sm font-semibold shadow-[0_4px_10px_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-px ${isScrolled
+                                    ? "bg-primary-green text-white hover:bg-dark-green hover:shadow-[0_4px_12px_rgba(0,135,81,0.3)]"
+                                    : "bg-white text-primary-green hover:bg-gold hover:text-primary-green"
+                                    }`}>
+                                    Sign In
+                                </button>
+                            </SignInButton>
+                        )}
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -136,11 +147,19 @@ export default function Navbar() {
                             <span>FR</span>
                         </div>
                     </div>
-                    <SignInButton mode="modal">
-                        <button className="w-full mt-2 bg-primary-green text-white py-3 rounded-xl font-semibold shadow-lg">
-                            Sign In
-                        </button>
-                    </SignInButton>
+                    {isSignedIn ? (
+                        <div className="flex flex-col gap-2">
+                            <Link href="/dashboard" className="w-full mt-2 bg-primary-green text-white py-3 rounded-xl font-semibold shadow-lg text-center" onClick={() => setIsMobileMenuOpen(false)}>
+                                Dashboard
+                            </Link>
+                        </div>
+                    ) : (
+                        <SignInButton mode="modal">
+                            <button className="w-full mt-2 bg-primary-green text-white py-3 rounded-xl font-semibold shadow-lg">
+                                Sign In
+                            </button>
+                        </SignInButton>
+                    )}
                 </div>
             </div>
         </nav>
