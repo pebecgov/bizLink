@@ -21,6 +21,29 @@ export default function Dashboard() {
     );
   }
 
+  // Handle case where user is not found in Convex (not synced yet or auth error)
+  if (currentUser === null) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-bg-dark">
+        <div className="w-12 h-12 rounded-full border-4 border-primary-green border-t-gold animate-spin"></div>
+        <p className="mt-4 text-white">Syncing profile...</p>
+      </div>
+    );
+  }
+
+  // Redirect to onboarding if role is "user" (unconfigured)
+  if (currentUser.role === "user") {
+    // Prevent flicker by showing loading or just executing push immediately
+    // In strict mode this might double fire but router.push is safe.
+    router.push("/onboarding");
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-bg-dark">
+        <div className="w-12 h-12 rounded-full border-4 border-primary-green border-t-gold animate-spin"></div>
+        <p className="mt-4 text-white">Redirecting to onboarding...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-bg-secondary flex flex-col items-center justify-center p-6">
       <div className="bg-white p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-gray-100">
