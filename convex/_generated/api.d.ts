@@ -10,6 +10,7 @@
 
 import type * as accessControl from "../accessControl.js";
 import type * as audit from "../audit.js";
+import type * as bootstrap from "../bootstrap.js";
 import type * as users from "../users.js";
 
 import type {
@@ -21,6 +22,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   accessControl: typeof accessControl;
   audit: typeof audit;
+  bootstrap: typeof bootstrap;
   users: typeof users;
 }>;
 
