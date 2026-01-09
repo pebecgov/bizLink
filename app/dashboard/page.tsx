@@ -1,51 +1,117 @@
 "use client";
 
-import { useUser, SignOutButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useRouter } from "next/navigation";
+import { BarChart, Users, Building, TrendingUp, DollarSign, Globe } from "lucide-react";
 
 export default function Dashboard() {
   const { user } = useUser();
   const currentUser = useQuery(api.users.getCurrentUser);
-  const router = useRouter();
 
   if (currentUser === undefined) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-bg-dark">
-        <h1 className="text-4xl md:text-5xl font-bold mb-8 tracking-wider">
-          <span className="bg-gradient-gold bg-clip-text text-transparent">PEBEC BIZLINK</span>
-        </h1>
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <div className="w-12 h-12 rounded-full border-4 border-primary-green border-t-gold animate-spin"></div>
       </div>
     );
   }
 
+  const stats = [
+    { icon: Users, label: "Total Users", value: "1,234", color: "bg-primary-green" },
+    { icon: Building, label: "Businesses", value: "567", color: "bg-accent-blue" },
+    { icon: DollarSign, label: "Total Revenue", value: "$45.2K", color: "bg-gold" },
+    { icon: TrendingUp, label: "Growth", value: "+23%", color: "bg-light-green" },
+  ];
+
   return (
-    <div className="min-h-screen bg-bg-secondary flex flex-col items-center justify-center p-6">
-      <div className="bg-white p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-gray-100">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-text-primary mb-4">Welcome to your Dashboard</h1>
-          <p className="text-xl text-text-secondary">
-            Hello, <span className="font-semibold text-primary-green">{user?.firstName || user?.emailAddresses[0]?.emailAddress}</span>!
-          </p>
+    <div className="space-y-6">
+      {/* Welcome Section */}
+      <div className="bg-gradient-primary text-white p-8 rounded-2xl shadow-green">
+        <div className="flex items-center gap-4 mb-4">
+          <Globe className="w-12 h-12" />
+          <div>
+            <h1 className="text-3xl font-bold">
+              Welcome back, {user?.firstName || user?.emailAddresses[0]?.emailAddress}!
+            </h1>
+            <p className="text-white/90 mt-1">
+              Here's what's happening with your platform today.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={stat.label}
+              className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow duration-300"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className={`${stat.color} p-3 rounded-lg`}>
+                  <Icon className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <h3 className="text-text-muted text-sm font-medium mb-1">
+                {stat.label}
+              </h3>
+              <p className="text-3xl font-bold text-text-primary">
+                {stat.value}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-xl border border-gray-200">
+          <h2 className="text-xl font-bold text-text-primary mb-4 flex items-center gap-2">
+            <BarChart className="w-6 h-6 text-primary-green" />
+            Recent Activity
+          </h2>
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                <div className="w-10 h-10 rounded-full bg-very-light-green flex items-center justify-center">
+                  <Users className="w-5 h-5 text-primary-green" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-text-primary">New user registered</p>
+                  <p className="text-xs text-text-muted">2 hours ago</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={() => router.push('/')}
-            className="px-8 py-3 rounded-xl bg-primary-green text-white font-semibold shadow-lg hover:bg-dark-green hover:-translate-y-1 transition-all duration-300"
-          >
-            Go Home
-          </button>
-
-          <SignOutButton>
-            <button className="px-8 py-3 rounded-xl bg-bg-secondary text-text-primary border-2 border-primary-green font-semibold hover:bg-very-light-green hover:-translate-y-1 transition-all duration-300">
-              Sign Out
-            </button>
-          </SignOutButton>
+        <div className="bg-white p-6 rounded-xl border border-gray-200">
+          <h2 className="text-xl font-bold text-text-primary mb-4 flex items-center gap-2">
+            <TrendingUp className="w-6 h-6 text-gold" />
+            Performance Metrics
+          </h2>
+          <div className="space-y-4">
+            {["User Engagement", "Business Verification", "Investment Activity"].map((metric) => (
+              <div key={metric}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-text-secondary">{metric}</span>
+                  <span className="text-sm font-bold text-primary-green">78%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-primary h-2 rounded-full"
+                    style={{ width: "78%" }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
