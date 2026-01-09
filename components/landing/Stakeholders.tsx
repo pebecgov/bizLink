@@ -56,7 +56,7 @@ export default function Stakeholders() {
                         Who We Serve
                     </h2>
                     <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto">
-                        A unified platform connecting all stakeholders in Africa's investment ecosystem
+                        A unified platform connecting all stakeholders in Africa&apos;s investment ecosystem
                     </p>
                 </div>
 

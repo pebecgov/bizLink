@@ -3,11 +3,40 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
 import { BarChart, Users, Building, TrendingUp, DollarSign, Globe } from "lucide-react";
 
 export default function Dashboard() {
   const { user } = useUser();
+  const router = useRouter();
   const currentUser = useQuery(api.users.getCurrentUser);
+
+  const stats = [
+    {
+      icon: Users,
+      label: "Total Users",
+      value: "1,234",
+      color: "bg-primary-green",
+    },
+    {
+      icon: Building,
+      label: "Businesses",
+      value: "567",
+      color: "bg-gold",
+    },
+    {
+      icon: TrendingUp,
+      label: "Investments",
+      value: "$2.5M",
+      color: "bg-accent-blue",
+    },
+    {
+      icon: DollarSign,
+      label: "Revenue",
+      value: "$125K",
+      color: "bg-dark-green",
+    },
+  ];
 
   if (currentUser === undefined) {
     return (
@@ -51,7 +80,7 @@ export default function Dashboard() {
               Welcome back, {user?.firstName || user?.emailAddresses[0]?.emailAddress}!
             </h1>
             <p className="text-white/90 mt-1">
-              Here's what's happening with your platform today.
+              Here&apos;s what&apos;s happening with your platform today.
             </p>
           </div>
         </div>

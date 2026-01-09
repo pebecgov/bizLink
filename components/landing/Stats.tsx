@@ -74,7 +74,7 @@ export default function Stats() {
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Platform Impact</h2>
                     <p className="text-lg md:text-xl opacity-90 text-light-gold max-w-2xl mx-auto">
-                        Transforming Africa's investment landscape through digital innovation
+                        Transforming Africa&apos;s investment landscape through digital innovation
                     </p>
                 </div>
 
@@ -101,7 +101,7 @@ export default function Stats() {
                     <div className="absolute bottom-0 left-0 p-32 bg-primary-green/20 blur-[100px] rounded-full"></div>
 
                     <div className="relative z-10">
-                        <h3 className="text-2xl md:text-3xl font-bold mb-4">Be Part of Africa's Growth Story</h3>
+                        <h3 className="text-2xl md:text-3xl font-bold mb-4">Be Part of Africa&apos;s Growth Story</h3>
                         <p className="text-white/90 text-lg mb-0 max-w-2xl mx-auto">
                             Join thousands of businesses and investors leveraging PEBEC BIZ LINK to unlock opportunities across the continent
                         </p>
