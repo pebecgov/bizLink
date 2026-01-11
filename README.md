@@ -1,4 +1,4 @@
-# P-BID Platform
+# BIZLNK Platform
 
 PEBEC Business-Investment Direct Platform - Module 0 & 1: Foundation, Security & Identity
 
