@@ -53,7 +53,12 @@ export default defineSchema({
   investor_profiles: defineTable({
     userId: v.string(),
     sectors: v.array(v.string()),
-    geography: v.array(v.string()),
+    geography: v.optional(v.array(v.string())), // Legacy field for backward compatibility
+    locations: v.optional(v.array(v.object({
+      state: v.string(),
+      lga: v.string(),
+      ward: v.optional(v.string()), // Granular filtering
+    }))),
     capitalRange: v.string(), // e.g. "$1k-$10k"
     riskAppetite: v.string(), // "low", "medium", "high"
   })

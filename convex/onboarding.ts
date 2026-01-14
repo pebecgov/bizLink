@@ -50,9 +50,12 @@ export const createInvestorProfile = mutation({
         sectors: v.array(v.string()),
         capitalRange: v.string(),
         riskAppetite: v.string(),
-        // geography is missing in args but in schema? Adding it.
-        // Wait, let's check schema. yes, geography is array string.
-        geography: v.optional(v.array(v.string())),
+        // geography is replaced by locations
+        locations: v.array(v.object({
+            state: v.string(),
+            lga: v.string(),
+            ward: v.optional(v.string())
+        })),
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity();
@@ -64,7 +67,7 @@ export const createInvestorProfile = mutation({
         const profileId = await ctx.db.insert("investor_profiles", {
             userId: identity.subject,
             sectors: args.sectors,
-            geography: args.geography || [], // Default to empty if not provided
+            locations: args.locations,
             capitalRange: args.capitalRange,
             riskAppetite: args.riskAppetite,
         });

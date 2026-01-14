@@ -1,6 +1,6 @@
 "use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Plus, X, MapPin } from "lucide-react";
 
 interface InvestorPreferencesProps {
     onNext: (data: any) => void;
@@ -10,12 +10,37 @@ interface InvestorPreferencesProps {
 
 const SECTORS = ["Fintech", "Healthtech", "Agritech", "E-commerce", "Logistics", "Clean Energy"];
 
+interface LocationSelection {
+    state: string;
+    lga: string;
+    ward?: string;
+}
+
 export function InvestorPreferences({ onNext, onBack, initialData = {} }: InvestorPreferencesProps) {
     const [formData, setFormData] = useState({
         sectors: initialData.sectors || [],
         capitalRange: initialData.capitalRange || "",
         riskAppetite: initialData.riskAppetite || "",
+        locations: initialData.locations || [] as LocationSelection[],
     });
+
+    const [allLocations, setAllLocations] = useState<any>(null);
+    const [isLoadingLocations, setIsLoadingLocations] = useState(true);
+    const [tempLocation, setTempLocation] = useState<LocationSelection>({ state: "", lga: "", ward: "" });
+
+    // Fetch location data on mount
+    useEffect(() => {
+        fetch('/lgas-with-wards.json')
+            .then(res => res.json())
+            .then(data => {
+                setAllLocations(data);
+                setIsLoadingLocations(false);
+            })
+            .catch(err => {
+                console.error("Failed to load locations:", err);
+                setIsLoadingLocations(false);
+            });
+    }, []);
 
     const toggleSector = (sector: string) => {
         setFormData((prev: any) => {
@@ -27,6 +52,32 @@ export function InvestorPreferences({ onNext, onBack, initialData = {} }: Invest
         });
     };
 
+    const handleAddLocation = () => {
+        if (tempLocation.state && tempLocation.lga) {
+            setFormData(prev => ({
+                ...prev,
+                locations: [...prev.locations, { ...tempLocation }]
+            }));
+            setTempLocation({ state: "", lga: "", ward: "" });
+        }
+    };
+
+    const removeLocation = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            locations: prev.locations.filter((_: any, i: number) => i !== index)
+        }));
+    };
+
+    // Derived lists based on selection
+    const states = allLocations ? Object.keys(allLocations).sort() : [];
+    const lgas = (allLocations && tempLocation.state && allLocations[tempLocation.state])
+        ? Object.keys(allLocations[tempLocation.state]).sort()
+        : [];
+    const wards = (allLocations && tempLocation.state && tempLocation.lga && allLocations[tempLocation.state][tempLocation.lga])
+        ? allLocations[tempLocation.state][tempLocation.lga].map((w: any) => w.name).sort()
+        : [];
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onNext(formData);
@@ -37,11 +88,87 @@ export function InvestorPreferences({ onNext, onBack, initialData = {} }: Invest
             <div className="text-center mb-10">
                 <h2 className="text-3xl font-bold text-gray-800">Investment Preferences</h2>
                 <p className="text-gray-500 mt-2">
-                    Customise your deal flow.
+                    Customise your deal flow with specific locations and sectors.
                 </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8 max-w-lg mx-auto bg-white/40 backdrop-blur-md p-8 rounded-2xl border border-white/50 shadow-sm">
+
+                {/* Locations Section */}
+                <div className="space-y-4">
+                    <label className="text-sm font-semibold text-gray-700 ml-1 flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        Target Locations
+                    </label>
+                    <div className="space-y-3 bg-white/60 p-4 rounded-xl border border-gray-200">
+                        {isLoadingLocations ? (
+                            <div className="text-sm text-gray-500 text-center py-4">Loading locations...</div>
+                        ) : (
+                            <>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <select
+                                        value={tempLocation.state}
+                                        onChange={(e) => setTempLocation({ state: e.target.value, lga: "", ward: "" })}
+                                        className="w-full rounded-lg border-gray-200 text-sm p-2"
+                                    >
+                                        <option value="">Select State</option>
+                                        {states.map(state => (
+                                            <option key={state} value={state}>{state}</option>
+                                        ))}
+                                    </select>
+
+                                    <select
+                                        value={tempLocation.lga}
+                                        onChange={(e) => setTempLocation(prev => ({ ...prev, lga: e.target.value, ward: "" }))}
+                                        disabled={!tempLocation.state}
+                                        className="w-full rounded-lg border-gray-200 text-sm p-2 disabled:bg-gray-100"
+                                    >
+                                        <option value="">Select LGA</option>
+                                        {lgas.map(lga => (
+                                            <option key={lga} value={lga}>{lga}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <select
+                                        value={tempLocation.ward || ""}
+                                        onChange={(e) => setTempLocation(prev => ({ ...prev, ward: e.target.value }))}
+                                        disabled={!tempLocation.lga}
+                                        className="flex-1 rounded-lg border-gray-200 text-sm p-2 disabled:bg-gray-100"
+                                    >
+                                        <option value="">Select Ward (Optional)</option>
+                                        {wards.map((ward: string) => (
+                                            <option key={ward} value={ward}>{ward}</option>
+                                        ))}
+                                    </select>
+                                    <button
+                                        type="button"
+                                        onClick={handleAddLocation}
+                                        disabled={!tempLocation.state || !tempLocation.lga}
+                                        className="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+                                    >
+                                        <Plus className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </>
+                        )}
+
+                        {/* Selected Locations List */}
+                        {formData.locations.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {formData.locations.map((loc: LocationSelection, idx: number) => (
+                                    <div key={idx} className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                                        <span>{loc.state} {">"} {loc.lga} {loc.ward ? `> ${loc.ward}` : ""}</span>
+                                        <button type="button" onClick={() => removeLocation(idx)} className="hover:text-green-900">
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
 
                 <div className="space-y-4">
                     <label className="text-sm font-semibold text-gray-700 ml-1">Interested Sectors</label>
