@@ -34,7 +34,7 @@ export default function Stakeholders() {
 
     const partners = [
         { name: "PEBEC", fullName: "Presidential Enabling Business Environment Council", flag: "🇳🇬" },
-        { name: "FIRS", fullName: "Federal Inland Revenue Service", flag: "🇳🇬" },
+        { name: "NRS", fullName: "Federal Inland Revenue Service", flag: "🇳🇬" },
         { name: "AfCFTA", fullName: "African Continental Free Trade Area Secretariat", flag: "🌍" },
         { name: "NIPC", fullName: "Nigerian Investment Promotion Commission", flag: "🇳🇬" },
         { name: "ECOWAS", fullName: "Economic Community of West African States", flag: "🌍" },

@@ -45,7 +45,7 @@ export default function Features() {
                 </svg>
             ),
             title: "Tax Compliance Tools",
-            description: "Automated TIN generation and tax compliance tracking powered by FIRS integration for seamless operations."
+            description: "Automated TIN generation and tax compliance tracking powered by NRS integration for seamless operations."
         },
         {
             icon: (
