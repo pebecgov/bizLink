@@ -49,11 +49,11 @@ export function BusinessProfile({ onNext, onBack, initialData = {} }: BusinessPr
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="registrationNumber" className="text-sm font-semibold text-gray-700 ml-1">Registration Number (CAC)</label>
+                    <label htmlFor="registrationNumber" className="text-sm font-semibold text-gray-700 ml-1">NIN Number</label>
                     <input
                         id="registrationNumber"
                         name="registrationNumber"
-                        placeholder="e.g. RC123456"
+                        placeholder="e.g. 01234567890"
                         required
                         value={formData.registrationNumber}
                         onChange={handleChange}

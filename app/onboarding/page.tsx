@@ -76,7 +76,7 @@ export default function OnboardingPage() {
                 sectors: finalData.sectors,
                 capitalRange: finalData.capitalRange,
                 riskAppetite: finalData.riskAppetite,
-                geography: [], // TODO: Add geography step or field
+                locations: finalData.locations || [], // Use locations instead of geography
             });
 
             router.push("/dashboard");
