@@ -98,7 +98,7 @@ export default function Footer() {
                     <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                         <span className="text-white/60 text-sm font-semibold hover:text-white transition-colors cursor-default">PEBEC</span>
                         <span className="text-white/20 text-sm">|</span>
-                        <span className="text-white/60 text-sm font-semibold hover:text-white transition-colors cursor-default">FIRS</span>
+                        <span className="text-white/60 text-sm font-semibold hover:text-white transition-colors cursor-default">NRS</span>
                         <span className="text-white/20 text-sm">|</span>
                         <span className="text-white/60 text-sm font-semibold hover:text-white transition-colors cursor-default">AfCFTA Secretariat</span>
                         <span className="text-white/20 text-sm">|</span>

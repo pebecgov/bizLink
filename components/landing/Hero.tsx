@@ -50,9 +50,9 @@ export default function Hero({ isAuthenticated }: HeroProps) {
                     </div>
 
                     <h1 className="text-2xl md:text-6xl lg:text-5xl font-bold mb-6 leading-[1.1]">
-                        <span className="text-[#07492F]">Pan-African</span><br />
-                        <span className="text-[#07492F]">Investment & Business</span><br />
-                        <span className="text-[#761912]">Facilitation <span className="text-[#07492F]">Program</span></span>
+                        <span className="text-[#07492F]">The Digital Gateway</span><br />
+                        <span className="text-[#07492F]">for Pan-African</span><br />
+                        <span className="text-[#761912]">Investment</span>
                     </h1>
 
                     <p className="text-lg text-gray-700 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
@@ -107,7 +107,7 @@ export default function Hero({ isAuthenticated }: HeroProps) {
                         <div className="h-6 w-px bg-[#07492F]/10 hidden md:block"></div>
                         <div className="flex gap-3 flex-wrap justify-center items-center">
                             <span className="text-[#07492F]/60 text-xs uppercase font-bold tracking-widest md:hidden">Powered by</span>
-                            {['PEBEC', 'FIRS', 'AfCFTA', 'NIPC', 'ECOWAS'].map((partner) => (
+                            {['PEBEC', 'NRS', 'AfCFTA', 'NIPC', 'ECOWAS'].map((partner) => (
                                 <span key={partner} className="px-4 py-1.5 rounded-lg text-xs font-bold text-[#07492F] bg-[#009F62]/5 border border-[#009F62]/20 hover:bg-[#009F62] hover:text-white hover:border-[#009F62] transition-colors duration-300 cursor-default shadow-sm">
                                     {partner}
                                 </span>
