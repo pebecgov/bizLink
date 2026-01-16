@@ -5,7 +5,12 @@ export const createBusinessProfile = mutation({
     args: {
         businessName: v.string(),
         registrationNumber: v.string(),
-        taxId: v.optional(v.string()),
+        contactName: v.string(),
+        contactPhone: v.string(),
+        state: v.string(),
+        lga: v.string(),
+        sector: v.string(),
+        subsector: v.string(),
         // We'll handle documents separately or as a list of URLs after upload
         documents: v.array(v.object({
             type: v.string(),
@@ -24,7 +29,12 @@ export const createBusinessProfile = mutation({
             ownerId: identity.subject, // Using Clerk ID (subject) as ownerId
             businessName: args.businessName,
             registrationNumber: args.registrationNumber,
-            taxId: args.taxId,
+            contactName: args.contactName,
+            contactPhone: args.contactPhone,
+            state: args.state,
+            lga: args.lga,
+            sector: args.sector,
+            subsector: args.subsector,
             documents: args.documents,
             verificationStatus: "pending",
             riskScore: undefined, // Initial score
@@ -47,15 +57,21 @@ export const createBusinessProfile = mutation({
 
 export const createInvestorProfile = mutation({
     args: {
+        // Legal entity information
+        registeredName: v.string(),
+        jurisdiction: v.string(),
+        incorporationDocs: v.optional(v.array(v.object({
+            name: v.string(),
+            size: v.string()
+        }))),
+        taxIdType: v.string(),
+        taxIdentificationNumber: v.string(),
+        taxIssuingCountry: v.string(),
+        // Investment preferences
         sectors: v.array(v.string()),
         capitalRange: v.string(),
         riskAppetite: v.string(),
-        // locations is optional to support existing data
-        locations: v.optional(v.array(v.object({
-            state: v.string(),
-            lga: v.string(),
-            ward: v.optional(v.string())
-        }))),
+        regions: v.optional(v.array(v.string())),
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity();
@@ -66,8 +82,16 @@ export const createInvestorProfile = mutation({
         // 1. Create Investor Profile
         const profileId = await ctx.db.insert("investor_profiles", {
             userId: identity.subject,
+            // Legal details
+            registeredName: args.registeredName,
+            jurisdiction: args.jurisdiction,
+            incorporationDocs: args.incorporationDocs || undefined,
+            taxIdType: args.taxIdType,
+            taxIdentificationNumber: args.taxIdentificationNumber,
+            taxIssuingCountry: args.taxIssuingCountry,
+            // Investment preferences
             sectors: args.sectors,
-            locations: args.locations || undefined, // Use undefined if not provided
+            regions: args.regions || undefined,
             capitalRange: args.capitalRange,
             riskAppetite: args.riskAppetite,
         });

@@ -85,9 +85,12 @@ export const updateUserRole = mutation({
     userId: v.id("users"),
     newRole: v.union(
       v.literal("admin"),
+      v.literal("system_admin"),
       v.literal("regulator"),
       v.literal("investor"),
-      v.literal("business_owner")
+      v.literal("business_owner"),
+      v.literal("verification_officer"),
+      v.literal("data_analyst")
     ),
     jurisdiction: v.optional(v.string()),
   },

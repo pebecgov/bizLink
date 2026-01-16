@@ -11,7 +11,9 @@
 import type * as accessControl from "../accessControl.js";
 import type * as audit from "../audit.js";
 import type * as bootstrap from "../bootstrap.js";
+import type * as businessProfile from "../businessProfile.js";
 import type * as debug from "../debug.js";
+import type * as investorActions from "../investorActions.js";
 import type * as onboarding from "../onboarding.js";
 import type * as users from "../users.js";
 
@@ -25,7 +27,9 @@ declare const fullApi: ApiFromModules<{
   accessControl: typeof accessControl;
   audit: typeof audit;
   bootstrap: typeof bootstrap;
+  businessProfile: typeof businessProfile;
   debug: typeof debug;
+  investorActions: typeof investorActions;
   onboarding: typeof onboarding;
   users: typeof users;
 }>;

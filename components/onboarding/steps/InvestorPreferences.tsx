@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
-import { Plus, X, MapPin } from "lucide-react";
+import { useState } from "react";
+import { MapPin } from "lucide-react";
+import { SECTORS } from "../constants/sectors";
 
 interface InvestorPreferencesProps {
     onNext: (data: any) => void;
@@ -8,39 +9,23 @@ interface InvestorPreferencesProps {
     initialData?: any;
 }
 
-const SECTORS = ["Fintech", "Healthtech", "Agritech", "E-commerce", "Logistics", "Clean Energy"];
-
-interface LocationSelection {
-    state: string;
-    lga: string;
-    ward?: string;
-}
+const NIGERIAN_REGIONS = [
+    "All Regions",
+    "North-West",
+    "North-East",
+    "North-Central",
+    "South-West",
+    "South-East",
+    "South-South"
+];
 
 export function InvestorPreferences({ onNext, onBack, initialData = {} }: InvestorPreferencesProps) {
     const [formData, setFormData] = useState({
         sectors: initialData.sectors || [],
         capitalRange: initialData.capitalRange || "",
         riskAppetite: initialData.riskAppetite || "",
-        locations: initialData.locations || [] as LocationSelection[],
+        regions: initialData.regions || [] as string[],
     });
-
-    const [allLocations, setAllLocations] = useState<any>(null);
-    const [isLoadingLocations, setIsLoadingLocations] = useState(true);
-    const [tempLocation, setTempLocation] = useState<LocationSelection>({ state: "", lga: "", ward: "" });
-
-    // Fetch location data on mount
-    useEffect(() => {
-        fetch('/lgas-with-wards.json')
-            .then(res => res.json())
-            .then(data => {
-                setAllLocations(data);
-                setIsLoadingLocations(false);
-            })
-            .catch(err => {
-                console.error("Failed to load locations:", err);
-                setIsLoadingLocations(false);
-            });
-    }, []);
 
     const toggleSector = (sector: string) => {
         setFormData((prev: any) => {
@@ -52,31 +37,25 @@ export function InvestorPreferences({ onNext, onBack, initialData = {} }: Invest
         });
     };
 
-    const handleAddLocation = () => {
-        if (tempLocation.state && tempLocation.lga) {
-            setFormData(prev => ({
-                ...prev,
-                locations: [...prev.locations, { ...tempLocation }]
-            }));
-            setTempLocation({ state: "", lga: "", ward: "" });
-        }
+    const toggleRegion = (region: string) => {
+        setFormData((prev) => {
+            const current = prev.regions;
+
+            // If "All Regions" is selected, clear other selections and add "All Regions"
+            if (region === "All Regions") {
+                return { ...prev, regions: current.includes("All Regions") ? [] : ["All Regions"] };
+            }
+
+            // If another region is selected, remove "All Regions" if present
+            const withoutAll = current.filter((r: string) => r !== "All Regions");
+            const updated = withoutAll.includes(region)
+                ? withoutAll.filter((r: string) => r !== region)
+                : [...withoutAll, region];
+
+            return { ...prev, regions: updated };
+        });
     };
 
-    const removeLocation = (index: number) => {
-        setFormData(prev => ({
-            ...prev,
-            locations: prev.locations.filter((_: any, i: number) => i !== index)
-        }));
-    };
-
-    // Derived lists based on selection
-    const states = allLocations ? Object.keys(allLocations).sort() : [];
-    const lgas = (allLocations && tempLocation.state && allLocations[tempLocation.state])
-        ? Object.keys(allLocations[tempLocation.state]).sort()
-        : [];
-    const wards = (allLocations && tempLocation.state && tempLocation.lga && allLocations[tempLocation.state][tempLocation.lga])
-        ? allLocations[tempLocation.state][tempLocation.lga].map((w: any) => w.name).sort()
-        : [];
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -94,96 +73,50 @@ export function InvestorPreferences({ onNext, onBack, initialData = {} }: Invest
 
             <form onSubmit={handleSubmit} className="space-y-8 max-w-lg mx-auto bg-white/40 backdrop-blur-md p-8 rounded-2xl border border-white/50 shadow-sm">
 
-                {/* Locations Section */}
+                {/* Regions Section */}
                 <div className="space-y-4">
                     <label className="text-sm font-semibold text-gray-700 ml-1 flex items-center gap-2">
                         <MapPin className="w-4 h-4" />
-                        Target Locations
+                        Target Regions
                     </label>
                     <div className="space-y-3 bg-white/60 p-4 rounded-xl border border-gray-200">
-                        {isLoadingLocations ? (
-                            <div className="text-sm text-gray-500 text-center py-4">Loading locations...</div>
-                        ) : (
-                            <>
-                                <div className="grid grid-cols-2 gap-2">
-                                    <select
-                                        value={tempLocation.state}
-                                        onChange={(e) => setTempLocation({ state: e.target.value, lga: "", ward: "" })}
-                                        className="w-full rounded-lg border-gray-200 text-sm p-2"
-                                    >
-                                        <option value="">Select State</option>
-                                        {states.map(state => (
-                                            <option key={state} value={state}>{state}</option>
-                                        ))}
-                                    </select>
-
-                                    <select
-                                        value={tempLocation.lga}
-                                        onChange={(e) => setTempLocation(prev => ({ ...prev, lga: e.target.value, ward: "" }))}
-                                        disabled={!tempLocation.state}
-                                        className="w-full rounded-lg border-gray-200 text-sm p-2 disabled:bg-gray-100"
-                                    >
-                                        <option value="">Select LGA</option>
-                                        {lgas.map(lga => (
-                                            <option key={lga} value={lga}>{lga}</option>
-                                        ))}
-                                    </select>
+                        <div className="grid grid-cols-2 gap-3">
+                            {NIGERIAN_REGIONS.map((region) => (
+                                <div
+                                    key={region}
+                                    className={`flex items-center space-x-3 border p-3 rounded-xl hover:border-green-300 hover:bg-green-50/50 transition-colors cursor-pointer group ${region === "All Regions" ? "col-span-2 border-green-300 bg-green-50/30" : "border-gray-200 bg-white/60"
+                                        }`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        id={`region-${region}`}
+                                        checked={formData.regions.includes(region)}
+                                        onChange={() => toggleRegion(region)}
+                                        className="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer"
+                                    />
+                                    <label htmlFor={`region-${region}`} className="cursor-pointer text-sm font-medium text-gray-700 group-hover:text-gray-900 flex-1 select-none">
+                                        {region}
+                                    </label>
                                 </div>
-
-                                <div className="flex gap-2">
-                                    <select
-                                        value={tempLocation.ward || ""}
-                                        onChange={(e) => setTempLocation(prev => ({ ...prev, ward: e.target.value }))}
-                                        disabled={!tempLocation.lga}
-                                        className="flex-1 rounded-lg border-gray-200 text-sm p-2 disabled:bg-gray-100"
-                                    >
-                                        <option value="">Select Ward (Optional)</option>
-                                        {wards.map((ward: string) => (
-                                            <option key={ward} value={ward}>{ward}</option>
-                                        ))}
-                                    </select>
-                                    <button
-                                        type="button"
-                                        onClick={handleAddLocation}
-                                        disabled={!tempLocation.state || !tempLocation.lga}
-                                        className="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
-                                    >
-                                        <Plus className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </>
-                        )}
-
-                        {/* Selected Locations List */}
-                        {formData.locations.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                                {formData.locations.map((loc: LocationSelection, idx: number) => (
-                                    <div key={idx} className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                                        <span>{loc.state} {">"} {loc.lga} {loc.ward ? `> ${loc.ward}` : ""}</span>
-                                        <button type="button" onClick={() => removeLocation(idx)} className="hover:text-green-900">
-                                            <X className="w-3 h-3" />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                            ))}
+                        </div>
                     </div>
                 </div>
 
                 <div className="space-y-4">
                     <label className="text-sm font-semibold text-gray-700 ml-1">Interested Sectors</label>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="h-[500px] overflow-y-auto flex flex-col sm:grid sm:grid-cols-2 gap-3 bg-white/30 p-3 rounded-xl">
                         {SECTORS.map((sector) => (
-                            <div key={sector} className="flex items-center space-x-3 border border-gray-200 bg-white/60 p-3 rounded-xl hover:border-green-300 hover:bg-green-50/50 transition-colors cursor-pointer group">
+                            <div key={sector.name} className="flex items-center space-x-3 border border-gray-200 bg-white/60 p-3 rounded-xl hover:border-green-300 hover:bg-green-50/50 transition-colors cursor-pointer group">
                                 <input
                                     type="checkbox"
-                                    id={`sector-${sector}`}
-                                    checked={formData.sectors.includes(sector)}
-                                    onChange={() => toggleSector(sector)}
+                                    id={`sector-${sector.name}`}
+                                    checked={formData.sectors.includes(sector.name)}
+                                    onChange={() => toggleSector(sector.name)}
                                     className="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer"
                                 />
-                                <label htmlFor={`sector-${sector}`} className="cursor-pointer text-sm font-medium text-gray-700 group-hover:text-gray-900 flex-1 select-none">
-                                    {sector}
+                                <label htmlFor={`sector-${sector.name}`} className="cursor-pointer text-sm font-medium text-gray-700 group-hover:text-gray-900 flex-1 select-none">
+                                    {sector.name}
                                 </label>
                             </div>
                         ))}

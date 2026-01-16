@@ -3,18 +3,37 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useRouter } from "next/navigation";
-import { BarChart, Users, Building, TrendingUp, DollarSign, Globe } from "lucide-react";
+import { Users, Building, TrendingUp, DollarSign, Globe, BarChart } from "lucide-react";
+import { BusinessDashboard } from "@/components/dashboard/business/BusinessDashboard";
+import { InvestorDashboard } from "@/components/dashboard/investor/InvestorDashboard";
 
 export default function Dashboard() {
   const { user } = useUser();
-  const router = useRouter();
-  const currentUser = useQuery(api.users.getCurrentUser);
+  // Fetch the Convex user to get the role from our DB
+  // Note: we might also rely on Clerk metadata if synced, but DB is safer for app logic
+  const convexUser = useQuery(api.users.getCurrentUser);
+
+  // Loading state
+  if (!user || convexUser === undefined) {
+    return <div>Loading dashboard...</div>;
+  }
+
+  // --- BUSINESS OWNER DASHBOARD ---
+  if (convexUser?.role === "business_owner") {
+    return <BusinessDashboard />;
+  }
+
+  // --- INVESTOR DASHBOARD ---
+  if (convexUser?.role === "investor") {
+    return <InvestorDashboard />;
+  }
+
+  // --- DEFAULT DASHBOARD (For now, kept as fallback/other roles) ---
 
   const stats = [
     {
       icon: Users,
-      label: "Total Users",
+      label: "Total Visitors",
       value: "1,234",
       color: "bg-primary-green",
     },
@@ -37,37 +56,6 @@ export default function Dashboard() {
       color: "bg-dark-green",
     },
   ];
-
-  if (currentUser === undefined) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="w-12 h-12 rounded-full border-4 border-primary-green border-t-gold animate-spin"></div>
-      </div>
-    );
-  }
-
-  // Handle case where user is not found in Convex (not synced yet or auth error)
-  if (currentUser === null) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-bg-dark">
-        <div className="w-12 h-12 rounded-full border-4 border-primary-green border-t-gold animate-spin"></div>
-        <p className="mt-4 text-white">Syncing profile...</p>
-      </div>
-    );
-  }
-
-  // Redirect to onboarding if role is "user" (unconfigured)
-  if (currentUser.role === "user") {
-    // Prevent flicker by showing loading or just executing push immediately
-    // In strict mode this might double fire but router.push is safe.
-    router.push("/onboarding");
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-bg-dark">
-        <div className="w-12 h-12 rounded-full border-4 border-primary-green border-t-gold animate-spin"></div>
-        <p className="mt-4 text-white">Redirecting to onboarding...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">

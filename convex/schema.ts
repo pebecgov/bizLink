@@ -8,9 +8,12 @@ export default defineSchema({
     email: v.string(),
     role: v.union( // RBAC Role Map
       v.literal("admin"),
+      v.literal("system_admin"),
       v.literal("regulator"),
       v.literal("investor"),
       v.literal("business_owner"),
+      v.literal("verification_officer"),
+      v.literal("data_analyst"),
       v.literal("user")
     ),
     jurisdiction: v.optional(v.string()), // For scoping regulator access
@@ -34,10 +37,16 @@ export default defineSchema({
 
   // Phase 1: Business Profile
   businesses: defineTable({
+    // Core fields (required)
     ownerId: v.string(), // ClerkId or UserId
     businessName: v.string(),
-    registrationNumber: v.string(), // CAC
-    taxId: v.optional(v.string()),
+    registrationNumber: v.string(), // CAC/NIN
+    contactName: v.string(),
+    contactPhone: v.string(),
+    state: v.string(),
+    lga: v.string(),
+    sector: v.string(),
+    subsector: v.string(),
     documents: v.array(v.object({
       type: v.string(),
       url: v.string(),
@@ -45,14 +54,135 @@ export default defineSchema({
     })),
     verificationStatus: v.string(), // "pending", "verified", "rejected"
     riskScore: v.optional(v.number()),
+
+    // 1. Company Identity
+    logoUrl: v.optional(v.string()),
+    tradingName: v.optional(v.string()),
+    companyTagline: v.optional(v.string()),
+    companyDescription: v.optional(v.string()),
+    companyType: v.optional(v.string()), // "Private Limited Company", etc.
+
+    // 2. Business Classification
+    secondarySectors: v.optional(v.array(v.string())),
+    businessStage: v.optional(v.string()), // "Startup", "Growth", "Established"
+    businessModel: v.optional(v.string()), // "B2B", "B2C", "B2G"
+    targetMarket: v.optional(v.string()), // "Local", "Regional", "Pan-African"
+    afcftaCompliant: v.optional(v.boolean()),
+    operatingCountries: v.optional(v.array(v.string())),
+
+    // 3. Registration & Legal (extended)
+    tinNumber: v.optional(v.string()),
+    cacRegistrationDate: v.optional(v.string()),
+    yearEstablished: v.optional(v.number()),
+
+    // 4. Location & Contact
+    primaryEmail: v.optional(v.string()),
+    website: v.optional(v.string()),
+    headOfficeAddress: v.optional(v.object({
+      street: v.string(),
+      city: v.string(),
+      state: v.string(),
+      country: v.string(),
+      postalCode: v.optional(v.string()),
+      lga: v.optional(v.string()),
+    })),
+    socialMedia: v.optional(v.object({
+      linkedin: v.optional(v.string()),
+      twitter: v.optional(v.string()),
+      facebook: v.optional(v.string()),
+      instagram: v.optional(v.string()),
+      tiktok: v.optional(v.string()),
+    })),
+    branches: v.optional(v.array(v.object({
+      name: v.string(),
+      address: v.string(),
+      phone: v.optional(v.string()),
+      isPrimary: v.optional(v.boolean()),
+    }))),
+
+    // 5. Financials
+    numberOfEmployees: v.optional(v.string()), // "1-10", "11-50", etc.
+    annualRevenue: v.optional(v.string()), // "₦1M-₦10M", etc.
+
+    // 6. Products & Services
+    productsServices: v.optional(v.array(v.object({
+      name: v.string(),
+      description: v.optional(v.string()),
+      category: v.optional(v.string()),
+    }))),
+
+    // 7. Team & Management
+    teamMembers: v.optional(v.array(v.object({
+      name: v.string(),
+      position: v.string(),
+      bio: v.optional(v.string()),
+      linkedIn: v.optional(v.string()),
+    }))),
+
+    // 8. Mission & Vision
+    missionStatement: v.optional(v.string()),
+    visionStatement: v.optional(v.string()),
+
+    // 9. Media Gallery
+    imageGallery: v.optional(v.array(v.string())), // URLs
+    videoGallery: v.optional(v.array(v.string())), // URLs
+
+    // 10. Investment Information
+    seekingFunding: v.optional(v.boolean()),
+    fundingAmount: v.optional(v.string()),
+    equityOffered: v.optional(v.string()),
+    useOfFunds: v.optional(v.string()),
+
+    // 11. Market & Competition
+    targetCustomers: v.optional(v.string()),
+    marketSize: v.optional(v.string()),
+    competitors: v.optional(v.array(v.string())),
+    competitiveAdvantage: v.optional(v.string()),
+
+    // 12. Certifications & Awards
+    certifications: v.optional(v.array(v.object({
+      name: v.string(),
+      issuer: v.string(),
+      date: v.optional(v.string()),
+    }))),
+    awards: v.optional(v.array(v.object({
+      title: v.string(),
+      issuer: v.string(),
+      year: v.optional(v.number()),
+    }))),
+
+    // 13. Sustainability
+    sustainabilityInitiatives: v.optional(v.array(v.string())),
+    esgCompliance: v.optional(v.string()),
+
+    // Additional fields from mock data
+    credibilityScore: v.optional(v.number()), // 0-1000
+    verificationLevel: v.optional(v.string()), // "Basic", "Intermediate", "Advanced"
+
+    // Metadata
+    profileCompleteness: v.optional(v.number()), // 0-100%
+    lastUpdated: v.optional(v.number()),
   })
     .index("by_ownerId", ["ownerId"])
-    .index("by_status", ["verificationStatus"]),
+    .index("by_status", ["verificationStatus"])
+    .index("by_sector", ["sector", "subsector"]),
 
   // Phase 1: Investor Profile
   investor_profiles: defineTable({
     userId: v.string(),
+    // Legal entity information
+    registeredName: v.optional(v.string()),
+    jurisdiction: v.optional(v.string()),
+    incorporationDocs: v.optional(v.array(v.object({
+      name: v.string(),
+      size: v.string()
+    }))),
+    taxIdType: v.optional(v.string()),
+    taxIdentificationNumber: v.optional(v.string()),
+    taxIssuingCountry: v.optional(v.string()),
+    // Investment preferences
     sectors: v.array(v.string()),
+    regions: v.optional(v.array(v.string())), // Geographic regions (e.g., "North-West", "South-East")
     geography: v.optional(v.array(v.string())), // Legacy field for backward compatibility
     locations: v.optional(v.array(v.object({
       state: v.string(),
@@ -63,5 +193,29 @@ export default defineSchema({
     riskAppetite: v.string(), // "low", "medium", "high"
   })
     .index("by_userId", ["userId"]),
+
+  // Phase 1: Investor Discovery Features
+  saved_searches: defineTable({
+    userId: v.string(), // ClerkId or UserId
+    name: v.string(), // User-given name for the search
+    criteria: v.object({
+      keywords: v.optional(v.string()),
+      location: v.optional(v.string()),
+      sector: v.optional(v.string()),
+      businessStage: v.optional(v.string()),
+    }),
+    createdAt: v.number(),
+  })
+    .index("by_userId", ["userId"]),
+
+  saved_businesses: defineTable({
+    userId: v.string(), // ClerkId or UserId
+    businessId: v.id("businesses"),
+    notes: v.optional(v.string()),
+    savedAt: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_businessId", ["businessId"])
+    .index("by_user_business", ["userId", "businessId"]), // Composite index for quick existence checks
 });
 

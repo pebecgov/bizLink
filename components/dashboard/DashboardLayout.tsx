@@ -4,6 +4,9 @@ import { useState } from "react";
 import Sidebar from "./Sidebar";
 import { Menu } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
 
 interface DashboardLayoutProps {
     children: React.ReactNode;
@@ -11,14 +14,43 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const router = useRouter();
+    const currentUser = useQuery(api.users.getCurrentUser);
+
+    if (currentUser === undefined) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh]">
+                <div className="w-12 h-12 rounded-full border-4 border-primary-green border-t-gold animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (currentUser === null) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen bg-bg-dark">
+                <div className="w-12 h-12 rounded-full border-4 border-primary-green border-t-gold animate-spin"></div>
+                <p className="mt-4 text-white">Syncing profile...</p>
+            </div>
+        );
+    }
+
+    if (currentUser.role === "user") {
+        router.push("/onboarding");
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen bg-bg-dark">
+                <div className="w-12 h-12 rounded-full border-4 border-primary-green border-t-gold animate-spin"></div>
+                <p className="mt-4 text-white">Redirecting to onboarding...</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-screen bg-bg-secondary flex">
+        <div className="h-screen bg-bg-secondary flex overflow-hidden">
             {/* Sidebar */}
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex flex-col min-w-0 h-full">
                 {/* Header */}
                 <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
                     <div className="flex items-center justify-between px-6 py-4">
@@ -41,7 +73,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 </header>
 
                 {/* Page Content */}
-                <main className="flex-1 overflow-auto">
+                <main className="flex-1 overflow-y-auto">
                     <div className="p-6">
                         {children}
                     </div>

@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
+import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { roleConfigs } from "./SidebarConfig";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface SidebarProps {
     isOpen: boolean;
@@ -12,11 +14,26 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
-    const [selectedRole, setSelectedRole] = useState("SUPER ADMIN");
     const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
     const pathname = usePathname();
+    const currentUser = useQuery(api.users.getCurrentUser);
 
-    const currentRoleConfig = roleConfigs.find((config) => config.role === selectedRole);
+    // Map DB role to SidebarConfig role
+    const getRoleString = (role?: string) => {
+        switch (role) {
+            case "admin": return "SUPER ADMIN";
+            case "system_admin": return "SYSTEM ADMIN";
+            case "business_owner": return "BUSINESS USER";
+            case "investor": return "INVESTOR USER";
+            case "regulator": return "REGULATORY OFFICER";
+            case "verification_officer": return "VERIFICATION OFFICER";
+            case "data_analyst": return "DATA ANALYST";
+            default: return "BUSINESS USER"; // Fallback or strict mode could return null
+        }
+    };
+
+    const userRoleConfig = getRoleString(currentUser?.role);
+    const currentRoleConfig = roleConfigs.find((config) => config.role === userRoleConfig);
 
     const toggleExpanded = (label: string) => {
         const newExpanded = new Set(expandedItems);
@@ -32,6 +49,26 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         if (!path) return false;
         return pathname === path;
     };
+
+    // Show skeleton if loading
+    if (currentUser === undefined) {
+        return (
+            <aside
+                className={`fixed lg:sticky top-0 left-0 h-screen w-72 bg-white border-r border-gray-200 z-50 transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+                    } flex flex-col`}
+            >
+                <div className="p-6 border-b border-gray-200 animate-pulse">
+                    <div className="h-6 w-3/4 bg-gray-200 rounded mb-4"></div>
+                    <div className="h-10 w-full bg-gray-200 rounded-xl"></div>
+                </div>
+                <div className="p-4 space-y-4 animate-pulse">
+                    <div className="h-8 bg-gray-200 rounded-xl"></div>
+                    <div className="h-8 bg-gray-200 rounded-xl"></div>
+                    <div className="h-8 bg-gray-200 rounded-xl"></div>
+                </div>
+            </aside>
+        );
+    }
 
     return (
         <>
@@ -62,21 +99,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                         </button>
                     </div>
 
-                    {/* Role Selector */}
-                    <div className="relative">
-                        <select
-                            value={selectedRole}
-                            onChange={(e) => setSelectedRole(e.target.value)}
-                            className="w-full px-4 py-3 bg-gradient-primary text-white rounded-xl font-semibold appearance-none cursor-pointer hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-green focus:ring-offset-2"
-                        >
-                            {roleConfigs.map((config) => (
-                                <option key={config.role} value={config.role} className="bg-white text-text-primary">
-                                    {config.role}
-                                </option>
-                            ))}
-                        </select>
-                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white pointer-events-none" />
-                    </div>
                 </div>
 
                 {/* Navigation */}

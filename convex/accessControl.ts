@@ -1,7 +1,7 @@
 import { QueryCtx, MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 
-export type UserRole = "admin" | "regulator" | "investor" | "business_owner" | "user";
+export type UserRole = "admin" | "system_admin" | "regulator" | "investor" | "business_owner" | "verification_officer" | "data_analyst" | "user";
 
 /**
  * Helper to assert user is authenticated and get user record
@@ -64,7 +64,7 @@ export async function assertAuthorized(
     throw new Error("Unauthorized: Insufficient Permissions");
   }
 
-  if (!requiredRoles.includes(user.role)) {
+  if (!requiredRoles.includes(user.role as UserRole)) {
     // Log unauthorized role escalation attempts (only in mutation context)
     if ("insert" in ctx.db && typeof ctx.db.insert === "function") {
       await (ctx.db as MutationCtx["db"]).insert("audit_logs", {
