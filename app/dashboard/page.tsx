@@ -40,19 +40,19 @@ export default function Dashboard() {
     {
       icon: Building,
       label: "Businesses",
-      value: "567",
+      value: "0",
       color: "bg-gold",
     },
     {
       icon: TrendingUp,
       label: "Investments",
-      value: "$2.5M",
+      value: "0.00 USD",
       color: "bg-accent-blue",
     },
     {
       icon: DollarSign,
       label: "Revenue",
-      value: "$125K",
+      value: "0.00 USD",
       color: "bg-dark-green",
     },
   ];
