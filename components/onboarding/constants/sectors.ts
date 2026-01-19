@@ -5,7 +5,7 @@ export interface Sector {
 
 export const SECTORS: Sector[] = [
     {
-        name: "AGRICULTURE, FORESTRY & FISHING",
+        name: "Agriculture, Forestry & Fishing",
         subsectors: [
             "Grain Farming (Rice, Maize, Wheat, Sorghum)",
             "Vegetable & Melon Farming",
@@ -29,7 +29,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "MINING & QUARRYING",
+        name: "Mining & Quarrying",
         subsectors: [
             "Crude Petroleum Extraction",
             "Natural Gas Extraction",
@@ -49,7 +49,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "MANUFACTURING",
+        name: "Manufacturing",
         subsectors: [
             "Animal Food Manufacturing",
             "Grain & Oilseed Milling",
@@ -131,7 +131,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "ELECTRICITY, GAS, STEAM & AIR CONDITIONING",
+        name: "Electricity, Gas, Steam & Air Conditioning",
         subsectors: [
             "Hydroelectric Power",
             "Thermal Power Generation",
@@ -145,7 +145,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "WATER SUPPLY, SEWERAGE & WASTE MANAGEMENT",
+        name: "Water Supply, Sewerage & Waste Management",
         subsectors: [
             "Water Collection, Treatment & Supply",
             "Sewage Treatment",
@@ -156,7 +156,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "CONSTRUCTION",
+        name: "Construction",
         subsectors: [
             "Residential Building Construction",
             "Non-Residential Building Construction",
@@ -174,7 +174,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "WHOLESALE & RETAIL TRADE",
+        name: "Wholesale & Retail Trade",
         subsectors: [
             "Motor Vehicle & Parts Wholesalers",
             "Furniture & Home Furnishing Wholesalers",
@@ -203,7 +203,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "TRANSPORTATION & STORAGE",
+        name: "Transportation & Storage",
         subsectors: [
             "Urban & Suburban Passenger Transit",
             "Interurban & Rural Bus Service",
@@ -229,7 +229,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "ACCOMMODATION & FOOD SERVICES",
+        name: "Accommodation & Food Services",
         subsectors: [
             "Hotels & Motels",
             "Short-Term Lodging",
@@ -245,7 +245,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "INFORMATION & COMMUNICATION",
+        name: "Information & Communication",
         subsectors: [
             "Newspaper Publishers",
             "Magazine Publishers",
@@ -270,7 +270,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "FINANCIAL & INSURANCE ACTIVITIES",
+        name: "Financial & Insurance Activities",
         subsectors: [
             "Commercial Banks",
             "Microfinance Banks",
@@ -295,7 +295,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "REAL ESTATE ACTIVITIES",
+        name: "Real Estate Activities",
         subsectors: [
             "Residential Real Estate",
             "Commercial Real Estate",
@@ -308,7 +308,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "PROFESSIONAL, SCIENTIFIC & TECHNICAL ACTIVITIES",
+        name: "Professional, Scientific & Technical Activities",
         subsectors: [
             "Legal Services",
             "Accounting & Bookkeeping",
@@ -336,7 +336,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "ADMINISTRATIVE & SUPPORT SERVICES",
+        name: "Administrative & Support Services",
         subsectors: [
             "Office Administrative Services",
             "Facilities Support Services",
@@ -350,7 +350,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "PUBLIC ADMINISTRATION & DEFENSE",
+        name: "Public Administration & Defense",
         subsectors: [
             "Federal Government Administration",
             "State Government Administration",
@@ -361,7 +361,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "EDUCATION",
+        name: "Education",
         subsectors: [
             "Primary Schools",
             "Secondary Schools",
@@ -379,7 +379,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "HUMAN HEALTH & SOCIAL WORK",
+        name: "Human Health & Social Work",
         subsectors: [
             "Hospitals",
             "Specialist Medical Clinics",
@@ -396,7 +396,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "ARTS, ENTERTAINMENT & RECREATION",
+        name: "Arts, Entertainment & Recreation",
         subsectors: [
             "Music Production",
             "Film Production (Nollywood)",
@@ -432,7 +432,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "RENEWABLE ENERGY & ENVIRONMENTAL SERVICES",
+        name: "Renewable Energy & Environmental Services",
         subsectors: [
             "Solar Energy Systems",
             "Wind Energy",
@@ -444,7 +444,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "DIGITAL ECONOMY & TECHNOLOGY",
+        name: "Digital Economy & Technology",
         subsectors: [
             "E-commerce Platforms",
             "Digital Marketing Agencies",
@@ -458,7 +458,7 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
-        name: "CREATIVE & MEDIA INDUSTRIES",
+        name: "Creative & Media Industries",
         subsectors: [
             "Content Creation",
             "Influencer Marketing",

@@ -217,5 +217,32 @@ export default defineSchema({
     .index("by_userId", ["userId"])
     .index("by_businessId", ["businessId"])
     .index("by_user_business", ["userId", "businessId"]), // Composite index for quick existence checks
+
+  // AI Matching System
+  matches: defineTable({
+    investorId: v.string(), // ClerkId or UserId of investor
+    businessId: v.id("businesses"),
+    score: v.number(), // Overall match score 0-100
+    factors: v.object({
+      sector: v.number(),
+      location: v.number(),
+      capital: v.number(),
+      risk: v.number(),
+      stage: v.number(),
+    }),
+    aiReason: v.optional(v.string()), // AI-generated explanation
+    status: v.union(
+      v.literal("new"),
+      v.literal("viewed"),
+      v.literal("contacted"),
+      v.literal("dismissed")
+    ),
+    createdAt: v.number(),
+    updatedAt: v.optional(v.number()),
+  })
+    .index("by_investorId", ["investorId"])
+    .index("by_businessId", ["businessId"])
+    .index("by_investor_status", ["investorId", "status"])
+    .index("by_investor_business", ["investorId", "businessId"]),
 });
 

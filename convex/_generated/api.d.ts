@@ -14,6 +14,7 @@ import type * as bootstrap from "../bootstrap.js";
 import type * as businessProfile from "../businessProfile.js";
 import type * as debug from "../debug.js";
 import type * as investorActions from "../investorActions.js";
+import type * as matching from "../matching.js";
 import type * as onboarding from "../onboarding.js";
 import type * as users from "../users.js";
 
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   businessProfile: typeof businessProfile;
   debug: typeof debug;
   investorActions: typeof investorActions;
+  matching: typeof matching;
   onboarding: typeof onboarding;
   users: typeof users;
 }>;
