@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { SignInButton, useUser, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -18,27 +19,32 @@ export default function Navbar() {
     }, []);
 
     const navLinks = [
-        { name: "Home", href: "#" },
+        { name: "Home", href: "/" },
+        { name: "Listed Businesses", href: "/businesses" },
         { name: "About Us", href: "#features" },
-        { name: "Opportunities", href: "#stats" },
         { name: "Partners", href: "#stakeholders" },
         { name: "Contact", href: "#contact" },
     ];
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-[1000] py-6 transition-all duration-300 ${isScrolled ? "bg-white/95 backdrop-blur-md !py-3 shadow-[0_4px_20px_rgba(0,0,0,0.05)]" : "bg-white/95 backdrop-blur-md"
+            className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-300 ${isScrolled ? "bg-white/95 backdrop-blur-md !py-3 shadow-[0_4px_20px_rgba(0,0,0,0.05)]" : "bg-white/95 backdrop-blur-md"
                 }`}
         >
             <div className="container mx-auto px-6 md:px-8 max-w-7xl flex items-center justify-between">
                 <div className="w-full flex items-center justify-between">
                     {/* Logo Section */}
                     <div className="flex items-center gap-4">
-                        <div className="flex flex-col leading-none">
-                            <span className={`text-2xl flex items-center justify-center gap-2 font-extrabold tracking-[-0.5px] transition-colors duration-300 text-[#07492F]`}>
-                                PEBEC <span className="text-[#761912] text-[0.8rem]">BIZ<span className="">LINK</span></span>
-                            </span>
-                        </div>
+                        <Link href="/" className="flex items-center gap-2">
+                            <Image
+                                src="/logo.png"
+                                alt="BizLink Logo"
+                                width={120}
+                                height={40}
+                                className="object-contain"
+                                priority
+                            />
+                        </Link>
                         <div className="hidden md:flex h-8 w-px bg-black/10"></div>
                         <div className="hidden md:flex flex-col">
                             <span className="text-[10px] font-semibold uppercase tracking-widest leading-[1.2] text-text-secondary">

@@ -457,6 +457,13 @@ export const roleConfigs: RoleConfig[] = [
                 ]
             },
             {
+                icon: Award,
+                label: "Investment Preferences",
+                subItems: [
+                    { label: "Edit All Preferences", path: "/dashboard/settings/preferences" }
+                ]
+            },
+            {
                 icon: Briefcase,
                 label: "My Investment Portfolio",
                 subItems: [
@@ -465,17 +472,6 @@ export const roleConfigs: RoleConfig[] = [
                     { label: "Investment Performance", path: "/dashboard/portfolio/performance" },
                     { label: "Portfolio Analytics", path: "/dashboard/portfolio/analytics" },
                     { label: "Returns & ROI", path: "/dashboard/portfolio/roi" }
-                ]
-            },
-            {
-                icon: Award,
-                label: "Investment Preferences",
-                subItems: [
-                    { label: "My Investment Profile", path: "/dashboard/preferences/profile" },
-                    { label: "Sector Preferences", path: "/dashboard/preferences/sectors" },
-                    { label: "Geographic Preferences", path: "/dashboard/preferences/geographic" },
-                    { label: "Risk Appetite", path: "/dashboard/preferences/risk" },
-                    { label: "Capital Range", path: "/dashboard/preferences/capital" }
                 ]
             },
             {
