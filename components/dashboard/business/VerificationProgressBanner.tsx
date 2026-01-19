@@ -132,7 +132,7 @@ export function VerificationProgressBanner({
                                 Almost There! Just {75 - percentage}% more to unlock investments
                             </h4>
                             <p className="text-sm text-yellow-700 mt-1">
-                                You're very close to becoming investment-ready. Upload {totalMissing} more document{totalMissing !== 1 ? 's' : ''} to reach 75%.
+                                You&apos;re very close to becoming investment-ready. Upload {totalMissing} more document{totalMissing !== 1 ? 's' : ''} to reach 75%.
                             </p>
                         </div>
                     </div>

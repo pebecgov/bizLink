@@ -46,7 +46,7 @@ export function FundingPreferencesModal({
                     </div>
                     <div className="relative z-10">
                         <h2 className="text-2xl font-bold mb-2">Welcome to BizLink!</h2>
-                        <p className="text-green-50">Let's understand your funding needs</p>
+                        <p className="text-green-50">Let&apos;s understand your funding needs</p>
                     </div>
                 </div>
 
@@ -68,7 +68,7 @@ export function FundingPreferencesModal({
                             <Shield className="w-6 h-6 text-blue-600 mt-0.5 shrink-0" />
                             <div>
                                 <h4 className="font-semibold text-blue-900 mb-2">
-                                    To receive investments, you'll need to complete verification
+                                    To receive investments, you&apos;ll need to complete verification
                                 </h4>
                                 <div className="space-y-2 text-sm text-blue-800">
                                     <div className="flex items-start gap-2">
@@ -109,7 +109,7 @@ export function FundingPreferencesModal({
                             className="bg-primary-green hover:bg-green-700 text-white h-auto py-4 rounded-xl"
                         >
                             <div className="text-center">
-                                <p className="font-bold text-lg">Yes, I'm Seeking Funding</p>
+                                <p className="font-bold text-lg">Yes, I&apos;m Seeking Funding</p>
                                 <p className="text-xs text-green-100 mt-1">
                                     I want to connect with investors
                                 </p>
@@ -125,7 +125,7 @@ export function FundingPreferencesModal({
                             <div className="text-center">
                                 <p className="font-bold text-lg">Not Right Now</p>
                                 <p className="text-xs text-gray-500 mt-1">
-                                    I'll explore the platform first
+                                    I&apos;ll explore the platform first
                                 </p>
                             </div>
                         </Button>
