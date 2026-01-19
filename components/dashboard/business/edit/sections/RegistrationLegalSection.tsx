@@ -4,36 +4,49 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Shield, CheckCircle } from "lucide-react";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Doc } from "@/convex/_generated/dataModel";
+import { DocumentItem, UploadedDocument } from "@/components/dashboard/business/DocumentRequirementsList";
+import { CORE_DOCUMENTS, ADDITIONAL_DOCUMENTS } from "@/constants/documentTypes";
 
-export function RegistrationLegalSection() {
+interface RegistrationLegalSectionProps {
+    businessProfile: Doc<"businesses">;
+    verificationDocs: UploadedDocument[];
+    onUpload: (docType: string, category: string, uploadFormats?: string[]) => void;
+    onDelete: (docId: string) => void;
+    onView: (url: string) => void;
+    uploadingDocs: Set<string>;
+}
+
+export function RegistrationLegalSection({
+    businessProfile,
+    verificationDocs,
+    onUpload,
+    onDelete,
+    onView,
+    uploadingDocs
+}: RegistrationLegalSectionProps) {
     const { toast } = useToast();
-    const businessProfile = useQuery(api.businessProfile.getMyBusinessProfile);
     const updateRegistrationLegal = useMutation(api.businessProfile.updateRegistrationLegal);
     const [isLoading, setIsLoading] = useState(false);
 
-    if (businessProfile === undefined) {
-        return (
-            <div className="space-y-8 animate-in fade-in">
-                <div className="flex items-center justify-center py-12">
-                    <div className="w-8 h-8 border-4 border-primary-green border-t-transparent rounded-full animate-spin"></div>
-                </div>
-            </div>
-        );
-    }
+    // Helpers to find docs
+    const getDocReq = (id: string) =>
+        CORE_DOCUMENTS.find(d => d.id === id) ||
+        ADDITIONAL_DOCUMENTS.find(d => d.id === id);
 
-    if (!businessProfile) {
-        return (
-            <div className="space-y-8 animate-in fade-in">
-                <div className="text-center py-12">
-                    <p className="text-gray-500">No business profile found. Please complete onboarding first.</p>
-                </div>
-            </div>
-        );
-    }
+    const getUploadedDoc = (id: string) =>
+        verificationDocs.find(d => d.documentType === id);
+
+
+    const cacCertDoc = getDocReq("CAC_CERTIFICATE");
+    const cacForm11Doc = getDocReq("FORM_CAC_1_1");
+    const mematDoc = getDocReq("MEMAT");
+    const tinCertDoc = getDocReq("TIN_CERTIFICATE");
+    const taxClearanceDoc = getDocReq("TAX_CLEARANCE");
 
     const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -74,83 +87,151 @@ export function RegistrationLegalSection() {
             </div>
 
             {/* CAC Registration */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <Label htmlFor="cacNumber">CAC Registration Number *</Label>
-                    <div className="relative">
-                        <Input
-                            id="cacNumber"
-                            name="cacNumber"
-                            defaultValue={businessProfile.registrationNumber}
-                            placeholder="RC123456"
-                            required
-                        />
-                        {businessProfile.verificationStatus === "verified" && (
-                            <CheckCircle className="w-4 h-4 text-green-500 absolute right-3 top-3" />
-                        )}
+            <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="cacNumber">CAC Registration Number *</Label>
+                        <div className="relative">
+                            <Input
+                                id="cacNumber"
+                                name="cacNumber"
+                                defaultValue={businessProfile.registrationNumber}
+                                placeholder="RC123456"
+                                required
+                            />
+                            {businessProfile.verificationStatus === "verified" && (
+                                <CheckCircle className="w-4 h-4 text-green-500 absolute right-3 top-3" />
+                            )}
+                        </div>
                     </div>
-                    {businessProfile.verificationStatus === "verified" && (
-                        <p className="text-xs text-green-600 flex items-center gap-1">
-                            <Shield className="w-3 h-3" />
-                            Verified with CAC
-                        </p>
+                    <div className="space-y-2">
+                        <Label htmlFor="cacDate">CAC Registration Date *</Label>
+                        <Input
+                            id="cacDate"
+                            name="cacDate"
+                            type="date"
+                            defaultValue={businessProfile.cacRegistrationDate || ""}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="companyType">Company Type *</Label>
+                        <select
+                            id="companyType"
+                            name="companyType"
+                            defaultValue={businessProfile.companyType || ""}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                            required
+                        >
+                            <option value="">Select company type</option>
+                            <option value="Sole Proprietorship">Sole Proprietorship/Business Name</option>
+                            <option value="Partnership">Partnership</option>
+                            <option value="Private Limited Company">Private Limited Company (LLC)</option>
+                            <option value="Public Limited Company">Public Limited Company (PLC)</option>
+                            <option value="NGO">NGO/Non-Profit</option>
+                        </select>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="yearEstablished">Year Established</Label>
+                        <Input
+                            id="yearEstablished"
+                            name="yearEstablished"
+                            type="number"
+                            min="1900"
+                            max={new Date().getFullYear()}
+                            defaultValue={businessProfile.yearEstablished || ""}
+                            placeholder={new Date().getFullYear().toString()}
+                        />
+                    </div>
+                </div>
+
+                {/* CAC Documents */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div className="col-span-full">
+                        <Label className="text-gray-700 font-semibold mb-2 block">CAC Documents</Label>
+                        <p className="text-xs text-gray-500 mb-4">Please upload your CAC certificate and related forms.</p>
+                    </div>
+
+                    {cacCertDoc && (
+                        <DocumentItem
+                            doc={cacCertDoc}
+                            status={getUploadedDoc(cacCertDoc.id)}
+                            onUpload={(file) => onUpload(cacCertDoc.id, cacCertDoc.category, cacCertDoc.uploadFormats)}
+                            onDelete={onDelete}
+                            onView={onView}
+                            isUploading={uploadingDocs.has(cacCertDoc.id)}
+                        />
+                    )}
+
+                    {cacForm11Doc && (
+                        <DocumentItem
+                            doc={cacForm11Doc}
+                            status={getUploadedDoc(cacForm11Doc.id)}
+                            onUpload={(file) => onUpload(cacForm11Doc.id, cacForm11Doc.category, cacForm11Doc.uploadFormats)}
+                            onDelete={onDelete}
+                            onView={onView}
+                            isUploading={uploadingDocs.has(cacForm11Doc.id)}
+                        />
+                    )}
+
+                    {mematDoc && (
+                        <div className="col-span-full mt-2">
+                            <DocumentItem
+                                doc={mematDoc}
+                                status={getUploadedDoc(mematDoc.id)}
+                                onUpload={(file) => onUpload(mematDoc.id, mematDoc.category, mematDoc.uploadFormats)}
+                                onDelete={onDelete}
+                                onView={onView}
+                                isUploading={uploadingDocs.has(mematDoc.id)}
+                            />
+                        </div>
                     )}
                 </div>
-                <div className="space-y-2">
-                    <Label htmlFor="cacDate">CAC Registration Date *</Label>
-                    <Input
-                        id="cacDate"
-                        name="cacDate"
-                        type="date"
-                        defaultValue={businessProfile.cacRegistrationDate || ""}
-                    />
-                </div>
             </div>
 
-            {/* TIN & Company Type */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <Label htmlFor="tinNumber">TIN Number *</Label>
-                    <div className="relative">
-                        <Input
-                            id="tinNumber"
-                            name="tinNumber"
-                            defaultValue={businessProfile.tinNumber || ""}
-                            placeholder="12345678-0001"
-                        />
+            {/* TIN & Taxes */}
+            <div className="space-y-6 pt-4 border-t border-gray-100">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="tinNumber">TIN Number *</Label>
+                        <div className="relative">
+                            <Input
+                                id="tinNumber"
+                                name="tinNumber"
+                                defaultValue={businessProfile.tinNumber || ""}
+                                placeholder="12345678-0001"
+                            />
+                        </div>
                     </div>
                 </div>
-                <div className="space-y-2">
-                    <Label htmlFor="companyType">Company Type *</Label>
-                    <select
-                        id="companyType"
-                        name="companyType"
-                        defaultValue={businessProfile.companyType || ""}
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
-                        required
-                    >
-                        <option value="">Select company type</option>
-                        <option value="Sole Proprietorship">Sole Proprietorship/Business Name</option>
-                        <option value="Partnership">Partnership</option>
-                        <option value="Private Limited Company">Private Limited Company (LLC)</option>
-                        <option value="Public Limited Company">Public Limited Company (PLC)</option>
-                        <option value="NGO">NGO/Non-Profit</option>
-                    </select>
-                </div>
-            </div>
 
-            {/* Year Established */}
-            <div className="space-y-2">
-                <Label htmlFor="yearEstablished">Year Established</Label>
-                <Input
-                    id="yearEstablished"
-                    name="yearEstablished"
-                    type="number"
-                    min="1900"
-                    max={new Date().getFullYear()}
-                    defaultValue={businessProfile.yearEstablished || ""}
-                    placeholder={new Date().getFullYear().toString()}
-                />
+                {/* Tax Documents */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div className="col-span-full">
+                        <Label className="text-gray-700 font-semibold mb-2 block">Tax Documents</Label>
+                    </div>
+
+                    {tinCertDoc && (
+                        <DocumentItem
+                            doc={tinCertDoc}
+                            status={getUploadedDoc(tinCertDoc.id)}
+                            onUpload={(file) => onUpload(tinCertDoc.id, tinCertDoc.category, tinCertDoc.uploadFormats)}
+                            onDelete={onDelete}
+                            onView={onView}
+                            isUploading={uploadingDocs.has(tinCertDoc.id)}
+                        />
+                    )}
+
+                    {taxClearanceDoc && (
+                        <DocumentItem
+                            doc={taxClearanceDoc}
+                            status={getUploadedDoc(taxClearanceDoc.id)}
+                            onUpload={(file) => onUpload(taxClearanceDoc.id, taxClearanceDoc.category, taxClearanceDoc.uploadFormats)}
+                            onDelete={onDelete}
+                            onView={onView}
+                            isUploading={uploadingDocs.has(taxClearanceDoc.id)}
+                        />
+                    )}
+                </div>
             </div>
 
             {/* Verification Status */}

@@ -1,38 +1,45 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Doc } from "@/convex/_generated/dataModel";
+import { DocumentItem, UploadedDocument } from "@/components/dashboard/business/DocumentRequirementsList";
+import { CORE_DOCUMENTS, ADDITIONAL_DOCUMENTS } from "@/constants/documentTypes";
 
-export function FinancialsSection() {
+interface FinancialsSectionProps {
+    businessProfile: Doc<"businesses">;
+    verificationDocs: UploadedDocument[];
+    onUpload: (docType: string, category: string, uploadFormats?: string[]) => void;
+    onDelete: (docId: string) => void;
+    onView: (url: string) => void;
+    uploadingDocs: Set<string>;
+}
+
+export function FinancialsSection({
+    businessProfile,
+    verificationDocs,
+    onUpload,
+    onDelete,
+    onView,
+    uploadingDocs
+}: FinancialsSectionProps) {
     const { toast } = useToast();
-    const businessProfile = useQuery(api.businessProfile.getMyBusinessProfile);
     const updateFinancials = useMutation(api.businessProfile.updateFinancials);
     const [isLoading, setIsLoading] = useState(false);
 
-    if (businessProfile === undefined) {
-        return (
-            <div className="space-y-8 animate-in fade-in">
-                <div className="flex items-center justify-center py-12">
-                    <div className="w-8 h-8 border-4 border-primary-green border-t-transparent rounded-full animate-spin"></div>
-                </div>
-            </div>
-        );
-    }
+    // Helper to find doc
+    const getDocReq = (id: string) =>
+        CORE_DOCUMENTS.find(d => d.id === id) ||
+        ADDITIONAL_DOCUMENTS.find(d => d.id === id);
 
-    if (!businessProfile) {
-        return (
-            <div className="space-y-8 animate-in fade-in">
-                <div className="text-center py-12">
-                    <p className="text-gray-500">No business profile found.</p>
-                </div>
-            </div>
-        );
-    }
+    const getUploadedDoc = (id: string) =>
+        verificationDocs.find(d => d.documentType === id);
+
+    const financialDoc = getDocReq("FINANCIAL_STATEMENTS");
 
     const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -69,41 +76,61 @@ export function FinancialsSection() {
                 <p className="text-sm text-gray-500 mt-2">Provide information about your company&apos;s size and financial standing</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <Label htmlFor="numberOfEmployees">Number of Employees *</Label>
-                    <select
-                        id="numberOfEmployees"
-                        name="numberOfEmployees"
-                        defaultValue={businessProfile.numberOfEmployees || ""}
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
-                        required
-                    >
-                        <option value="">Select range</option>
-                        <option value="1-10">1-10</option>
-                        <option value="11-50">11-50</option>
-                        <option value="51-200">51-200</option>
-                        <option value="201-500">201-500</option>
-                        <option value="500+">500+</option>
-                    </select>
+            <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label htmlFor="numberOfEmployees">Number of Employees *</Label>
+                        <select
+                            id="numberOfEmployees"
+                            name="numberOfEmployees"
+                            defaultValue={businessProfile.numberOfEmployees || ""}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                            required
+                        >
+                            <option value="">Select range</option>
+                            <option value="1-10">1-10</option>
+                            <option value="11-50">11-50</option>
+                            <option value="51-200">51-200</option>
+                            <option value="201-500">201-500</option>
+                            <option value="500+">500+</option>
+                        </select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="annualRevenue">Annual Revenue *</Label>
+                        <select
+                            id="annualRevenue"
+                            name="annualRevenue"
+                            defaultValue={businessProfile.annualRevenue || ""}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                            required
+                        >
+                            <option value="">Select range</option>
+                            <option value="Under ₦1M">Under ₦1M</option>
+                            <option value="₦1M-₦10M">₦1M-₦10M</option>
+                            <option value="₦10M-₦100M">₦10M-₦100M</option>
+                            <option value="₦100M-₦1B">₦100M-₦1B</option>
+                            <option value="Over ₦1B">Over ₦1B</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div className="space-y-2">
-                    <Label htmlFor="annualRevenue">Annual Revenue *</Label>
-                    <select
-                        id="annualRevenue"
-                        name="annualRevenue"
-                        defaultValue={businessProfile.annualRevenue || ""}
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
-                        required
-                    >
-                        <option value="">Select range</option>
-                        <option value="Under ₦1M">Under ₦1M</option>
-                        <option value="₦1M-₦10M">₦1M-₦10M</option>
-                        <option value="₦10M-₦100M">₦10M-₦100M</option>
-                        <option value="₦100M-₦1B">₦100M-₦1B</option>
-                        <option value="Over ₦1B">Over ₦1B</option>
-                    </select>
+                {/* Financial Documents */}
+                <div className="grid grid-cols-1 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div className="col-span-full">
+                        <Label className="text-gray-700 font-semibold mb-2 block">Audited Financial Statements</Label>
+                    </div>
+
+                    {financialDoc && (
+                        <DocumentItem
+                            doc={financialDoc}
+                            status={getUploadedDoc(financialDoc.id)}
+                            onUpload={(file) => onUpload(financialDoc.id, financialDoc.category, financialDoc.uploadFormats)}
+                            onDelete={onDelete}
+                            onView={onView}
+                            isUploading={uploadingDocs.has(financialDoc.id)}
+                        />
+                    )}
                 </div>
             </div>
 
