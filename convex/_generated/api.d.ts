@@ -9,6 +9,7 @@
  */
 
 import type * as accessControl from "../accessControl.js";
+import type * as adminVerification from "../adminVerification.js";
 import type * as audit from "../audit.js";
 import type * as bootstrap from "../bootstrap.js";
 import type * as businessProfile from "../businessProfile.js";
@@ -17,6 +18,7 @@ import type * as investorActions from "../investorActions.js";
 import type * as matching from "../matching.js";
 import type * as onboarding from "../onboarding.js";
 import type * as users from "../users.js";
+import type * as verificationScore from "../verificationScore.js";
 
 import type {
   ApiFromModules,
@@ -26,6 +28,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   accessControl: typeof accessControl;
+  adminVerification: typeof adminVerification;
   audit: typeof audit;
   bootstrap: typeof bootstrap;
   businessProfile: typeof businessProfile;
@@ -34,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   matching: typeof matching;
   onboarding: typeof onboarding;
   users: typeof users;
+  verificationScore: typeof verificationScore;
 }>;
 
 /**

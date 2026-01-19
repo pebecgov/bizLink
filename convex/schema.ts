@@ -159,6 +159,9 @@ export default defineSchema({
     credibilityScore: v.optional(v.number()), // 0-1000
     verificationLevel: v.optional(v.string()), // "Basic", "Intermediate", "Advanced"
 
+    // Funding & Verification
+    verificationPercentage: v.optional(v.number()), // 0-100, cached calculation
+
     // Metadata
     profileCompleteness: v.optional(v.number()), // 0-100%
     lastUpdated: v.optional(v.number()),
@@ -218,6 +221,7 @@ export default defineSchema({
     .index("by_businessId", ["businessId"])
     .index("by_user_business", ["userId", "businessId"]), // Composite index for quick existence checks
 
+<<<<<<< HEAD
   // AI Matching System
   matches: defineTable({
     investorId: v.string(), // ClerkId or UserId of investor
@@ -244,5 +248,38 @@ export default defineSchema({
     .index("by_businessId", ["businessId"])
     .index("by_investor_status", ["investorId", "status"])
     .index("by_investor_business", ["investorId", "businessId"]),
+=======
+  // Phase 2: Verification Documents
+  verification_documents: defineTable({
+    businessId: v.id("businesses"),
+    documentType: v.string(), // "CAC_CERTIFICATE", "TIN", etc.
+    category: v.union(
+      v.literal("core"),
+      v.literal("sector_specific"),
+      v.literal("additional")
+    ),
+    fileUrl: v.string(), // Storage ID
+    fileName: v.string(),
+    fileSize: v.number(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("verified"),
+      v.literal("rejected"),
+      v.literal("expired")
+    ),
+    uploadedAt: v.number(),
+    verifiedAt: v.optional(v.number()),
+    verifiedBy: v.optional(v.string()), // userId of verification officer
+    rejectedAt: v.optional(v.number()), // When document was rejected
+    rejectedBy: v.optional(v.string()), // userId of officer who rejected
+    rejectionReason: v.optional(v.string()),
+    expiryDate: v.optional(v.number()),
+    metadata: v.optional(v.any()), // For document-specific data like ID numbers
+  })
+    .index("by_businessId", ["businessId"])
+    .index("by_status", ["status"])
+    .index("by_type", ["documentType"])
+    .index("by_business_type", ["businessId", "documentType"]),
+>>>>>>> e03fa77951d6f47e27936bd5b5177ce7689612a1
 });
 

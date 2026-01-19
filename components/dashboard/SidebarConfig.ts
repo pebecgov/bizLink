@@ -109,6 +109,20 @@ export const roleConfigs: RoleConfig[] = [
                 ]
             },
             {
+                icon: CheckCircle,
+                label: "Verification Management",
+                subItems: [
+                    // { label: "Verification Queue", path: "/dashboard/verification/queue" },
+                    { label: "Pending Verifications Document", path: "/dashboard/verification/pending" },
+                    // { label: "In Progress", path: "/dashboard/verification/progress" },
+                    { label: "Approved Businesses Document", path: "/dashboard/verification/approved" },
+                    // { label: "Rejected Applications", path: "/dashboard/verification/rejected" },
+                    // { label: "Re-verification Queue", path: "/dashboard/verification/requeue" },
+                    // { label: "Verification Analytics", path: "/dashboard/verification/analytics" },
+                    // { label: "Document Review", path: "/dashboard/verification/documents" }
+                ]
+            },
+            {
                 icon: Settings,
                 label: "System Configuration",
                 subItems: [
@@ -213,11 +227,14 @@ export const roleConfigs: RoleConfig[] = [
                 icon: CheckCircle,
                 label: "Verification Management",
                 subItems: [
+                    { label: "Verification Queue", path: "/dashboard/verification/queue" },
                     { label: "Pending Verifications", path: "/dashboard/verification/pending" },
+                    { label: "In Progress", path: "/dashboard/verification/progress" },
                     { label: "Approved Businesses", path: "/dashboard/verification/approved" },
                     { label: "Rejected Applications", path: "/dashboard/verification/rejected" },
                     { label: "Re-verification Queue", path: "/dashboard/verification/requeue" },
-                    { label: "Verification Analytics", path: "/dashboard/verification/analytics" }
+                    { label: "Verification Analytics", path: "/dashboard/verification/analytics" },
+                    { label: "Document Review", path: "/dashboard/verification/documents" }
                 ]
             },
             {
@@ -323,7 +340,7 @@ export const roleConfigs: RoleConfig[] = [
                 subItems: [
                     { label: "Company Overview", path: "/dashboard/business/overview" },
                     { label: "Edit Profile", path: "/dashboard/business/edit" },
-                    { label: "Documents", path: "/dashboard/business/documents" },
+                    { label: "Compliance & Documentation", path: "/dashboard/business/documents" },
                     { label: "Verification Status", path: "/dashboard/business/verification" },
                     { label: "Credibility Score", path: "/dashboard/business/score" }
                 ]

@@ -245,7 +245,11 @@ export const SECTORS: Sector[] = [
         ]
     },
     {
+<<<<<<< HEAD
         name: "Information & Communication",
+=======
+        name: "INFORMATION, TECHNOLOGY & COMMUNICATION",
+>>>>>>> e03fa77951d6f47e27936bd5b5177ce7689612a1
         subsectors: [
             "Newspaper Publishers",
             "Magazine Publishers",

@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { TopMetrics } from "./TopMetrics";
 import { VerificationWidget } from "./VerificationWidget";
 import { FinancialCards } from "./FinancialCards";
@@ -8,60 +13,101 @@ import { EventsWidget } from "./EventsWidget";
 import { PerformanceChart } from "./PerformanceChart";
 import { MarketIntel } from "./MarketIntel";
 import { QuickActions } from "./QuickActions";
+import { FundingPreferencesModal } from "./FundingPreferencesModal";
+import { VerificationProgressBanner } from "./VerificationProgressBanner";
 
 export function BusinessDashboard() {
+    const [showFundingModal, setShowFundingModal] = useState(false);
+    const myBusiness = useQuery(api.businessProfile.getMyBusinessProfile);
+    const verificationScore = useQuery(
+        api.verificationScore.calculateVerificationScore,
+        myBusiness?._id ? { businessId: myBusiness._id } : "skip"
+    );
+
+    // Show funding preferences modal on first visit if not set
+    const shouldShowModal = myBusiness && myBusiness.seekingFunding === undefined && !showFundingModal;
+
+    // Show verification banner if seeking funding
+    const shouldShowBanner = myBusiness?.seekingFunding === true && verificationScore;
+
     return (
         <div className="space-y-8 pb-12">
+            {/* Funding Preferences Modal (First-time users) */}
+            {shouldShowModal && myBusiness ? (
+                <FundingPreferencesModal
+                    businessId={myBusiness._id}
+                    onClose={() => setShowFundingModal(true)}
+                    currentPercentage={verificationScore?.totalPercentage || 0}
+                />
+            ) : null}
 
-            {/* Header / Welcome (Optional, can be separate) */}
-            <div>
-                <h1 className="text-2xl font-bold text-gray-900">Business Dashboard</h1>
-                <p className="text-gray-500">Monitor your performance and manage investor relations</p>
-            </div>
+            {/* Only show dashboard content if funding preference has been set */}
+            {!shouldShowModal && (
+                <>
+                    {/* Header / Welcome */}
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">Business Dashboard</h1>
+                        <p className="text-gray-500">Monitor your performance and manage investor relations</p>
+                    </div>
 
-            {/* Row 1: Top Metrics */}
-            <section>
-                <TopMetrics />
-            </section>
 
-            {/* Row 2: Verification */}
-            <section>
-                <VerificationWidget />
-            </section>
+                    {/* Row 1: Top Metrics */}
+                    <section>
+                        <TopMetrics />
+                    </section>
+                    {/* Verification Progress Banner (Seeking Funding Users) */}
+                    {shouldShowBanner && (
+                        <section>
+                            <VerificationProgressBanner
+                                percentage={verificationScore.totalPercentage}
+                                tier={verificationScore.tier}
+                                canReceiveInvestment={verificationScore.canReceiveInvestment}
+                                missingCoreDocuments={verificationScore.missingCoreDocuments}
+                                missingSectorDocuments={verificationScore.missingSectorDocuments}
+                            />
+                        </section>
+                    )}
 
-            {/* Row 3: Financials */}
-            <section>
-                <FinancialCards />
-            </section>
+                    {/* Row 2: Verification */}
+                    {/* <section>
+                        <VerificationWidget />
+                    </section> */}
 
-            {/* Row 4: Messages (Width control if needed, currently full) */}
-            <section>
-                <MessagesWidget />
-            </section>
+                    {/* Row 3: Financials */}
+                    <section>
+                        <FinancialCards />
+                    </section>
 
-            {/* Row 5: AI Matches */}
-            <section>
-                <AIMatches />
-            </section>
+                    {/* Row 4: Messages (Width control if needed, currently full) */}
+                    <section>
+                        <MessagesWidget />
+                    </section>
 
-            {/* Info Grid: Pipeline, Events, Chart, Intel */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Column 1 */}
-                <div className="space-y-8">
-                    <DealPipeline />
-                </div>
+                    {/* Row 5: AI Matches */}
+                    <section>
+                        <AIMatches />
+                    </section>
 
-                {/* Column 2 */}
-                <div className="space-y-8">
-                    <EventsWidget />
-                    
-                </div>
-            </div>
+                    {/* Info Grid: Pipeline, Events, Chart, Intel */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Column 1 */}
+                        <div className="space-y-8">
+                            <DealPipeline />
+                        </div>
 
-            {/* Row 10: Quick Actions */}
-            <section>
-                <QuickActions />
-            </section>
+                        {/* Column 2 */}
+                        <div className="space-y-8">
+                            <EventsWidget />
+                        </div>
+                    </div>
+
+                    {/* Row 10: Quick Actions */}
+                    <section>
+                        <QuickActions />
+                    </section>
+                </>
+            )}
+
         </div>
     );
 }
