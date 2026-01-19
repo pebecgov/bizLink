@@ -221,6 +221,34 @@ export default defineSchema({
     .index("by_businessId", ["businessId"])
     .index("by_user_business", ["userId", "businessId"]), // Composite index for quick existence checks
 
+<<<<<<< HEAD
+  // AI Matching System
+  matches: defineTable({
+    investorId: v.string(), // ClerkId or UserId of investor
+    businessId: v.id("businesses"),
+    score: v.number(), // Overall match score 0-100
+    factors: v.object({
+      sector: v.number(),
+      location: v.number(),
+      capital: v.number(),
+      risk: v.number(),
+      stage: v.number(),
+    }),
+    aiReason: v.optional(v.string()), // AI-generated explanation
+    status: v.union(
+      v.literal("new"),
+      v.literal("viewed"),
+      v.literal("contacted"),
+      v.literal("dismissed")
+    ),
+    createdAt: v.number(),
+    updatedAt: v.optional(v.number()),
+  })
+    .index("by_investorId", ["investorId"])
+    .index("by_businessId", ["businessId"])
+    .index("by_investor_status", ["investorId", "status"])
+    .index("by_investor_business", ["investorId", "businessId"]),
+=======
   // Phase 2: Verification Documents
   verification_documents: defineTable({
     businessId: v.id("businesses"),
@@ -252,5 +280,6 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_type", ["documentType"])
     .index("by_business_type", ["businessId", "documentType"]),
+>>>>>>> e03fa77951d6f47e27936bd5b5177ce7689612a1
 });
 

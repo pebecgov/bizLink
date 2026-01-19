@@ -16,20 +16,10 @@ const COUNTRIES = [
     "Brazil", "Mexico", "Other"
 ].sort();
 
-const TAX_ID_TYPES = [
-    "TIN (Tax Identification Number)",
-    "VAT (Value Added Tax)",
-    "EIN (Employer Identification Number)",
-    "Other"
-];
-
 export function InvestorLegalDetails({ onNext, onBack, initialData = {} }: InvestorLegalDetailsProps) {
     const [formData, setFormData] = useState({
         registeredName: initialData.registeredName || "",
         jurisdiction: initialData.jurisdiction || "",
-        taxIdType: initialData.taxIdType || "",
-        taxIdentificationNumber: initialData.taxIdentificationNumber || "",
-        taxIssuingCountry: initialData.taxIssuingCountry || "",
     });
 
     const [incorporationDocs, setIncorporationDocs] = useState<any[]>(initialData.incorporationDocs || []);
@@ -52,8 +42,7 @@ export function InvestorLegalDetails({ onNext, onBack, initialData = {} }: Inves
         e.preventDefault();
 
         // Basic validation
-        if (!formData.registeredName || !formData.jurisdiction || !formData.taxIdType ||
-            !formData.taxIdentificationNumber || !formData.taxIssuingCountry) {
+        if (!formData.registeredName || !formData.jurisdiction) {
             alert("Please fill in all required fields");
             return;
         }
@@ -66,7 +55,7 @@ export function InvestorLegalDetails({ onNext, onBack, initialData = {} }: Inves
             <div className="text-center mb-10">
                 <h2 className="text-3xl font-bold text-gray-800">Legal Entity Information</h2>
                 <p className="text-gray-500 mt-2">
-                    Provide your legal entity and tax identification details.
+                    Provide your legal entity details.
                 </p>
             </div>
 
@@ -165,76 +154,6 @@ export function InvestorLegalDetails({ onNext, onBack, initialData = {} }: Inves
                                     ))}
                                 </div>
                             )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Tax Identification Section */}
-                <div className="space-y-4 pt-2">
-                    <label className="text-sm font-semibold text-gray-700 ml-1">
-                        Tax Identification
-                    </label>
-
-                    <div className="space-y-3">
-                        <div>
-                            <label htmlFor="taxIdType" className="text-xs font-medium text-gray-600 ml-1">
-                                Tax ID Type <span className="text-red-500">*</span>
-                            </label>
-                            <div className="relative mt-1">
-                                <select
-                                    id="taxIdType"
-                                    value={formData.taxIdType}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, taxIdType: e.target.value }))}
-                                    className="flex h-12 w-full appearance-none rounded-xl border border-gray-200 bg-white/60 px-4 py-2 text-sm ring-offset-background placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:cursor-not-allowed disabled:opacity-50"
-                                    required
-                                >
-                                    <option value="">Select Tax ID Type</option>
-                                    {TAX_ID_TYPES.map(type => (
-                                        <option key={type} value={type}>{type}</option>
-                                    ))}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                                    <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label htmlFor="taxIdentificationNumber" className="text-xs font-medium text-gray-600 ml-1">
-                                Tax Identification Number <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                id="taxIdentificationNumber"
-                                value={formData.taxIdentificationNumber}
-                                onChange={(e) => setFormData(prev => ({ ...prev, taxIdentificationNumber: e.target.value }))}
-                                className="mt-1 flex h-12 w-full rounded-xl border border-gray-200 bg-white/60 px-4 py-2 text-sm ring-offset-background placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:cursor-not-allowed disabled:opacity-50"
-                                placeholder="e.g., GB123456789"
-                                required
-                            />
-                        </div>
-
-                        <div>
-                            <label htmlFor="taxIssuingCountry" className="text-xs font-medium text-gray-600 ml-1">
-                                Tax Issuing Country <span className="text-red-500">*</span>
-                            </label>
-                            <div className="relative mt-1">
-                                <select
-                                    id="taxIssuingCountry"
-                                    value={formData.taxIssuingCountry}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, taxIssuingCountry: e.target.value }))}
-                                    className="flex h-12 w-full appearance-none rounded-xl border border-gray-200 bg-white/60 px-4 py-2 text-sm ring-offset-background placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:cursor-not-allowed disabled:opacity-50"
-                                    required
-                                >
-                                    <option value="">Select Country</option>
-                                    {COUNTRIES.map(country => (
-                                        <option key={country} value={country}>{country}</option>
-                                    ))}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                                    <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

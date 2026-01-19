@@ -10,6 +10,7 @@ import { BusinessProfile } from "@/components/onboarding/steps/BusinessProfile";
 import { BusinessLocation } from "@/components/onboarding/steps/BusinessLocation";
 import { DocumentUpload } from "@/components/onboarding/steps/DocumentUpload";
 import { InvestorLegalDetails } from "@/components/onboarding/steps/InvestorLegalDetails";
+import { InvestorTaxDetails } from "@/components/onboarding/steps/InvestorTaxDetails";
 import { InvestorPreferences } from "@/components/onboarding/steps/InvestorPreferences";
 import AnimatedBackground from "@/components/onboarding/AnimatedBackground";
 
@@ -130,6 +131,8 @@ export default function OnboardingPage() {
                 case 1:
                     return <InvestorLegalDetails onNext={handleNext} onBack={handleBack} initialData={formData} />;
                 case 2:
+                    return <InvestorTaxDetails onNext={handleNext} onBack={handleBack} initialData={formData} />;
+                case 3:
                     return <InvestorPreferences onNext={handleInvestorSubmit} onBack={handleBack} initialData={formData} />;
                 default:
                     return null;
@@ -149,7 +152,7 @@ export default function OnboardingPage() {
                     <div className="h-1.5 w-full bg-green-100/50 rounded-full overflow-hidden backdrop-blur-sm">
                         <div
                             className="h-full bg-gradient-to-r from-green-400 to-emerald-500 transition-all duration-700 ease-out rounded-full shadow-[0_0_10px_rgba(74,222,128,0.3)]"
-                            style={{ width: `${((step + 1) / (role === 'business' ? 4 : 3)) * 100}%` }}
+                            style={{ width: `${((step + 1) / (role === 'business' ? 4 : 4)) * 100}%` }}
                         />
                     </div>
                 </div>
