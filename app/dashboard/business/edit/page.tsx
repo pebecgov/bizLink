@@ -11,33 +11,21 @@ import { Check, ChevronRight, Upload, AlertCircle, Save, Building2 } from "lucid
 
 import { SECTORS } from "@/components/onboarding/constants/sectors";
 import { BUSINESS_STAGES, BUSINESS_MODELS, TARGET_MARKETS, AFRICAN_COUNTRIES } from "@/components/dashboard/business/lib/sectorData";
-import { RegistrationLegalSection } from "@/components/dashboard/business/edit/sections/RegistrationLegalSection";
 import { LocationContactSection } from "@/components/dashboard/business/edit/sections/LocationContactSection";
-import { FinancialsSection } from "@/components/dashboard/business/edit/sections/FinancialsSection";
 import { ProductsServicesSection } from "@/components/dashboard/business/edit/sections/ProductsServicesSection";
-import { TeamManagementSection } from "@/components/dashboard/business/edit/sections/TeamManagementSection";
 import { MissionVisionSection } from "@/components/dashboard/business/edit/sections/MissionVisionSection";
 import { MediaGallerySection } from "@/components/dashboard/business/edit/sections/MediaGallerySection";
-import { InvestmentInfoSection } from "@/components/dashboard/business/edit/sections/InvestmentInfoSection";
-import { MarketCompetitionSection } from "@/components/dashboard/business/edit/sections/MarketCompetitionSection";
 import { CertificationsSection } from "@/components/dashboard/business/edit/sections/CertificationsSection";
 import { SustainabilitySection } from "@/components/dashboard/business/edit/sections/SustainabilitySection";
 import { useRouter } from "next/navigation";
 
 const SECTIONS_CONFIG = [
-    { id: "identity", label: "Company Identity" },
+    { id: "identity", label: "Business Identity" },
     { id: "classification", label: "Business Classification" },
-    { id: "legal", label: "Registration & Legal" },
     { id: "location", label: "Location & Contact" },
-    { id: "financials", label: "Company Size & Financials" },
-    { id: "products", label: "Products & Services" },
-    { id: "team", label: "Team & Management" },
     { id: "mission", label: "Mission & Vision" },
     { id: "media", label: "Media Gallery" },
-    { id: "investment", label: "Investment Information" },
-    { id: "market", label: "Market & Competition" },
-    { id: "certifications", label: "Certifications & Awards" },
-    { id: "sustainability", label: "Sustainability (Optional)" },
+    { id: "certifications", label: "Certifications & Awards" }
 ];
 
 export default function EditProfilePage() {
@@ -56,12 +44,8 @@ export default function EditProfilePage() {
                 return (p.businessName && p.companyTagline && p.companyDescription) ? "complete" : "incomplete";
             case "classification":
                 return (p.sector && p.subsector && p.businessStage) ? "complete" : "incomplete";
-            case "legal":
-                return (p.registrationNumber && p.tinNumber && p.companyType) ? "complete" : "incomplete";
             case "location":
                 return (p.headOfficeAddress?.street && p.headOfficeAddress?.city && p.contactPhone && p.primaryEmail) ? "complete" : "incomplete";
-            case "financials":
-                return (p.annualRevenue && p.numberOfEmployees) ? "complete" : "incomplete";
             case "mission":
                 return (p.missionStatement && p.visionStatement) ? "complete" : "incomplete";
             case "media":
@@ -707,15 +691,10 @@ export default function EditProfilePage() {
                             </div>
                         )}
 
-                        {activeSection === "legal" && <RegistrationLegalSection />}
                         {activeSection === "location" && <LocationContactSection />}
-                        {activeSection === "financials" && <FinancialsSection />}
                         {activeSection === "products" && <ProductsServicesSection />}
-                        {activeSection === "team" && <TeamManagementSection />}
                         {activeSection === "mission" && <MissionVisionSection />}
                         {activeSection === "media" && <MediaGallerySection />}
-                        {activeSection === "investment" && <InvestmentInfoSection />}
-                        {activeSection === "market" && <MarketCompetitionSection />}
                         {activeSection === "certifications" && <CertificationsSection />}
                         {activeSection === "sustainability" && <SustainabilitySection />}
 
