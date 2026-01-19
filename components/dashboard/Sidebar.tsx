@@ -8,6 +8,8 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
+import Image from "next/image";
+
 interface SidebarProps {
     isOpen: boolean;
     onClose: () => void;
@@ -58,7 +60,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     } flex flex-col`}
             >
                 <div className="p-6 border-b border-gray-200 animate-pulse">
-                    <div className="h-6 w-3/4 bg-gray-200 rounded mb-4"></div>
+                    <div className="h-12 w-12 bg-gray-200 rounded-lg mb-4"></div>
                     <div className="h-10 w-full bg-gray-200 rounded-xl"></div>
                 </div>
                 <div className="p-4 space-y-4 animate-pulse">
@@ -86,11 +88,17 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     } flex flex-col`}
             >
                 {/* Header */}
-                <div className="p-6 border-b border-gray-200">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-bold bg-gradient-gold bg-clip-text text-transparent">
-                            PEBEC BIZLINK
-                        </h2>
+                <div className="border-b border-gray-200">
+                    <div className="flex items-center justify-center">
+                        <Link href="/" className="flex items-center gap-2">
+                            <Image
+                                src="/logo.png"
+                                alt="BizLink Logo"
+                                width={120}
+                                height={40}
+                                className="object-contain"
+                            />
+                        </Link>
                         <button
                             onClick={onClose}
                             className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
