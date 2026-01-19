@@ -14,6 +14,16 @@ export const getBusinessProfile = query({
 });
 
 /**
+ * Get business by ID (for public profile access)
+ */
+export const getBusinessById = query({
+    args: { id: v.id("businesses") },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.id);
+    },
+});
+
+/**
  * Get current user's business profile
  */
 export const getMyBusinessProfile = query({

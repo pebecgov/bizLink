@@ -206,7 +206,8 @@ export const getMatchedBusinesses = query({
                     factors,
                 };
             })
-            .filter((m) => m.score > 30) // Minimum score threshold
+            // IMPORTANT: Require sector match (sector score > 0) as mandatory filter
+            .filter((m) => m.factors.sector > 0)
             .sort((a, b) => b.score - a.score)
             .slice(0, 20); // Top 20 matches
 
@@ -276,7 +277,8 @@ export const getMatchedInvestors = query({
                     factors,
                 };
             })
-            .filter((m) => m.score > 30)
+            // IMPORTANT: Require sector match (sector score > 0) as mandatory filter
+            .filter((m) => m.factors.sector > 0)
             .sort((a, b) => b.score - a.score)
             .slice(0, 10);
 

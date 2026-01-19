@@ -4,6 +4,8 @@ export default authMiddleware({
   // Public routes that don't require authentication
   publicRoutes: [
     "/",
+    "/businesses",
+    "/businesses/(.*)",
     "/api/webhooks/clerk", // Clerk webhook endpoint (must be public)
     "/sign-in(.*)",
     "/sign-up(.*)",

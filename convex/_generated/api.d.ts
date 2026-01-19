@@ -17,6 +17,7 @@ import type * as debug from "../debug.js";
 import type * as investorActions from "../investorActions.js";
 import type * as matching from "../matching.js";
 import type * as onboarding from "../onboarding.js";
+import type * as seed from "../seed.js";
 import type * as users from "../users.js";
 import type * as verificationScore from "../verificationScore.js";
 
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   investorActions: typeof investorActions;
   matching: typeof matching;
   onboarding: typeof onboarding;
+  seed: typeof seed;
   users: typeof users;
   verificationScore: typeof verificationScore;
 }>;
