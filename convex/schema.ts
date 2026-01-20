@@ -322,5 +322,31 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_milestoneId", ["milestoneId"]),
+
+  // Phase 1: Verification Documents
+  verification_documents: defineTable({
+    businessId: v.id("businesses"),
+    documentType: v.string(),
+    category: v.union(v.literal("core"), v.literal("sector_specific"), v.literal("additional")),
+    fileUrl: v.string(), // Storage ID
+    fileName: v.string(),
+    fileSize: v.number(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("verified"),
+      v.literal("rejected"),
+      v.literal("expired")
+    ),
+    uploadedAt: v.number(),
+    verifiedAt: v.optional(v.number()),
+    verifiedBy: v.optional(v.string()),
+    rejectionReason: v.optional(v.string()),
+    rejectedAt: v.optional(v.number()),
+    rejectedBy: v.optional(v.string()),
+    metadata: v.optional(v.any()),
+  })
+    .index("by_businessId", ["businessId"])
+    .index("by_status", ["status"])
+    .index("by_business_type", ["businessId", "documentType"]),
 });
 
