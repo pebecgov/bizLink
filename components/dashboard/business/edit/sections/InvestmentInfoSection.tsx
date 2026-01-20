@@ -15,7 +15,7 @@ import { CORE_DOCUMENTS, ADDITIONAL_DOCUMENTS } from "@/constants/documentTypes"
 interface InvestmentInfoSectionProps {
     businessProfile: Doc<"businesses">;
     verificationDocs: UploadedDocument[];
-    onUpload: (docType: string, category: string, uploadFormats?: string[]) => void;
+    onUpload: (file: File, docType: string, category: string, uploadFormats?: string[]) => void;
     onDelete: (docId: string) => void;
     onView: (url: string) => void;
     uploadingDocs: Set<string>;
@@ -106,7 +106,7 @@ export function InvestmentInfoSection({
                     <DocumentItem
                         doc={businessPlanDoc}
                         status={getUploadedDoc(businessPlanDoc.id)}
-                        onUpload={(file) => onUpload(businessPlanDoc.id, businessPlanDoc.category, businessPlanDoc.uploadFormats)}
+                        onUpload={(file) => onUpload(file, businessPlanDoc.id, businessPlanDoc.category, businessPlanDoc.uploadFormats)}
                         onDelete={onDelete}
                         onView={onView}
                         isUploading={uploadingDocs.has(businessPlanDoc.id)}

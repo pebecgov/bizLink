@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import { Doc } from "@/convex/_generated/dataModel";
 import { DocumentItem, UploadedDocument } from "@/components/dashboard/business/DocumentRequirementsList";
 import { ADDITIONAL_DOCUMENTS, CORE_DOCUMENTS } from "@/constants/documentTypes";
@@ -9,7 +10,7 @@ import { ADDITIONAL_DOCUMENTS, CORE_DOCUMENTS } from "@/constants/documentTypes"
 interface TeamManagementSectionProps {
     businessProfile: Doc<"businesses">;
     verificationDocs: UploadedDocument[];
-    onUpload: (docType: string, category: string, uploadFormats?: string[]) => void;
+    onUpload: (file: File, docType: string, category: string, uploadFormats?: string[]) => void;
     onDelete: (docId: string) => void;
     onView: (url: string) => void;
     uploadingDocs: Set<string>;
@@ -27,6 +28,7 @@ export function TeamManagementSection({
     // DIRECTORS_IDS
     const directorsIdsDoc = ADDITIONAL_DOCUMENTS.find(d => d.id === "DIRECTORS_IDS");
     const getUploadedDoc = (id: string) => verificationDocs.find(d => d.documentType === id);
+    const { toast } = useToast();
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -49,7 +51,7 @@ export function TeamManagementSection({
                     <DocumentItem
                         doc={directorsIdsDoc}
                         status={getUploadedDoc(directorsIdsDoc.id)}
-                        onUpload={(file) => onUpload(directorsIdsDoc.id, directorsIdsDoc.category, directorsIdsDoc.uploadFormats)}
+                        onUpload={(file) => onUpload(file, directorsIdsDoc.id, directorsIdsDoc.category, directorsIdsDoc.uploadFormats)}
                         onDelete={onDelete}
                         onView={onView}
                         isUploading={uploadingDocs.has(directorsIdsDoc.id)}
@@ -58,7 +60,12 @@ export function TeamManagementSection({
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                <Button className="bg-primary-green hover:bg-green-700 text-white">Save Section</Button>
+                <Button
+                    className="bg-primary-green hover:bg-green-700 text-white"
+                    onClick={() => toast({ title: "Info", description: "Team management features are coming soon." })}
+                >
+                    Save Section
+                </Button>
             </div>
         </div>
     );

@@ -12,10 +12,10 @@ export function TopMetrics() {
                 </div>
                 <h3 className="text-gray-500 text-sm font-medium">Profile Views</h3>
                 <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-gray-900">2,847</span>
-                    <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">↑ 18%</span>
+                    <span className="text-3xl font-bold text-gray-900">0</span>
+                    <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">↑ 0%</span>
                 </div>
-                <p className="text-xs text-gray-400 mt-2">18% this month</p>
+                <p className="text-xs text-gray-400 mt-2">0 % this month</p>
             </div>
 
             {/* Card 2: Investor Interest */}
@@ -27,8 +27,8 @@ export function TopMetrics() {
                 </div>
                 <h3 className="text-gray-500 text-sm font-medium">Investor Interest</h3>
                 <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-gray-900">47</span>
-                    <span className="text-sm font-medium text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">+23</span>
+                    <span className="text-3xl font-bold text-gray-900">0</span>
+                    <span className="text-sm font-medium text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">0</span>
                 </div>
                 <p className="text-xs text-gray-400 mt-2">New this week</p>
             </div>
@@ -42,8 +42,8 @@ export function TopMetrics() {
                 </div>
                 <h3 className="text-gray-500 text-sm font-medium">Active Deals</h3>
                 <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-gray-900">12</span>
-                    <span className="text-sm font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">↑ 3</span>
+                    <span className="text-3xl font-bold text-gray-900">0</span>
+                    <span className="text-sm font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">↑ 0</span>
                 </div>
                 <p className="text-xs text-gray-400 mt-2">3 new opportunities</p>
             </div>
@@ -57,8 +57,8 @@ export function TopMetrics() {
                 </div>
                 <h3 className="text-gray-500 text-sm font-medium">Total Transaction</h3>
                 <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-gray-900">₦2.4M</span>
-                    <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">↑ 12%</span>
+                    <span className="text-3xl font-bold text-gray-900">₦0</span>
+                    <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">↑ 0%</span>
                 </div>
                 <p className="text-xs text-gray-400 mt-2">Last 30 days</p>
             </div>

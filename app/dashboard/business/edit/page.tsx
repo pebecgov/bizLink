@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -229,10 +230,10 @@ export default function EditProfilePage() {
                 companyDescription: companyDescription || undefined,
                 logoUrl: uploadedLogoUrl,
             });
-            alert("Company Identity saved successfully!");
+            toast.success("Company Identity saved successfully!");
         } catch (error) {
             console.error("Error saving identity:", error);
-            alert("Failed to save. Please try again.");
+            toast.error("Failed to save. Please try again.");
         } finally {
             setIsSaving(false);
         }
@@ -269,10 +270,10 @@ export default function EditProfilePage() {
                 afcftaCompliant: afcftaCompliant || undefined,
                 operatingCountries: operatingCountries.length > 0 ? operatingCountries : undefined,
             });
-            alert("Classification section saved successfully!");
+            toast.success("Classification section saved successfully!");
         } catch (error) {
             console.error("Error saving classification:", error);
-            alert("Failed to save. Please try again.");
+            toast.error("Failed to save. Please try again.");
         } finally {
             setIsSaving(false);
         }

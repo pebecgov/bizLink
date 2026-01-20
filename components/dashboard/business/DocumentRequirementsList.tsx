@@ -26,7 +26,7 @@ interface DocumentRequirementsListProps {
     sectorDocuments: DocumentRequirement[];
     additionalDocuments: DocumentRequirement[];
     uploadedDocuments: UploadedDocument[];
-    onUpload: (docType: string, category: string, uploadFormats?: string[]) => void;
+    onUpload: (file: File, docType: string, category: string, uploadFormats?: string[]) => void;
     onDelete: (docId: string) => void;
     onView: (url: string) => void;
     uploadingDocs?: Set<string>;
@@ -51,7 +51,7 @@ export const DocumentItem = ({
         rejectionReason?: string;
         resolvedUrl?: string | null;
     };
-    onUpload: (file: File) => void;
+    onUpload: (file: File, docType: string, category: string, formats?: string[]) => void;
     onDelete: (docId: string) => void;
     onView: (url: string) => void;
     isUploading: boolean;
@@ -61,7 +61,9 @@ export const DocumentItem = ({
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) onUpload(file);
+        if (file) {
+            onUpload(file, doc.id, doc.category, doc.uploadFormats);
+        }
     };
 
     const formatFileSize = (bytes: number) => {
@@ -280,7 +282,7 @@ export function DocumentRequirementsList({
                                 key={doc.id}
                                 doc={doc}
                                 status={getUploadedDoc(doc.id)}
-                                onUpload={(file) => onUpload(doc.id, "core", doc.uploadFormats)}
+                                onUpload={(file, docType, category, formats) => onUpload(file, docType, category, formats)}
                                 onDelete={onDelete}
                                 onView={onView}
                                 isUploading={uploadingDocs.has(doc.id)}
@@ -322,7 +324,7 @@ export function DocumentRequirementsList({
                                     key={doc.id}
                                     doc={doc}
                                     status={getUploadedDoc(doc.id)}
-                                    onUpload={(file) => onUpload(doc.id, "sector_specific", doc.uploadFormats)}
+                                    onUpload={(file, docType, category, formats) => onUpload(file, docType, category, formats)}
                                     onDelete={onDelete}
                                     onView={onView}
                                     isUploading={uploadingDocs.has(doc.id)}
@@ -364,7 +366,7 @@ export function DocumentRequirementsList({
                                 key={doc.id}
                                 doc={doc}
                                 status={getUploadedDoc(doc.id)}
-                                onUpload={(file) => onUpload(doc.id, "additional", doc.uploadFormats)}
+                                onUpload={(file, docType, category, formats) => onUpload(file, docType, category, formats)}
                                 onDelete={onDelete}
                                 onView={onView}
                                 isUploading={uploadingDocs.has(doc.id)}

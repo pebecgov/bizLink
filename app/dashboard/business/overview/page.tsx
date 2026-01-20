@@ -6,6 +6,18 @@ import { BadgeCheck, Building2, Calendar, Globe, MapPin, Phone, Mail, Award, Use
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+const TikTokIcon = ({ className }: { className?: string }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        stroke="none"
+        className={className}
+    >
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 1 0-1 13.6 6.84 6.84 0 0 0 6.82-6.85V7.93a8.62 8.62 0 0 0 4.3 1.53V6.03a4.86 4.86 0 0 1-.89-.04Z" />
+    </svg>
+);
+
 export default function BusinessOverviewPage() {
     // Fetch real business profile data
     const businessProfile = useQuery(api.businessProfile.getMyBusinessProfile);
@@ -315,6 +327,7 @@ export default function BusinessOverviewPage() {
                                         case 'twitter': return { icon: Twitter, color: 'text-sky-500 bg-sky-50 hover:bg-sky-500', label: 'Twitter' };
                                         case 'instagram': return { icon: Instagram, color: 'text-pink-600 bg-pink-50 hover:bg-pink-600', label: 'Instagram' };
                                         case 'linkedin': return { icon: Linkedin, color: 'text-blue-700 bg-blue-50 hover:bg-blue-700', label: 'LinkedIn' };
+                                        case 'tiktok': return { icon: TikTokIcon, color: 'text-black bg-gray-50 hover:bg-black', label: 'TikTok' };
                                         default: return { icon: Globe, color: 'text-gray-600 bg-gray-100 hover:bg-gray-600', label: p };
                                     }
                                 };

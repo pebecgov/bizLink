@@ -13,7 +13,7 @@ import { CORE_DOCUMENTS, ADDITIONAL_DOCUMENTS } from "@/constants/documentTypes"
 interface FinancialsSectionProps {
     businessProfile: Doc<"businesses">;
     verificationDocs: UploadedDocument[];
-    onUpload: (docType: string, category: string, uploadFormats?: string[]) => void;
+    onUpload: (file: File, docType: string, category: string, uploadFormats?: string[]) => void;
     onDelete: (docId: string) => void;
     onView: (url: string) => void;
     uploadingDocs: Set<string>;
@@ -125,7 +125,7 @@ export function FinancialsSection({
                         <DocumentItem
                             doc={financialDoc}
                             status={getUploadedDoc(financialDoc.id)}
-                            onUpload={(file) => onUpload(financialDoc.id, financialDoc.category, financialDoc.uploadFormats)}
+                            onUpload={(file) => onUpload(file, financialDoc.id, financialDoc.category, financialDoc.uploadFormats)}
                             onDelete={onDelete}
                             onView={onView}
                             isUploading={uploadingDocs.has(financialDoc.id)}
