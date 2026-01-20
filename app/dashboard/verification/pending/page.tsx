@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
     FileText, CheckCircle, XCircle, Eye, Clock, Building, TrendingUp, AlertTriangle
@@ -11,7 +12,7 @@ import {
 
 export default function PendingVerificationsPage() {
     const pendingBusinesses = useQuery(api.adminVerification.getPendingBusinesses);
-    const [selectedBusinessId, setSelectedBusinessId] = useState<Id<"business"> | null>(null);
+    const [selectedBusinessId, setSelectedBusinessId] = useState<Id<"businesses"> | null>(null);
 
     if (!pendingBusinesses) {
         return (
@@ -130,7 +131,7 @@ export default function PendingVerificationsPage() {
 }
 
 // Document Review Modal Component
-function DocumentReviewModal({ businessId, onClose }: { businessId: Id<"business">; onClose: () => void }) {
+function DocumentReviewModal({ businessId, onClose }: { businessId: Id<"businesses">; onClose: () => void }) {
     const documents = useQuery(api.adminVerification.getBusinessDocuments, { businessId });
     const approveDoc = useMutation(api.adminVerification.approveDocument);
     const rejectDoc = useMutation(api.adminVerification.rejectDocument);
@@ -142,10 +143,10 @@ function DocumentReviewModal({ businessId, onClose }: { businessId: Id<"business
     const handleApprove = async (docId: Id<"verification_documents">) => {
         setProcessing(docId);
         try {
-            await approveDoc({ documentId: docId, reviewedBy: "Admin" });
+            await approveDoc({ documentId: docId, verifiedBy: "Admin" });
         } catch (error) {
             console.error("Error approving document:", error);
-            alert("Failed to approve document");
+            toast.error("Failed to approve document");
         } finally {
             setProcessing(null);
         }
@@ -153,7 +154,7 @@ function DocumentReviewModal({ businessId, onClose }: { businessId: Id<"business
 
     const handleReject = async () => {
         if (!rejectingDocId || !rejectionReason.trim()) {
-            alert("Please provide a rejection reason");
+            toast.error("Please provide a rejection reason");
             return;
         }
 
@@ -162,13 +163,13 @@ function DocumentReviewModal({ businessId, onClose }: { businessId: Id<"business
             await rejectDoc({
                 documentId: rejectingDocId,
                 rejectionReason: rejectionReason.trim(),
-                reviewedBy: "Admin",
+                rejectedBy: "Admin",
             });
             setRejectingDocId(null);
             setRejectionReason("");
         } catch (error) {
             console.error("Error rejecting document:", error);
-            alert("Failed to reject document");
+            toast.error("Failed to reject document");
         } finally {
             setProcessing(null);
         }

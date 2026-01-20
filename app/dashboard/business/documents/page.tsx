@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { FileText, AlertTriangle, Shield, TrendingUp, Users, PieChart, Globe, FolderOpen, CheckCircle } from "lucide-react";
@@ -29,78 +30,52 @@ export default function DocumentsPage() {
     const deleteDocument = useMutation(api.verificationScore.deleteVerificationDocument);
     const generateUploadUrl = useMutation(api.businessProfile.generateUploadUrl);
 
+    const { toast } = useToast();
     const [uploadingDocs, setUploadingDocs] = useState<Set<string>>(new Set());
     const [activeTab, setActiveTab] = useState("legal");
 
-    const handleUpload = async (docType: string, category: string, uploadFormats: string[] = []) => {
+    const handleUpload = async (file: File, docType: string, category: string) => {
         if (!myBusiness) return;
 
+        setUploadingDocs(prev => new Set([...prev, docType]));
+
         try {
-            const formatToMimeType = (format: string): string => {
-                const mimeTypes: Record<string, string> = {
-                    'PDF': '.pdf,application/pdf',
-                    'JPG': '.jpg,.jpeg,image/jpeg',
-                    'PNG': '.png,image/png',
-                    'JPEG': '.jpg,.jpeg,image/jpeg',
-                    'DOC': '.doc,application/msword',
-                    'DOCX': '.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'XLSX': '.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'XLS': '.xls,application/vnd.ms-excel',
-                    'PPT': '.ppt,application/vnd.ms-powerpoint',
-                    'PPTX': '.pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                    'SVG': '.svg,image/svg+xml',
-                };
-                return mimeTypes[format.toUpperCase()] || '';
-            };
+            const uploadUrl = await generateUploadUrl();
+            const result = await fetch(uploadUrl, {
+                method: "POST",
+                headers: { "Content-Type": file.type },
+                body: file,
+            });
 
-            const acceptFormats = uploadFormats.length > 0
-                ? uploadFormats.map(f => formatToMimeType(f)).filter(Boolean).join(',')
-                : '.pdf,.jpg,.jpeg,.png';
+            const { storageId } = await result.json();
 
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = acceptFormats;
+            await uploadDocument({
+                businessId: myBusiness._id,
+                documentType: docType,
+                category: category as "core" | "sector_specific" | "additional",
+                fileUrl: storageId,
+                fileName: file.name,
+                fileSize: file.size,
+            });
 
-            input.onchange = async (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0];
-                if (!file) return;
+            toast({
+                title: "Success",
+                description: "Document uploaded successfully",
+            });
 
-                setUploadingDocs(prev => new Set([...prev, docType]));
-
-                try {
-                    const uploadUrl = await generateUploadUrl();
-                    const result = await fetch(uploadUrl, {
-                        method: "POST",
-                        headers: { "Content-Type": file.type },
-                        body: file,
-                    });
-
-                    const { storageId } = await result.json();
-
-                    await uploadDocument({
-                        businessId: myBusiness._id,
-                        documentType: docType,
-                        category: category as "core" | "sector_specific" | "additional",
-                        fileUrl: storageId,
-                        fileName: file.name,
-                        fileSize: file.size,
-                    });
-
-                } catch (error) {
-                    console.error("Failed to upload document:", error);
-                    alert("Failed to upload document. Please try again.");
-                } finally {
-                    setUploadingDocs(prev => {
-                        const newSet = new Set(prev);
-                        newSet.delete(docType);
-                        return newSet;
-                    });
-                }
-            };
-
-            input.click();
         } catch (error) {
-            console.error("Upload error:", error);
+            console.error("Failed to upload document:", error);
+            toast({
+                title: "Error",
+                description: "Failed to upload document. Please try again.",
+                variant: "destructive",
+            });
+        } finally {
+            setUploadingDocs(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(docType);
+                return newSet;
+            });
         }
     };
 
@@ -108,9 +83,17 @@ export default function DocumentsPage() {
         if (!confirm("Are you sure you want to delete this document?")) return;
         try {
             await deleteDocument({ documentId: docId as any });
+            toast({
+                title: "Success",
+                description: "Document deleted successfully",
+            });
         } catch (error) {
             console.error("Failed to delete document:", error);
-            alert("Failed to delete document. Please try again.");
+            toast({
+                title: "Error",
+                description: "Failed to delete document. Please try again.",
+                variant: "destructive",
+            });
         }
     };
 

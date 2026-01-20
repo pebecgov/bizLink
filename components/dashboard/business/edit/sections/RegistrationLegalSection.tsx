@@ -15,7 +15,7 @@ import { CORE_DOCUMENTS, ADDITIONAL_DOCUMENTS } from "@/constants/documentTypes"
 interface RegistrationLegalSectionProps {
     businessProfile: Doc<"businesses">;
     verificationDocs: UploadedDocument[];
-    onUpload: (docType: string, category: string, uploadFormats?: string[]) => void;
+    onUpload: (file: File, docType: string, category: string, uploadFormats?: string[]) => void;
     onDelete: (docId: string) => void;
     onView: (url: string) => void;
     uploadingDocs: Set<string>;
@@ -155,7 +155,7 @@ export function RegistrationLegalSection({
                         <DocumentItem
                             doc={cacCertDoc}
                             status={getUploadedDoc(cacCertDoc.id)}
-                            onUpload={(file) => onUpload(cacCertDoc.id, cacCertDoc.category, cacCertDoc.uploadFormats)}
+                            onUpload={(file) => onUpload(file, cacCertDoc.id, cacCertDoc.category, cacCertDoc.uploadFormats)}
                             onDelete={onDelete}
                             onView={onView}
                             isUploading={uploadingDocs.has(cacCertDoc.id)}
@@ -166,7 +166,7 @@ export function RegistrationLegalSection({
                         <DocumentItem
                             doc={cacForm11Doc}
                             status={getUploadedDoc(cacForm11Doc.id)}
-                            onUpload={(file) => onUpload(cacForm11Doc.id, cacForm11Doc.category, cacForm11Doc.uploadFormats)}
+                            onUpload={(file) => onUpload(file, cacForm11Doc.id, cacForm11Doc.category, cacForm11Doc.uploadFormats)}
                             onDelete={onDelete}
                             onView={onView}
                             isUploading={uploadingDocs.has(cacForm11Doc.id)}
@@ -178,7 +178,7 @@ export function RegistrationLegalSection({
                             <DocumentItem
                                 doc={mematDoc}
                                 status={getUploadedDoc(mematDoc.id)}
-                                onUpload={(file) => onUpload(mematDoc.id, mematDoc.category, mematDoc.uploadFormats)}
+                                onUpload={(file) => onUpload(file, mematDoc.id, mematDoc.category, mematDoc.uploadFormats)}
                                 onDelete={onDelete}
                                 onView={onView}
                                 isUploading={uploadingDocs.has(mematDoc.id)}
@@ -214,7 +214,7 @@ export function RegistrationLegalSection({
                         <DocumentItem
                             doc={tinCertDoc}
                             status={getUploadedDoc(tinCertDoc.id)}
-                            onUpload={(file) => onUpload(tinCertDoc.id, tinCertDoc.category, tinCertDoc.uploadFormats)}
+                            onUpload={(file) => onUpload(file, tinCertDoc.id, tinCertDoc.category, tinCertDoc.uploadFormats)}
                             onDelete={onDelete}
                             onView={onView}
                             isUploading={uploadingDocs.has(tinCertDoc.id)}
@@ -225,7 +225,7 @@ export function RegistrationLegalSection({
                         <DocumentItem
                             doc={taxClearanceDoc}
                             status={getUploadedDoc(taxClearanceDoc.id)}
-                            onUpload={(file) => onUpload(taxClearanceDoc.id, taxClearanceDoc.category, taxClearanceDoc.uploadFormats)}
+                            onUpload={(file) => onUpload(file, taxClearanceDoc.id, taxClearanceDoc.category, taxClearanceDoc.uploadFormats)}
                             onDelete={onDelete}
                             onView={onView}
                             isUploading={uploadingDocs.has(taxClearanceDoc.id)}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CheckCircle, Upload, TrendingUp, Lock, Star } from "lucide-react";
+import { AlertTriangle, CheckCircle, Upload, TrendingUp, Lock, Star, ArrowRight } from "lucide-react";
 
 interface VerificationProgressBannerProps {
     percentage: number;
@@ -67,9 +67,12 @@ export function VerificationProgressBanner({
                     </div>
 
                     <Link href="/dashboard/business/documents">
-                        <Button className="bg-green-500 text-white hover:bg-gray-100">
-                            <Upload className="w-4 h-4 mr-2" />
-                            Upload Documents
+                        <Button className={`shadow-sm transition-all duration-300 hover:scale-105 font-semibold ${percentage >= 70
+                                ? "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm border border-white/20"
+                                : "bg-primary-green text-white hover:bg-green-700"
+                            }`}>
+                            <ArrowRight className="w-4 h-4 mr-2" />
+                            Manage Documents
                         </Button>
                     </Link>
                 </div>
