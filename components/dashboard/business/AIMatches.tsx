@@ -1,11 +1,38 @@
 "use client";
 
-import { Sparkles, ExternalLink, TrendingUp } from "lucide-react";
-import { useQuery } from "convex/react";
+import { Sparkles, ExternalLink, TrendingUp, Loader2, Check, UserPlus, Clock } from "lucide-react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function AIMatches() {
     const matchedInvestors = useQuery(api.matching.getMatchedInvestors, {});
+    const myBusiness = useQuery(api.businessProfile.getMyBusinessProfile);
+    const myConnections = useQuery(api.connections.getMyConnections);
+    const initiateConnect = useMutation(api.connections.initiateConnection);
+    const [connecting, setConnecting] = useState<Record<string, boolean>>({});
+
+    const handleConnect = async (investorId: string, investorName: string) => {
+        if (!myBusiness?._id) {
+            toast.error("Complete your business profile first");
+            return;
+        }
+
+        setConnecting(prev => ({ ...prev, [investorId]: true }));
+        try {
+            await initiateConnect({
+                businessId: myBusiness._id,
+                investorId
+            });
+            toast.success(`Connection request sent to ${investorName}`);
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to connect");
+        } finally {
+            setConnecting(prev => ({ ...prev, [investorId]: false }));
+        }
+    };
 
     if (matchedInvestors === undefined) {
         return (
@@ -56,33 +83,46 @@ export function AIMatches() {
             </div>
 
             <div className="space-y-3">
-                {matchedInvestors.slice(0, 3).map((match, index) => (
-                    <InvestorCard
-                        key={match.investor.userId || index}
-                        name={match.investor.registeredName || "Anonymous Investor"}
-                        type={match.investor.riskAppetite === "high" ? "Venture Capital" :
-                            match.investor.riskAppetite === "medium" ? "Growth Equity" : "Angel Investor"}
-                        budget={match.investor.capitalRange || "Undisclosed"}
-                        match={match.score}
-                        location={match.investor.jurisdiction || "Nigeria"}
-                        sectors={match.investor.sectors?.slice(0, 2) || []}
-                    />
-                ))}
+                {matchedInvestors.slice(0, 3).map((match, index) => {
+                    const investorId = match.investor.userId;
+                    const connection = myConnections?.find(c => c.investorId === investorId);
+
+                    return (
+                        <InvestorCard
+                            key={investorId || index}
+                            investorId={investorId}
+                            name={match.investor.registeredName || "Anonymous Investor"}
+                            type={match.investor.riskAppetite === "high" ? "Venture Capital" :
+                                match.investor.riskAppetite === "medium" ? "Growth Equity" : "Angel Investor"}
+                            budget={match.investor.capitalRange || "Undisclosed"}
+                            match={match.score}
+                            location={match.investor.jurisdiction || "Nigeria"}
+                            sectors={match.investor.sectors?.slice(0, 2) || []}
+                            status={connection?.status}
+                            isConnecting={connecting[investorId || ""]}
+                            onConnect={() => investorId && handleConnect(investorId, match.investor.registeredName || "Investor")}
+                        />
+                    );
+                })}
             </div>
         </div>
     );
 }
 
 interface InvestorCardProps {
+    investorId?: string;
     name: string;
     type: string;
     budget: string;
     match: number;
     location: string;
     sectors: string[];
+    status?: string;
+    isConnecting?: boolean;
+    onConnect?: () => void;
 }
 
-function InvestorCard({ name, type, budget, match, location, sectors }: InvestorCardProps) {
+function InvestorCard({ name, type, budget, match, location, sectors, status, isConnecting, onConnect }: InvestorCardProps) {
     // Map capital range to display format
     const formatBudget = (range: string) => {
         const budgetMap: Record<string, string> = {
@@ -118,9 +158,35 @@ function InvestorCard({ name, type, budget, match, location, sectors }: Investor
                         ))}
                     </div>
                 </div>
-                <button className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
-                    <ExternalLink className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                    {status === "connected" ? (
+                        <div className="p-2 text-green-400 bg-green-400/10 rounded-lg">
+                            <Check className="w-4 h-4" />
+                        </div>
+                    ) : status === "lead" ? (
+                        <div className="p-2 text-blue-400 bg-blue-400/10 rounded-lg">
+                            <Clock className="w-4 h-4" />
+                        </div>
+                    ) : (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onConnect?.();
+                            }}
+                            disabled={isConnecting}
+                            className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors group/btn"
+                        >
+                            {isConnecting ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <UserPlus className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+                            )}
+                        </button>
+                    )}
+                    <button className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+                        <ExternalLink className="w-4 h-4" />
+                    </button>
+                </div>
             </div>
         </div>
     );

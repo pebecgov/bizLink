@@ -4,10 +4,18 @@ import { use } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { MilestoneChat } from "@/components/dashboard/shared/MilestoneChat";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { useEffect } from "react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
-export default function ConnectionChatPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function ConnectionChatPage({ params }: { params: { id: string } }) {
+    const { id } = params;
     const conversationId = id as Id<"conversations">;
+    const markAsRead = useMutation(api.notifications.markAsReadByLink);
+
+    useEffect(() => {
+        markAsRead({ link: `/dashboard/messages/active/${id}` });
+    }, [id, markAsRead]);
 
     return (
         <div className="h-[calc(100vh-140px)]">

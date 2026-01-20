@@ -19,6 +19,43 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
     const pathname = usePathname();
     const currentUser = useQuery(api.users.getCurrentUser);
+    const unreadNotifications = useQuery(api.notifications.getMyNotifications)?.filter(n => !n.isRead) || [];
+    const myConnections = useQuery(api.connections.getMyConnections);
+
+    const getBadgeCount = (label: string) => {
+        if (label === "Investor Matching") {
+            // Use actual connection data to be consistent with TopMetrics
+            if (!myConnections) return 0;
+            return myConnections.filter(c =>
+                c.status === "lead" &&
+                c.business?.ownerId === currentUser?.clerkId &&
+                c.initiatedBy !== currentUser?.clerkId
+            ).length;
+        }
+        if (label === "Messages & Networking" || label === "Messages") {
+            return unreadNotifications.filter(n => ["message", "milestone"].includes(n.type)).length;
+        }
+        if (label === "Notifications") {
+            return unreadNotifications.length;
+        }
+        return 0;
+    };
+
+    const getSubItemBadgeCount = (label: string) => {
+        if (label === "Match Requests") {
+            // Consistent with parent
+            if (!myConnections) return 0;
+            return myConnections.filter(c =>
+                c.status === "lead" &&
+                c.business?.ownerId === currentUser?.clerkId &&
+                c.initiatedBy !== currentUser?.clerkId
+            ).length;
+        }
+        if (label === "Inbox" || label === "Active Conversations") {
+            return unreadNotifications.filter(n => ["message", "milestone"].includes(n.type)).length;
+        }
+        return 0;
+    };
 
     // Map DB role to SidebarConfig role
     const getRoleString = (role?: string) => {
@@ -129,6 +166,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                                                 <span className="flex-1 text-left font-medium text-sm">
                                                     {item.label}
                                                 </span>
+                                                {getBadgeCount(item.label) > 0 && (
+                                                    <span className="mr-2 px-2 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">
+                                                        {getBadgeCount(item.label)}
+                                                    </span>
+                                                )}
                                                 {isExpanded ? (
                                                     <ChevronDown className="w-4 h-4 flex-shrink-0" />
                                                 ) : (
@@ -143,12 +185,17 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                                                             key={subItem.path}
                                                             href={subItem.path}
                                                             onClick={() => onClose()}
-                                                            className={`block px-4 py-2 text-sm rounded-lg transition-all duration-200 ${isActive(subItem.path)
+                                                            className={`flex items-center justify-between px-4 py-2 text-sm rounded-lg transition-all duration-200 ${isActive(subItem.path)
                                                                 ? "bg-primary-green text-white font-semibold"
                                                                 : "text-text-secondary hover:bg-very-light-green hover:text-primary-green"
                                                                 }`}
                                                         >
-                                                            {subItem.label}
+                                                            <span>{subItem.label}</span>
+                                                            {getSubItemBadgeCount(subItem.label) > 0 && (
+                                                                <span className="px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">
+                                                                    {getSubItemBadgeCount(subItem.label)}
+                                                                </span>
+                                                            )}
                                                         </Link>
                                                     ))}
                                                 </div>
@@ -164,7 +211,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                                                 }`}
                                         >
                                             <Icon className="w-5 h-5 flex-shrink-0" />
-                                            <span className="font-medium text-sm">{item.label}</span>
+                                            <span className="flex-1 font-medium text-sm">{item.label}</span>
+                                            {getBadgeCount(item.label) > 0 && (
+                                                <span className="px-2 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full">
+                                                    {getBadgeCount(item.label)}
+                                                </span>
+                                            )}
                                         </Link>
                                     )}
                                 </div>

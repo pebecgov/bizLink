@@ -7,6 +7,7 @@ import { UserButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
+import { NotificationBell } from "./NotificationBell";
 
 interface DashboardLayoutProps {
     children: React.ReactNode;
@@ -67,6 +68,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         </div>
 
                         <div className="flex items-center gap-4">
+                            <NotificationBell />
                             <UserButton afterSignOutUrl="/" />
                         </div>
                     </div>

@@ -6,10 +6,12 @@ import { api } from "./_generated/api";
  * Initiate a connection (transitions match to 'lead')
  */
 export const initiateConnection = mutation({
-    args: { businessId: v.id("businesses") },
+    args: { businessId: v.id("businesses"), investorId: v.optional(v.string()) },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity();
         if (!identity) throw new Error("Not authenticated");
+
+        const targetInvestorId = args.investorId || identity.subject;
 
         const business = await ctx.db.get(args.businessId);
         if (!business) throw new Error("Business not found");
@@ -18,7 +20,7 @@ export const initiateConnection = mutation({
         const existing = await ctx.db
             .query("connections")
             .withIndex("by_investor_business", (q) =>
-                q.eq("investorId", identity.subject).eq("businessId", args.businessId)
+                q.eq("investorId", targetInvestorId).eq("businessId", args.businessId)
             )
             .first();
 
@@ -26,10 +28,29 @@ export const initiateConnection = mutation({
 
         // Create connection as 'lead'
         const connectionId = await ctx.db.insert("connections", {
-            investorId: identity.subject,
+            investorId: targetInvestorId,
             businessId: args.businessId,
             status: "lead",
+            initiatedBy: identity.subject,
             lastActivity: Date.now(),
+            createdAt: Date.now(),
+        });
+
+        // Trigger notification for business owner
+        const investorProfile = await ctx.db
+            .query("investor_profiles")
+            .withIndex("by_userId", (q) => q.eq("userId", targetInvestorId))
+            .first();
+
+        const senderName = investorProfile?.registeredName || "An investor";
+
+        await ctx.db.insert("notifications", {
+            userId: business.ownerId,
+            type: "connection_request",
+            title: "New Connection Request",
+            message: `${senderName} is interested in connecting with ${business.businessName}.`,
+            isRead: false,
+            link: "/dashboard/matching/requests",
             createdAt: Date.now(),
         });
 
@@ -37,7 +58,7 @@ export const initiateConnection = mutation({
         const match = await ctx.db
             .query("matches")
             .withIndex("by_investor_business", (q) =>
-                q.eq("investorId", identity.subject).eq("businessId", args.businessId)
+                q.eq("investorId", targetInvestorId).eq("businessId", args.businessId)
             )
             .first();
 
@@ -66,9 +87,12 @@ export const respondToConnection = mutation({
         const business = await ctx.db.get(connection.businessId);
         if (!business) throw new Error("Business not found");
 
-        // Only the business owner can respond to a lead initiated by an investor
-        // OR the investor can respond if it was the business who reached out (future proofing)
-        // For now, let's assume investor initiates -> business responds
+        // Cannot respond to your own initiation
+        if (connection.initiatedBy === identity.subject) {
+            throw new Error("You cannot respond to your own connection request");
+        }
+
+        // Must be one of the participants
         if (business.ownerId !== identity.subject && connection.investorId !== identity.subject) {
             throw new Error("Unauthorized");
         }
@@ -84,6 +108,39 @@ export const respondToConnection = mutation({
             connectionId: args.connectionId,
             participantIds: [connection.investorId, business.ownerId],
             lastMessageAt: Date.now(),
+        });
+
+    },
+});
+
+/**
+ * Decline a connection (transitions 'lead' to 'rejected')
+ */
+export const declineConnection = mutation({
+    args: { connectionId: v.id("connections") },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Not authenticated");
+
+        const connection = await ctx.db.get(args.connectionId);
+        if (!connection) throw new Error("Connection not found");
+
+        const business = await ctx.db.get(connection.businessId);
+        if (!business) throw new Error("Business not found");
+
+        // Cannot decline your own initiation
+        if (connection.initiatedBy === identity.subject) {
+            throw new Error("You cannot decline your own connection request");
+        }
+
+        // Only the recipient (business owner or investor) can decline
+        if (business.ownerId !== identity.subject && connection.investorId !== identity.subject) {
+            throw new Error("Unauthorized");
+        }
+
+        await ctx.db.patch(args.connectionId, {
+            status: "rejected",
+            lastActivity: Date.now(),
         });
 
         return args.connectionId;
@@ -127,10 +184,16 @@ export const getMyConnections = query({
                 .withIndex("by_userId", (q) => q.eq("userId", conn.investorId))
                 .first();
 
+            const conversation = await ctx.db
+                .query("conversations")
+                .withIndex("by_connectionId", (q) => q.eq("connectionId", conn._id))
+                .first();
+
             return {
                 ...conn,
                 business,
-                investorProfile
+                investorProfile,
+                conversationId: conversation?._id
             };
         }));
     },

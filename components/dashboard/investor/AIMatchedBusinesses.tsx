@@ -32,6 +32,8 @@ export function AIMatchedBusinesses() {
     const matchedResults = useQuery(api.matching.getMatchedBusinesses);
     const dismissMatch = useMutation(api.matching.dismissMatch);
     const getAIExplanation = useAction(api.matching.getMatchWithAIExplanation);
+    const initiateConnect = useMutation(api.connections.initiateConnection);
+
 
     const [aiReasons, setAiReasons] = useState<Record<string, string>>({});
     const [loadingAI, setLoadingAI] = useState<Record<string, boolean>>({});
@@ -120,7 +122,6 @@ export function AIMatchedBusinesses() {
         await dismissMatch({ businessId });
     };
 
-    const initiateConnect = useMutation(api.connections.initiateConnection);
 
     const handleConnect = async (businessId: Id<"businesses">, businessName: string) => {
         setConnecting(prev => ({ ...prev, [businessId]: true }));

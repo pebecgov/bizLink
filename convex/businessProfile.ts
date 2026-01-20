@@ -14,6 +14,20 @@ export const getBusinessProfile = query({
 });
 
 /**
+ * Get profile view count for a business
+ */
+export const getProfileViewsCount = query({
+    args: { businessId: v.id("businesses") },
+    handler: async (ctx, args) => {
+        const views = await ctx.db
+            .query("profile_views")
+            .withIndex("by_businessId", (q) => q.eq("businessId", args.businessId))
+            .collect();
+        return views.length;
+    },
+});
+
+/**
  * Get business by ID (for public profile access)
  */
 export const getBusinessById = query({
@@ -678,6 +692,28 @@ export const updateFullProfile = mutation({
         });
 
         return args.businessId;
+    },
+});
+
+/**
+ * Record a profile view
+ */
+export const recordProfileView = mutation({
+    args: { businessId: v.id("businesses") },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+
+        // Don't count owner's own views
+        const business = await ctx.db.get(args.businessId);
+        if (business && identity && business.ownerId === identity.subject) {
+            return;
+        }
+
+        await ctx.db.insert("profile_views", {
+            businessId: args.businessId,
+            viewerId: identity?.subject,
+            timestamp: Date.now(),
+        });
     },
 });
 /**
