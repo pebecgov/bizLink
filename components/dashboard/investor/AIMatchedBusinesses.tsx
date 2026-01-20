@@ -1,10 +1,11 @@
 "use client";
 
-import { ArrowRight, ExternalLink, Sparkles, X } from "lucide-react";
+import { ArrowRight, ExternalLink, Sparkles, X, Loader2 } from "lucide-react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
 import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
 
 interface MatchedBusiness {
     business: {
@@ -34,6 +35,14 @@ export function AIMatchedBusinesses() {
 
     const [aiReasons, setAiReasons] = useState<Record<string, string>>({});
     const [loadingAI, setLoadingAI] = useState<Record<string, boolean>>({});
+    const [connecting, setConnecting] = useState<Record<string, boolean>>({});
+
+    // Fetch existing connections to disable connect button for already connected businesses
+    const myConnections = useQuery(api.connections.getMyConnections);
+    const connectionMap = myConnections?.reduce((acc, conn) => {
+        if (conn.businessId) acc[conn.businessId] = conn.status;
+        return acc;
+    }, {} as Record<string, string>) || {};
 
     // Get AI explanations for top matches
     useEffect(() => {
@@ -109,6 +118,21 @@ export function AIMatchedBusinesses() {
 
     const handleDismiss = async (businessId: Id<"businesses">) => {
         await dismissMatch({ businessId });
+    };
+
+    const initiateConnect = useMutation(api.connections.initiateConnection);
+
+    const handleConnect = async (businessId: Id<"businesses">, businessName: string) => {
+        setConnecting(prev => ({ ...prev, [businessId]: true }));
+        try {
+            await initiateConnect({ businessId });
+            toast.success(`Connection request sent to ${businessName}`);
+        } catch (error) {
+            console.error("Connection error:", error);
+            toast.error("Failed to initiate connection. Please try again.");
+        } finally {
+            setConnecting(prev => ({ ...prev, [businessId]: false }));
+        }
     };
 
     return (
@@ -201,8 +225,21 @@ export function AIMatchedBusinesses() {
                                 View
                                 <ExternalLink className="w-3 h-3" />
                             </button>
-                            <button className="flex-1 px-3 py-2 border border-green-600 text-green-600 text-sm font-medium rounded-lg hover:bg-green-50 transition-colors">
-                                Connect
+                            <button
+                                onClick={() => handleConnect(business.id as Id<"businesses">, business.name)}
+                                disabled={connecting[business.id] || !!connectionMap[business.id]}
+                                className="flex-1 px-3 py-2 border border-green-600 text-green-600 text-sm font-medium rounded-lg hover:bg-green-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
+                            >
+                                {connecting[business.id] ? (
+                                    <>
+                                        <Loader2 className="w-3 h-3 animate-spin" />
+                                        Connecting
+                                    </>
+                                ) : connectionMap[business.id] ? (
+                                    connectionMap[business.id].charAt(0).toUpperCase() + connectionMap[business.id].slice(1)
+                                ) : (
+                                    "Connect"
+                                )}
                             </button>
                         </div>
                     </div>

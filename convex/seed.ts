@@ -1,4 +1,12 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
+
+export const listTestBusinesses = query({
+    args: {},
+    handler: async (ctx) => {
+        const businesses = await ctx.db.query("businesses").collect();
+        return businesses.filter(b => b.ownerId.startsWith("test_owner_"));
+    },
+});
 
 // Seed function to create test businesses for matching
 export const seedTestBusinesses = mutation({
@@ -215,12 +223,7 @@ export const seedTestBusinesses = mutation({
 export const clearTestBusinesses = mutation({
     args: {},
     handler: async (ctx) => {
-        const testBusinesses = await ctx.db
-            .query("businesses")
-            .filter((q) => q.eq(q.field("ownerId").slice(0, 11), "test_owner_"))
-            .collect();
-
-        // Alternative: get all with test_owner prefix
+        // Collect all businesses and filter manually for test owners
         const allBusinesses = await ctx.db.query("businesses").collect();
         const toDelete = allBusinesses.filter(b => b.ownerId.startsWith("test_owner_"));
 
