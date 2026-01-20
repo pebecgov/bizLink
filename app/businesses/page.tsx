@@ -6,9 +6,11 @@ import { Building2, MapPin, Users, TrendingUp, Search, Filter, ChevronRight, Ver
 import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
+import { BUSINESS_STAGES } from "@/components/dashboard/business/lib/sectorData";
 
 export default function PublicBusinessesPage() {
     const businesses = useQuery(api.businessProfile.getAllBusinesses);
+    const currentUser = useQuery(api.users.getCurrentUser);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedSector, setSelectedSector] = useState("");
@@ -183,12 +185,12 @@ export default function PublicBusinessesPage() {
                                                 {business.lga && `, ${business.lga}`}
                                             </div>
                                         </div>
-                                        {business.businessStage && (
+                                        {currentUser?.role === "investor" && business.businessStage && (
                                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${business.businessStage === "Startup" ? "bg-purple-100 text-purple-700" :
                                                 business.businessStage === "Growth" ? "bg-blue-100 text-blue-700" :
                                                     "bg-green-100 text-green-700"
                                                 }`}>
-                                                {business.businessStage}
+                                                {BUSINESS_STAGES.find(s => s.value === business.businessStage)?.label || business.businessStage}
                                             </span>
                                         )}
                                     </div>
@@ -219,7 +221,7 @@ export default function PublicBusinessesPage() {
                                                 <span>{business.numberOfEmployees}</span>
                                             </div>
                                         )}
-                                        {business.fundingAmount && (
+                                        {business.seekingFunding && business.fundingAmount && (
                                             <div className="font-semibold text-green-600">
                                                 {business.fundingAmount}
                                             </div>

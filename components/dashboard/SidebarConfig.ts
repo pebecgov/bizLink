@@ -16,6 +16,7 @@ export interface SidebarItem {
     label: string;
     path?: string;
     subItems?: SidebarSubItem[];
+    seekingFundingOnly?: boolean;
 }
 
 export interface RoleConfig {
@@ -348,6 +349,7 @@ export const roleConfigs: RoleConfig[] = [
             {
                 icon: Award,
                 label: "Investor Matching",
+                seekingFundingOnly: true,
                 subItems: [
                     { label: "Recommended Investors", path: "/dashboard/matching/recommended" },
                     { label: "Match Requests", path: "/dashboard/matching/requests" },
@@ -368,6 +370,7 @@ export const roleConfigs: RoleConfig[] = [
             {
                 icon: Handshake,
                 label: "Deals & Contracts",
+                seekingFundingOnly: true,
                 subItems: [
                     { label: "Active Deals", path: "/dashboard/deals/active" },
                     { label: "Pending Contracts", path: "/dashboard/deals/pending" },
@@ -379,6 +382,7 @@ export const roleConfigs: RoleConfig[] = [
             {
                 icon: DollarSign,
                 label: "Transactions",
+                seekingFundingOnly: true,
                 subItems: [
                     { label: "Transaction History", path: "/dashboard/transactions/history" },
                     { label: "Pending Payments", path: "/dashboard/transactions/pending" },

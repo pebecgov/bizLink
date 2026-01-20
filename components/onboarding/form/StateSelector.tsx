@@ -43,7 +43,7 @@ export default function StateSelector({
                         <option value="">Select State</option>
                         {NIGERIAN_STATES.map((state) => (
                             <option key={state.name} value={state.name}>
-                                {state.name}State
+                                {state.name}
                             </option>
                         ))}
                     </select>

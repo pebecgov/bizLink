@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
 import { Id } from "@/convex/_generated/dataModel";
+import { BUSINESS_STAGES } from "@/components/dashboard/business/lib/sectorData";
 
 export default function PublicBusinessProfilePage() {
     const params = useParams();
@@ -17,6 +18,7 @@ export default function PublicBusinessProfilePage() {
     const business = useQuery(api.businessProfile.getBusinessById, {
         id: businessId as Id<"businesses">
     });
+    const currentUser = useQuery(api.users.getCurrentUser);
 
     if (business === undefined) {
         return (
@@ -87,9 +89,9 @@ export default function PublicBusinessProfilePage() {
                                         {business.sector}
                                     </span>
                                 )}
-                                {business.businessStage && (
+                                {currentUser?.role === "investor" && business.businessStage && (
                                     <span className="px-3 py-1 bg-white/20 rounded-full text-sm">
-                                        {business.businessStage}
+                                        {BUSINESS_STAGES.find(s => s.value === business.businessStage)?.label || business.businessStage}
                                     </span>
                                 )}
                             </div>
@@ -203,11 +205,11 @@ export default function PublicBusinessProfilePage() {
                                 </div>
 
                                 {/* Financial Details - Only for signed in */}
-                                {(business.fundingAmount || business.annualRevenue) && (
+                                {((business.seekingFunding && business.fundingAmount) || business.annualRevenue || (business.seekingFunding && business.equityOffered)) && (
                                     <div className="bg-white rounded-xl border border-gray-200 p-6">
                                         <h2 className="text-lg font-bold text-gray-900 mb-4">Financial Information</h2>
                                         <div className="grid grid-cols-2 gap-4">
-                                            {business.fundingAmount && (
+                                            {business.seekingFunding && business.fundingAmount && (
                                                 <div>
                                                     <dt className="text-sm text-gray-500">Funding Sought</dt>
                                                     <dd className="font-bold text-green-600 text-xl">{business.fundingAmount}</dd>
@@ -219,7 +221,7 @@ export default function PublicBusinessProfilePage() {
                                                     <dd className="font-bold text-gray-900 text-xl">{business.annualRevenue}</dd>
                                                 </div>
                                             )}
-                                            {business.equityOffered && (
+                                            {business.seekingFunding && business.equityOffered && (
                                                 <div>
                                                     <dt className="text-sm text-gray-500">Equity Offered</dt>
                                                     <dd className="font-medium text-gray-900">{business.equityOffered}</dd>
@@ -272,17 +274,19 @@ export default function PublicBusinessProfilePage() {
                                         <span className="font-medium text-gray-900 text-sm">{business.numberOfEmployees}</span>
                                     </div>
                                 )}
-                                {business.businessStage && (
+                                {currentUser?.role === "investor" && business.businessStage && (
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-500 text-sm">Stage</span>
-                                        <span className="font-medium text-gray-900 text-sm">{business.businessStage}</span>
+                                        <span className="font-medium text-gray-900 text-sm">
+                                            {BUSINESS_STAGES.find(s => s.value === business.businessStage)?.label || business.businessStage}
+                                        </span>
                                     </div>
                                 )}
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-500 text-sm">Status</span>
                                     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${business.verificationStatus === "verified"
-                                            ? "bg-green-100 text-green-700"
-                                            : "bg-yellow-100 text-yellow-700"
+                                        ? "bg-green-100 text-green-700"
+                                        : "bg-yellow-100 text-yellow-700"
                                         }`}>
                                         {business.verificationStatus === "verified" ? "Verified" : "Pending"}
                                     </span>
