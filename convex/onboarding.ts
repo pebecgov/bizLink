@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const createBusinessProfile = mutation({
     args: {
@@ -109,3 +109,56 @@ export const createInvestorProfile = mutation({
         return profileId;
     },
 });
+
+// Get current investor profile
+export const getInvestorProfile = query({
+    args: {},
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            return null;
+        }
+
+        return await ctx.db
+            .query("investor_profiles")
+            .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
+            .first();
+    },
+});
+
+// Update investor profile (sectors, regions, etc.)
+export const updateInvestorProfile = mutation({
+    args: {
+        sectors: v.optional(v.array(v.string())),
+        regions: v.optional(v.array(v.string())),
+        capitalRange: v.optional(v.string()),
+        riskAppetite: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("Not authenticated");
+        }
+
+        const profile = await ctx.db
+            .query("investor_profiles")
+            .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
+            .first();
+
+        if (!profile) {
+            throw new Error("Investor profile not found");
+        }
+
+        // Build update object with only provided fields
+        const updates: any = {};
+        if (args.sectors !== undefined) updates.sectors = args.sectors;
+        if (args.regions !== undefined) updates.regions = args.regions;
+        if (args.capitalRange !== undefined) updates.capitalRange = args.capitalRange;
+        if (args.riskAppetite !== undefined) updates.riskAppetite = args.riskAppetite;
+
+        await ctx.db.patch(profile._id, updates);
+
+        return { success: true, profileId: profile._id };
+    },
+});
+

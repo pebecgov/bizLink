@@ -105,21 +105,26 @@ export function InvestorPreferences({ onNext, onBack, initialData = {} }: Invest
 
                 <div className="space-y-4">
                     <label className="text-sm font-semibold text-gray-700 ml-1">Interested Sectors</label>
-                    <div className="h-[500px] overflow-y-auto flex flex-col sm:grid sm:grid-cols-2 gap-3 bg-white/30 p-3 rounded-xl">
-                        {SECTORS.map((sector) => (
-                            <div key={sector.name} className="flex items-center space-x-3 border border-gray-200 bg-white/60 p-3 rounded-xl hover:border-green-300 hover:bg-green-50/50 transition-colors cursor-pointer group">
-                                <input
-                                    type="checkbox"
-                                    id={`sector-${sector.name}`}
-                                    checked={formData.sectors.includes(sector.name)}
-                                    onChange={() => toggleSector(sector.name)}
-                                    className="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer"
-                                />
-                                <label htmlFor={`sector-${sector.name}`} className="cursor-pointer text-sm font-medium text-gray-700 group-hover:text-gray-900 flex-1 select-none">
+                    <div className="max-h-[400px] overflow-y-auto bg-white/30 p-4 rounded-xl">
+                        <div className="flex flex-wrap gap-2">
+                            {SECTORS.map((sector) => (
+                                <button
+                                    key={sector.name}
+                                    type="button"
+                                    onClick={() => toggleSector(sector.name)}
+                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border-2 select-none
+                                        ${formData.sectors.includes(sector.name)
+                                            ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white border-transparent shadow-md hover:shadow-lg hover:scale-105'
+                                            : 'bg-white/70 text-gray-600 border-gray-200 hover:border-green-300 hover:bg-green-50 hover:text-gray-800'
+                                        }`}
+                                >
+                                    {formData.sectors.includes(sector.name) && (
+                                        <span className="mr-1.5">✓</span>
+                                    )}
                                     {sector.name}
-                                </label>
-                            </div>
-                        ))}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 

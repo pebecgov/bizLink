@@ -221,36 +221,31 @@ export default defineSchema({
     .index("by_businessId", ["businessId"])
     .index("by_user_business", ["userId", "businessId"]), // Composite index for quick existence checks
 
-  // Phase 2: Verification Documents
-  verification_documents: defineTable({
+  // AI Matching System
+  matches: defineTable({
+    investorId: v.string(), // ClerkId or UserId of investor
     businessId: v.id("businesses"),
-    documentType: v.string(), // "CAC_CERTIFICATE", "TIN", etc.
-    category: v.union(
-      v.literal("core"),
-      v.literal("sector_specific"),
-      v.literal("additional")
-    ),
-    fileUrl: v.string(), // Storage ID
-    fileName: v.string(),
-    fileSize: v.number(),
+    score: v.number(), // Overall match score 0-100
+    factors: v.object({
+      sector: v.number(),
+      location: v.number(),
+      capital: v.number(),
+      risk: v.number(),
+      stage: v.number(),
+    }),
+    aiReason: v.optional(v.string()), // AI-generated explanation
     status: v.union(
-      v.literal("pending"),
-      v.literal("verified"),
-      v.literal("rejected"),
-      v.literal("expired")
+      v.literal("new"),
+      v.literal("viewed"),
+      v.literal("contacted"),
+      v.literal("dismissed")
     ),
-    uploadedAt: v.number(),
-    verifiedAt: v.optional(v.number()),
-    verifiedBy: v.optional(v.string()), // userId of verification officer
-    rejectedAt: v.optional(v.number()), // When document was rejected
-    rejectedBy: v.optional(v.string()), // userId of officer who rejected
-    rejectionReason: v.optional(v.string()),
-    expiryDate: v.optional(v.number()),
-    metadata: v.optional(v.any()), // For document-specific data like ID numbers
+    createdAt: v.number(),
+    updatedAt: v.optional(v.number()),
   })
+    .index("by_investorId", ["investorId"])
     .index("by_businessId", ["businessId"])
-    .index("by_status", ["status"])
-    .index("by_type", ["documentType"])
-    .index("by_business_type", ["businessId", "documentType"]),
+    .index("by_investor_status", ["investorId", "status"])
+    .index("by_investor_business", ["investorId", "businessId"]),
 });
 
