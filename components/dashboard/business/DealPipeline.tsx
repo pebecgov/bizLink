@@ -1,10 +1,22 @@
 import { BarChart, ChevronRight } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export function DealPipeline() {
+    const connections = useQuery(api.connections.getMyConnections);
+
+    const counts = {
+        lead: connections?.filter(c => c.status === "lead").length || 0,
+        connected: connections?.filter(c => c.status === "connected").length || 0,
+        contract: connections?.filter(c => c.status === "contract").length || 0,
+        closed: connections?.filter(c => c.status === "closed").length || 0,
+    };
+
     const stages = [
-        { name: "Leads", count: 18, color: "bg-gray-200 text-gray-600" },
-       { name: "Contract", count: 3, color: "bg-purple-100 text-purple-600" },
-        { name: "Closed", count: 2, color: "bg-green-100 text-green-600" },
+        { name: "Leads", count: counts.lead, color: "bg-gray-100 text-gray-600" },
+        { name: "Connections", count: counts.connected, color: "bg-blue-100 text-blue-600" },
+        { name: "Contracts", count: counts.contract, color: "bg-purple-100 text-purple-600" },
+        { name: "Closed", count: counts.closed, color: "bg-green-100 text-green-600" },
     ];
 
     return (

@@ -247,5 +247,80 @@ export default defineSchema({
     .index("by_businessId", ["businessId"])
     .index("by_investor_status", ["investorId", "status"])
     .index("by_investor_business", ["investorId", "businessId"]),
+
+  // Phase 2: High-Stakes Connections & Milestones
+  connections: defineTable({
+    investorId: v.string(), // ClerkId or UserId of investor
+    businessId: v.id("businesses"),
+    status: v.union(
+      v.literal("lead"),       // One-way interest
+      v.literal("connected"),  // Two-way mutual interest
+      v.literal("contract"),   // Milestones agreed
+      v.literal("closed")      // Success/Completed
+    ),
+    lastActivity: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_investorId", ["investorId"])
+    .index("by_businessId", ["businessId"])
+    .index("by_status", ["status"])
+    .index("by_investor_business", ["investorId", "businessId"]),
+
+  conversations: defineTable({
+    connectionId: v.id("connections"),
+    participantIds: v.array(v.string()), // Combined [investorClerkId, businessOwnerClerkId]
+    lastMessageAt: v.number(),
+  })
+    .index("by_connectionId", ["connectionId"]),
+
+  messages: defineTable({
+    conversationId: v.id("conversations"),
+    senderId: v.string(),
+    content: v.string(),
+    type: v.union(
+      v.literal("text"),
+      v.literal("milestone_proposal"),
+      v.literal("document_request"),
+      v.literal("system")
+    ),
+    metadata: v.optional(v.any()), // Stores milestoneId or document metadata
+    createdAt: v.number(),
+  })
+    .index("by_conversationId", ["conversationId"]),
+
+  milestones: defineTable({
+    connectionId: v.id("connections"),
+    title: v.string(),
+    description: v.string(),
+    deadline: v.number(),
+    status: v.union(
+      v.literal("proposed"),   // Initial proposal
+      v.literal("agreed"),     // Both parties agreed
+      v.literal("completed"),  // Marked as done
+      v.literal("rejected"),   // Proposal declined
+      v.literal("cancelled")   // No longer valid
+    ),
+    proposedBy: v.string(),
+    agreedBy: v.optional(v.string()),
+    completedAt: v.optional(v.number()),
+    verificationRequired: v.optional(v.boolean()), // If true, other party must confirm completion
+    relatedDocumentId: v.optional(v.string()), // If the milestone is "Upload NDA"
+  })
+    .index("by_connectionId", ["connectionId"]),
+
+  milestone_extensions: defineTable({
+    milestoneId: v.id("milestones"),
+    requestedBy: v.string(),
+    reason: v.string(),
+    newDeadline: v.number(),
+    previousDeadline: v.number(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("approved"),
+      v.literal("rejected")
+    ),
+    createdAt: v.number(),
+  })
+    .index("by_milestoneId", ["milestoneId"]),
 });
 
