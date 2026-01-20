@@ -41,6 +41,25 @@ export const sendMessage = mutation({
         // Update connection last activity
         await ctx.db.patch(conversation.connectionId, { lastActivity: Date.now() });
 
+        // Send notification to recipient
+        const recipientId = conversation.participantIds.find(id => id !== identity.subject);
+        if (recipientId) {
+            const senderUser = await ctx.db
+                .query("users")
+                .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+                .first();
+
+            await ctx.db.insert("notifications", {
+                userId: recipientId,
+                type: "message",
+                title: "New Message",
+                message: `${senderUser?.email || "Someone"} sent you a message: ${args.content.slice(0, 50)}${args.content.length > 50 ? "..." : ""}`,
+                isRead: false,
+                link: `/dashboard/messages/active/${args.conversationId}`,
+                createdAt: Date.now(),
+            });
+        }
+
         return messageId;
     },
 });
@@ -48,11 +67,28 @@ export const sendMessage = mutation({
 export const getMessages = query({
     args: { conversationId: v.id("conversations") },
     handler: async (ctx, args) => {
-        return await ctx.db
+        const messages = await ctx.db
             .query("messages")
             .withIndex("by_conversationId", (q) => q.eq("conversationId", args.conversationId))
             .order("asc")
             .collect();
+
+        // Resolve storage IDs in metadata
+        return await Promise.all(messages.map(async (msg) => {
+            if (msg.metadata?.documentUrl) {
+                // Only resolve if it's not already a URL (Legacy/Mock support)
+                if (!msg.metadata.documentUrl.includes("://")) {
+                    const resolvedUrl = await ctx.storage.getUrl(msg.metadata.documentUrl);
+                    if (resolvedUrl) {
+                        return {
+                            ...msg,
+                            metadata: { ...msg.metadata, documentUrl: resolvedUrl }
+                        };
+                    }
+                }
+            }
+            return msg;
+        }));
     },
 });
 
@@ -71,14 +107,29 @@ export const getConversation = query({
     },
 });
 
+// ==================== MILESTONES ====================
+
 export const getMilestone = query({
     args: { milestoneId: v.id("milestones") },
     handler: async (ctx, args) => {
-        return await ctx.db.get(args.milestoneId);
+        const milestone = await ctx.db.get(args.milestoneId);
+        if (!milestone) return null;
+
+        let resolvedDocumentUrl = milestone.documentUrl;
+        if (milestone.documentUrl) {
+            // Only resolve if it's not already a URL (Legacy/Mock support)
+            if (!milestone.documentUrl.includes("://")) {
+                const url = await ctx.storage.getUrl(milestone.documentUrl);
+                if (url) resolvedDocumentUrl = url;
+            }
+        }
+
+        return {
+            ...milestone,
+            documentUrl: resolvedDocumentUrl,
+        };
     },
 });
-
-// ==================== MILESTONES ====================
 
 export const proposeMilestone = mutation({
     args: {
@@ -86,6 +137,9 @@ export const proposeMilestone = mutation({
         title: v.string(),
         description: v.string(),
         deadline: v.number(),
+        requiresDocument: v.optional(v.boolean()),
+        documentType: v.optional(v.string()),
+        templateUrl: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity();
@@ -101,6 +155,10 @@ export const proposeMilestone = mutation({
             deadline: args.deadline,
             status: "proposed",
             proposedBy: identity.subject,
+            requiresDocument: args.requiresDocument,
+            documentType: args.documentType,
+            templateUrl: args.templateUrl,
+            documentStatus: args.requiresDocument ? "pending" : undefined,
         });
 
         // Automatically send a system message in the chat
@@ -113,11 +171,30 @@ export const proposeMilestone = mutation({
             await ctx.db.insert("messages", {
                 conversationId: conversation._id,
                 senderId: identity.subject,
-                content: `Proposed milestone: ${args.title}`,
+                content: `Proposed milestone: ${args.title}${args.requiresDocument ? ` (Requires ${args.documentType})` : ""}`,
                 type: "milestone_proposal",
-                metadata: { milestoneId },
+                metadata: {
+                    milestoneId,
+                    requiresDocument: args.requiresDocument,
+                    documentType: args.documentType,
+                    hasTemplate: !!args.templateUrl,
+                },
                 createdAt: Date.now(),
             });
+
+            // Send notification to recipient
+            const recipientId = conversation.participantIds.find(id => id !== identity.subject);
+            if (recipientId) {
+                await ctx.db.insert("notifications", {
+                    userId: recipientId,
+                    type: "milestone",
+                    title: "New Milestone Proposed",
+                    message: `A new milestone has been proposed: ${args.title}`,
+                    isRead: false,
+                    link: `/dashboard/messages/active/${conversation._id}`,
+                    createdAt: Date.now(),
+                });
+            }
         }
 
         return milestoneId;
@@ -299,6 +376,55 @@ export const verifyDocument = mutation({
                 status: args.approved ? "verified" : "rejected",
                 verifiedAt: Date.now()
             },
+        });
+    },
+});
+
+export const submitMilestoneDocument = mutation({
+    args: {
+        milestoneId: v.id("milestones"),
+        documentUrl: v.string(),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Not authenticated");
+
+        const milestone = await ctx.db.get(args.milestoneId);
+        if (!milestone) throw new Error("Milestone not found");
+
+        await ctx.db.patch(args.milestoneId, {
+            documentUrl: args.documentUrl,
+            documentStatus: "submitted",
+        });
+
+        const conversation = await ctx.db
+            .query("conversations")
+            .withIndex("by_connectionId", (q) => q.eq("connectionId", milestone.connectionId))
+            .first();
+
+        if (conversation) {
+            await ctx.db.insert("messages", {
+                conversationId: conversation._id,
+                senderId: identity.subject,
+                content: `Uploaded document for milestone: ${milestone.title}`,
+                type: "text",
+                createdAt: Date.now(),
+            });
+        }
+    },
+});
+
+export const verifyMilestoneDocument = mutation({
+    args: {
+        milestoneId: v.id("milestones"),
+        approved: v.boolean(),
+    },
+    handler: async (ctx, args) => {
+        const milestone = await ctx.db.get(args.milestoneId);
+        if (!milestone) throw new Error("Milestone not found");
+
+        await ctx.db.patch(args.milestoneId, {
+            documentStatus: args.approved ? "verified" : "rejected",
         });
     },
 });

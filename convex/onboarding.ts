@@ -162,3 +162,13 @@ export const updateInvestorProfile = mutation({
     },
 });
 
+// Get investor profile by Clerk ID (for business owners to view)
+export const getInvestorProfileByClerkId = query({
+    args: { userId: v.string() },
+    handler: async (ctx, args) => {
+        return await ctx.db
+            .query("investor_profiles")
+            .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+            .first();
+    },
+});

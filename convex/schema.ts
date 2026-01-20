@@ -256,8 +256,10 @@ export default defineSchema({
       v.literal("lead"),       // One-way interest
       v.literal("connected"),  // Two-way mutual interest
       v.literal("contract"),   // Milestones agreed
-      v.literal("closed")      // Success/Completed
+      v.literal("closed"),     // Success/Completed
+      v.literal("rejected")    // Connection declined
     ),
+    initiatedBy: v.string(),   // clerkId of the user who initiated the connection
     lastActivity: v.number(),
     createdAt: v.number(),
   })
@@ -303,8 +305,18 @@ export default defineSchema({
     proposedBy: v.string(),
     agreedBy: v.optional(v.string()),
     completedAt: v.optional(v.number()),
-    verificationRequired: v.optional(v.boolean()), // If true, other party must confirm completion
-    relatedDocumentId: v.optional(v.string()), // If the milestone is "Upload NDA"
+    verificationRequired: v.optional(v.boolean()),
+    requiresDocument: v.optional(v.boolean()),
+    documentType: v.optional(v.string()),
+    documentUrl: v.optional(v.string()),
+    documentStatus: v.optional(v.union(
+      v.literal("pending"),
+      v.literal("submitted"),
+      v.literal("verified"),
+      v.literal("rejected")
+    )),
+    relatedDocumentId: v.optional(v.string()),
+    templateUrl: v.optional(v.string()),
   })
     .index("by_connectionId", ["connectionId"]),
 
@@ -348,5 +360,31 @@ export default defineSchema({
     .index("by_businessId", ["businessId"])
     .index("by_status", ["status"])
     .index("by_business_type", ["businessId", "documentType"]),
+
+  notifications: defineTable({
+    userId: v.string(), // Recipient ClerkId
+    type: v.union(
+      v.literal("connection_request"),
+      v.literal("connection_accepted"),
+      v.literal("message"),
+      v.literal("milestone"),
+      v.literal("system")
+    ),
+    title: v.string(),
+    message: v.string(),
+    link: v.optional(v.string()),
+    isRead: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_user_read", ["userId", "isRead"]),
+
+  profile_views: defineTable({
+    businessId: v.id("businesses"),
+    viewerId: v.optional(v.string()), // Optional for signed-out/anonymous views if allowed
+    timestamp: v.number(),
+  })
+    .index("by_businessId", ["businessId"])
+    .index("by_timestamp", ["timestamp"]),
 });
 
