@@ -172,7 +172,12 @@ export const getMatchedBusinesses = query({
 
         // Calculate scores for each business
         const scoredMatches = allBusinesses
-            .filter(b => b.businessName) // Filter out incomplete profiles
+            .filter(b =>
+                b.businessName &&
+                b.logoUrl &&
+                b.companyTagline &&
+                b.companyDescription
+            ) // Filter out incomplete profiles
             .map((business) => {
                 const factors = {
                     sector: calculateSectorScore(

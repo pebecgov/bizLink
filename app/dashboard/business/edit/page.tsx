@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, ChevronRight, Upload, AlertCircle, Save, Building2 } from "lucide-react";
+import { Check, ChevronRight, Upload, AlertCircle, Save, Building2, Plus, X, Sparkles, Loader2 } from "lucide-react";
 
 import { SECTORS } from "@/components/onboarding/constants/sectors";
 import { BUSINESS_STAGES, BUSINESS_MODELS, TARGET_MARKETS, AFRICAN_COUNTRIES } from "@/components/dashboard/business/lib/sectorData";
@@ -42,7 +42,7 @@ export default function EditProfilePage() {
 
         switch (id) {
             case "identity":
-                return (p.businessName && p.companyTagline && p.companyDescription) ? "complete" : "incomplete";
+                return (p.businessName && p.logoUrl && p.companyTagline && p.companyDescription) ? "complete" : "incomplete";
             case "classification":
                 return (p.sector && p.subsector && p.businessStage) ? "complete" : "incomplete";
             case "location":
@@ -111,6 +111,7 @@ export default function EditProfilePage() {
     const [targetMarket, setTargetMarket] = useState("");
     const [afcftaCompliant, setAfcftaCompliant] = useState(false);
     const [operatingCountries, setOperatingCountries] = useState<string[]>([]);
+    const [secondarySectors, setSecondarySectors] = useState<string[]>([]);
 
     // Initialize form data when business profile loads
     useEffect(() => {
@@ -157,6 +158,7 @@ export default function EditProfilePage() {
             setTargetMarket(businessProfile.targetMarket || "");
             setAfcftaCompliant(businessProfile.afcftaCompliant || false);
             setOperatingCountries(businessProfile.operatingCountries || []);
+            setSecondarySectors(businessProfile.secondarySectors || []);
         }
     }, [businessProfile]);
 
@@ -269,6 +271,7 @@ export default function EditProfilePage() {
                 targetMarket: targetMarket || undefined,
                 afcftaCompliant: afcftaCompliant || undefined,
                 operatingCountries: operatingCountries.length > 0 ? operatingCountries : undefined,
+                secondarySectors: secondarySectors.length > 0 ? secondarySectors : undefined,
             });
             toast.success("Classification section saved successfully!");
         } catch (error) {
@@ -276,6 +279,27 @@ export default function EditProfilePage() {
             toast.error("Failed to save. Please try again.");
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    const handleGlobalSave = async () => {
+        if (!activeSection) return;
+
+        // Map active section to its save handler
+        switch (activeSection) {
+            case "identity":
+                await handleSaveIdentity();
+                break;
+            case "classification":
+                await handleSaveClassification();
+                break;
+            default:
+                // For component-based sections, we notify the user to use the section-specific save button
+                // until we implement a more robust cross-component save trigger
+                toast.info(`Please use the "Save Section" button below to save your ${activeSection} changes.`, {
+                    description: "Global 'Save All' is coming soon for all sections.",
+                    icon: <AlertCircle className="w-4 h-4 text-blue-500" />
+                });
         }
     };
 
@@ -300,6 +324,117 @@ export default function EditProfilePage() {
         }
     };
 
+    // Helper Component for Multi-Select Pills
+    const MultiSelectPills = ({
+        label,
+        options,
+        selected,
+        onChange,
+        placeholder = "Click to select...",
+        maxItems = 5
+    }: {
+        label: string,
+        options: string[],
+        selected: string[],
+        onChange: (val: string[]) => void,
+        placeholder?: string,
+        maxItems?: number
+    }) => {
+        const [isExpanded, setIsExpanded] = useState(false);
+        const [searchQuery, setSearchQuery] = useState("");
+
+        const filteredOptions = options.filter(opt =>
+            opt.toLowerCase().includes(searchQuery.toLowerCase()) &&
+            !selected.includes(opt)
+        );
+
+        const toggleOption = (opt: string) => {
+            if (selected.includes(opt)) {
+                onChange(selected.filter(s => s !== opt));
+            } else if (selected.length < maxItems) {
+                onChange([...selected, opt]);
+                setSearchQuery("");
+            } else {
+                toast.error(`You can select up to ${maxItems} items`);
+            }
+        };
+
+        return (
+            <div className="space-y-3">
+                <Label>{label}</Label>
+
+                {/* Selected Items */}
+                <div className="flex flex-wrap gap-2 min-h-[40px] p-3 border border-gray-200 rounded-xl bg-gray-50/50">
+                    {selected.length === 0 ? (
+                        <span className="text-sm text-gray-400 italic">No items selected</span>
+                    ) : (
+                        selected.map(item => (
+                            <span
+                                key={item}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-semibold rounded-full shadow-sm hover:shadow-md hover:scale-[1.02] transition-all animate-in zoom-in-95 duration-200 cursor-default"
+                            >
+                                {item}
+                                <button
+                                    onClick={() => toggleOption(item)}
+                                    className="p-0.5 hover:bg-white/20 rounded-full transition-colors"
+                                >
+                                    <X className="w-3 h-3" />
+                                </button>
+                            </span>
+                        ))
+                    )}
+                </div>
+
+                {/* Selection Area */}
+                <div className="relative">
+                    <div className="relative">
+                        <Input
+                            placeholder={placeholder}
+                            value={searchQuery}
+                            onChange={(e) => {
+                                setSearchQuery(e.target.value);
+                                setIsExpanded(true);
+                            }}
+                            onFocus={() => setIsExpanded(true)}
+                            className="pl-3 pr-10 rounded-xl"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            <Sparkles className="w-4 h-4" />
+                        </div>
+                    </div>
+
+                    {isExpanded && (
+                        <>
+                            <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setIsExpanded(false)}
+                            />
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl z-20 max-h-60 overflow-y-auto p-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                                {filteredOptions.length === 0 ? (
+                                    <div className="p-3 text-sm text-gray-500 text-center">No options found</div>
+                                ) : (
+                                    filteredOptions.map(opt => (
+                                        <button
+                                            key={opt}
+                                            onClick={() => toggleOption(opt)}
+                                            className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-primary-green rounded-lg transition-colors flex items-center justify-between group"
+                                        >
+                                            {opt}
+                                            <Plus className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </button>
+                                    ))
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+                <p className="text-[10px] text-gray-400 italic">
+                    Select up to {maxItems} items. No need to hold Ctrl/Cmd.
+                </p>
+            </div>
+        );
+    };
+
     return (
         <div className="max-w-7xl mx-auto pb-12">
 
@@ -317,8 +452,21 @@ export default function EditProfilePage() {
                         </div>
                     </div>
                     <Button variant="outline" className="text-gray-600">Cancel</Button>
-                    <Button className="bg-primary-green hover:bg-green-700 text-white gap-2">
-                        <Save className="w-4 h-4" /> Save All
+                    <Button
+                        onClick={handleGlobalSave}
+                        disabled={isSaving}
+                        className="bg-primary-green hover:bg-green-700 text-white gap-2 min-w-[120px]"
+                    >
+                        {isSaving ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Saving...
+                            </>
+                        ) : (
+                            <>
+                                <Save className="w-4 h-4" /> Save All
+                            </>
+                        )}
                     </Button>
                 </div>
             </div>
@@ -348,6 +496,29 @@ export default function EditProfilePage() {
                 </aside>
                 {/* Main Form Area */}
                 <main className="flex-1 min-w-0">
+                    {/* Visibility Warning */}
+                    {getSectionStatus("identity") === "incomplete" && (
+                        <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                            <div className="p-2 bg-amber-100 rounded-lg text-amber-600">
+                                <AlertCircle className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h3 className="text-sm font-bold text-amber-900">Profile Not Listed</h3>
+                                <p className="text-xs text-amber-700 mt-1">
+                                    Your business will not appear in investor discovery or matches until the <strong>Business Identity</strong> section is complete (Name, Logo, Tagline, and Description).
+                                </p>
+                            </div>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="ml-auto border-amber-200 text-amber-700 hover:bg-amber-100"
+                                onClick={() => setActiveSection("identity")}
+                            >
+                                Fix Now
+                            </Button>
+                        </div>
+                    )}
+
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
 
                         {activeSection === "identity" && (
@@ -554,21 +725,14 @@ export default function EditProfilePage() {
                                 </div>
 
                                 {/* Secondary Sectors */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="secondarySectors">Secondary Sectors (Optional)</Label>
-                                    <select
-                                        id="secondarySectors"
-                                        multiple
-                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent min-h-[100px]"
-                                    >
-                                        {sortedSectors.map((sector) => (
-                                            <option key={sector.name} value={sector.name}>
-                                                {sector.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <p className="text-xs text-gray-500">Hold Ctrl/Cmd to select up to 3 additional sectors</p>
-                                </div>
+                                <MultiSelectPills
+                                    label="Secondary Sectors (Optional)"
+                                    options={sortedSectors.map(s => s.name).filter(n => n !== selectedSector)}
+                                    selected={secondarySectors}
+                                    onChange={setSecondarySectors}
+                                    placeholder="Search sectors..."
+                                    maxItems={3}
+                                />
 
                                 {/* Business Stage */}
                                 <div className="space-y-2">
@@ -647,26 +811,14 @@ export default function EditProfilePage() {
                                         <p className="text-xs text-gray-600 ml-7">Check this if your business meets AfCFTA requirements</p>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label htmlFor="operatingCountries">Operating Countries</Label>
-                                        <select
-                                            id="operatingCountries"
-                                            multiple
-                                            value={operatingCountries}
-                                            onChange={(e) => {
-                                                const selected = Array.from(e.target.selectedOptions, option => option.value);
-                                                setOperatingCountries(selected);
-                                            }}
-                                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent min-h-[120px]"
-                                        >
-                                            {AFRICAN_COUNTRIES.map((country) => (
-                                                <option key={country} value={country}>
-                                                    {country}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <p className="text-xs text-gray-600">Hold Ctrl/Cmd to select multiple countries where you operate</p>
-                                    </div>
+                                    <MultiSelectPills
+                                        label="Operating Countries"
+                                        options={AFRICAN_COUNTRIES}
+                                        selected={operatingCountries}
+                                        onChange={setOperatingCountries}
+                                        placeholder="Search countries..."
+                                        maxItems={10}
+                                    />
                                 </div>
 
                                 {/* Action Buttons */}

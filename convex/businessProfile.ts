@@ -53,15 +53,17 @@ export const getMyBusinessProfile = query({
  */
 export const getAllBusinesses = query({
     handler: async (ctx) => {
-        // In a real app, you would add pagination and filtering here
         const businesses = await ctx.db
             .query("businesses")
-            // .withIndex("by_businessName") // Assuming we might want to sort by name, but default order is fine for now
-            .take(50);
+            .take(100);
 
-        // Filter out incomplete profiles or return all
-        // For now, let's return those that at least have a business name
-        return businesses.filter((b) => b.businessName);
+        // Filter: Business must have complete "Identity" section to be discoverable
+        return businesses.filter((b) =>
+            b.businessName &&
+            b.logoUrl &&
+            b.companyTagline &&
+            b.companyDescription
+        );
     },
 });
 
@@ -74,15 +76,15 @@ export const getProfileCompleteness = query({
         const business = await ctx.db.get(args.businessId);
         if (!business) return 0;
 
-        // Required fields (60% weight)
+        // Required fields (60% weight) - Needed for listing visibility
         const requiredFields = [
-            'businessName', 'sector', 'subsector', 'companyDescription',
-            'contactPhone', 'state', 'lga', 'registrationNumber'
+            'businessName', 'logoUrl', 'companyTagline', 'companyDescription',
+            'sector', 'subsector', 'contactPhone', 'state', 'lga', 'registrationNumber'
         ];
 
         // Important optional fields (40% weight)
         const optionalFields = [
-            'logoUrl', 'tradingName', 'companyTagline', 'website', 'primaryEmail',
+            'tradingName', 'website', 'primaryEmail',
             'missionStatement', 'visionStatement', 'imageGallery', 'numberOfEmployees',
             'annualRevenue', 'yearEstablished', 'businessStage'
         ];
