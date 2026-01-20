@@ -7,8 +7,10 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
+import { useRouter } from "next/navigation";
 
 export default function BrowseBusinessesPage() {
+    const router = useRouter();
     const businesses = useQuery(api.businessProfile.getAllBusinesses);
     const [searchQuery, setSearchQuery] = useState("");
     const toggleSave = useMutation(api.investorActions.toggleSaveBusiness);
@@ -96,7 +98,13 @@ export default function BrowseBusinessesPage() {
                                 <p className="text-sm text-gray-600 line-clamp-2 mb-4 flex-grow">
                                     {business.companyDescription || "No description provided."}
                                 </p>
-                                <Button variant="outline" className="w-full text-sm mt-auto">View Profile</Button>
+                                <Button
+                                    variant="outline"
+                                    className="w-full text-sm mt-auto"
+                                    onClick={() => router.push(`/businesses/${business._id}`)}
+                                >
+                                    View Profile
+                                </Button>
                             </div>
                         </div>
                     ))}
