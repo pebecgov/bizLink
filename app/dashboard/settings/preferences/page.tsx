@@ -17,10 +17,10 @@ const REGIONS = [
 ];
 
 const CAPITAL_RANGES = [
-    { value: "1k-10k", label: "$1K - $10K" },
-    { value: "10k-50k", label: "$10K - $50K" },
-    { value: "50k-200k", label: "$50K - $200K" },
-    { value: "200k+", label: "$200K+" },
+    { value: "5m-50m", label: "₦5M - ₦50M" },
+    { value: "50m-250m", label: "₦50M - ₦250M" },
+    { value: "250m-1b", label: "₦250M - ₦1B" },
+    { value: "1b+", label: "₦1B+" },
 ];
 
 const RISK_LEVELS = [
@@ -125,8 +125,8 @@ export default function InvestorPreferencesPage() {
                     onClick={handleSave}
                     disabled={saving}
                     className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${saved
-                            ? "bg-green-100 text-green-700"
-                            : "bg-green-600 text-white hover:bg-green-700"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-green-600 text-white hover:bg-green-700"
                         }`}
                 >
                     {saving ? (

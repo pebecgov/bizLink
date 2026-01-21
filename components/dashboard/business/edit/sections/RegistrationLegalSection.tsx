@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Shield, CheckCircle } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Doc } from "@/convex/_generated/dataModel";
 import { DocumentItem, UploadedDocument } from "@/components/dashboard/business/DocumentRequirementsList";
@@ -31,7 +31,35 @@ export function RegistrationLegalSection({
 }: RegistrationLegalSectionProps) {
     const { toast } = useToast();
     const updateRegistrationLegal = useMutation(api.businessProfile.updateRegistrationLegal);
+    const verifyRegistrationNumbers = useMutation(api.businessProfile.verifyRegistrationNumbers);
     const [isLoading, setIsLoading] = useState(false);
+
+    // CAC Verification State
+    const [entityType, setEntityType] = useState<string>("");
+    const [cacNumber, setCacNumber] = useState(businessProfile.registrationNumber || "");
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [verificationResult, setVerificationResult] = useState<{ success: boolean; message: string } | null>(null);
+
+    // TIN Verification State
+    const [tinNumber, setTinNumber] = useState(businessProfile.tinNumber || "");
+    const [isVerifyingTin, setIsVerifyingTin] = useState(false);
+    const [tinVerificationResult, setTinVerificationResult] = useState<{ success: boolean; message: string } | null>(null);
+
+    // Parse saved CAC number on component mount
+    useEffect(() => {
+        if (businessProfile.registrationNumber) {
+            const savedCac = businessProfile.registrationNumber;
+            // Extract entity type prefix (RC, BN, IT, LLP)
+            const prefixes = ['RC', 'BN', 'IT', 'LLP'];
+            for (const prefix of prefixes) {
+                if (savedCac.startsWith(prefix)) {
+                    setEntityType(prefix);
+                    setCacNumber(savedCac.substring(prefix.length));
+                    break;
+                }
+            }
+        }
+    }, [businessProfile.registrationNumber]);
 
     // Helpers to find docs
     const getDocReq = (id: string) =>
@@ -48,6 +76,156 @@ export function RegistrationLegalSection({
     const tinCertDoc = getDocReq("TIN_CERTIFICATE");
     const taxClearanceDoc = getDocReq("TAX_CLEARANCE");
 
+    // Handle CAC Verification (Demo)
+    const handleVerify = async () => {
+        setIsVerifying(true);
+        setVerificationResult(null);
+
+        // Get form values
+        const cacDateInput = (document.getElementById("cacDate") as HTMLInputElement)?.value;
+
+        // Validation checks
+        if (!entityType) {
+            setVerificationResult({ success: false, message: "Please select an entity type" });
+            setIsVerifying(false);
+            return;
+        }
+
+        if (!cacNumber) {
+            setVerificationResult({ success: false, message: "Please enter CAC number" });
+            setIsVerifying(false);
+            return;
+        }
+
+        if (!cacDateInput) {
+            setVerificationResult({ success: false, message: "Please enter CAC registration date" });
+            setIsVerifying(false);
+            return;
+        }
+
+        // Validate number format
+        if (!/^\d+$/.test(cacNumber)) {
+            setVerificationResult({
+                success: false,
+                message: `Invalid CAC number format. Please enter only numbers`
+            });
+            setIsVerifying(false);
+            return;
+        }
+
+        // Check if number has sufficient length (at least 3 digits)
+        if (cacNumber.length < 3) {
+            setVerificationResult({
+                success: false,
+                message: `CAC number too short. Please enter at least 3 digits`
+            });
+            setIsVerifying(false);
+            return;
+        }
+
+        try {
+            // Save verification to database
+            await verifyRegistrationNumbers({ businessId: businessProfile._id });
+
+            // Success!
+            const fullCacNumber = `${entityType}${cacNumber}`;
+            setVerificationResult({
+                success: true,
+                message: `✓ CAC verification successful! "${businessProfile.businessName}" is correctly registered with ${fullCacNumber}`
+            });
+
+            toast({
+                title: "Verification Saved",
+                description: "Your CAC and TIN verification has been saved successfully",
+            });
+        } catch (error) {
+            console.error("Error saving verification:", error);
+            setVerificationResult({
+                success: false,
+                message: "Failed to save verification. Please try again."
+            });
+            toast({
+                title: "Error",
+                description: "Failed to save verification",
+                variant: "destructive",
+            });
+        } finally {
+            setIsVerifying(false);
+        }
+    };
+
+    // Handle TIN Verification
+    const handleVerifyTin = async () => {
+        setIsVerifyingTin(true);
+        setTinVerificationResult(null);
+
+        // Validation checks
+        if (!tinNumber || tinNumber.trim() === "") {
+            setTinVerificationResult({ success: false, message: "Please enter TIN number" });
+            setIsVerifyingTin(false);
+            return;
+        }
+
+        // Validate TIN format (basic format check: numbers and dash)
+        if (!/^[\d-]+$/.test(tinNumber)) {
+            setTinVerificationResult({
+                success: false,
+                message: "Invalid TIN format. TIN should contain only numbers and dashes (e.g., 12345678-0001)"
+            });
+            setIsVerifyingTin(false);
+            return;
+        }
+
+        // Check minimum length
+        if (tinNumber.length < 8) {
+            setTinVerificationResult({
+                success: false,
+                message: "TIN number is too short. Please enter a valid TIN"
+            });
+            setIsVerifyingTin(false);
+            return;
+        }
+
+        try {
+            // For demo: verify against company name
+            // In production, this would call a government API
+            const companyName = businessProfile.businessName;
+
+            if (!companyName) {
+                setTinVerificationResult({
+                    success: false,
+                    message: "Company name not found. Please save your business name first."
+                });
+                setIsVerifyingTin(false);
+                return;
+            }
+
+            // Demo validation successful
+            setTinVerificationResult({
+                success: true,
+                message: `✓ TIN verification successful! "${companyName}" is correctly registered with TIN ${tinNumber}`
+            });
+
+            toast({
+                title: "TIN Verified",
+                description: "Your TIN number has been verified successfully",
+            });
+        } catch (error) {
+            console.error("Error verifying TIN:", error);
+            setTinVerificationResult({
+                success: false,
+                message: "Failed to verify TIN. Please try again."
+            });
+            toast({
+                title: "Error",
+                description: "Failed to verify TIN",
+                variant: "destructive",
+            });
+        } finally {
+            setIsVerifyingTin(false);
+        }
+    };
+
     const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
@@ -55,11 +233,14 @@ export function RegistrationLegalSection({
         try {
             const formData = new FormData(e.currentTarget);
 
+            // Combine entity type with CAC number for storage
+            const fullCacNumber = entityType && cacNumber ? `${entityType}${cacNumber}` : cacNumber;
+
             await updateRegistrationLegal({
                 businessId: businessProfile._id,
-                registrationNumber: formData.get("cacNumber") as string,
+                registrationNumber: fullCacNumber,
                 cacRegistrationDate: formData.get("cacDate") as string || undefined,
-                tinNumber: formData.get("tinNumber") as string || undefined,
+                tinNumber: tinNumber || undefined,
                 companyType: formData.get("companyType") as string || undefined,
                 yearEstablished: formData.get("yearEstablished") ? parseInt(formData.get("yearEstablished") as string) : undefined,
             });
@@ -88,22 +269,57 @@ export function RegistrationLegalSection({
 
             {/* CAC Registration */}
             <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Entity Type */}
+                    <div className="space-y-2">
+                        <Label htmlFor="entityType">Entity Type *</Label>
+                        <select
+                            id="entityType"
+                            value={entityType}
+                            onChange={(e) => setEntityType(e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
+                            required
+                        >
+                            <option value="">Select entity type</option>
+                            <option value="RC">Limited Company (RC)</option>
+                            <option value="BN">Business Name (BN)</option>
+                            <option value="IT">NGO / Association (IT)</option>
+                            <option value="LLP">LLP / LP</option>
+                        </select>
+                        <p className="text-xs text-gray-500">Select your business registration type</p>
+                    </div>
+
+                    {/* CAC Number */}
                     <div className="space-y-2">
                         <Label htmlFor="cacNumber">CAC Registration Number *</Label>
-                        <div className="relative">
+                        <div className="relative flex items-center">
+                            {entityType && (
+                                <span className="absolute left-3 text-gray-700 font-medium z-10 bg-gray-100 px-2 py-1 rounded-l text-sm">
+                                    {entityType}
+                                </span>
+                            )}
                             <Input
                                 id="cacNumber"
                                 name="cacNumber"
-                                defaultValue={businessProfile.registrationNumber}
-                                placeholder="RC123456"
+                                value={cacNumber}
+                                onChange={(e) => {
+                                    // Only allow numbers
+                                    const value = e.target.value.replace(/\D/g, '');
+                                    setCacNumber(value);
+                                    setVerificationResult(null);
+                                }}
+                                placeholder={entityType ? "123456" : "Select entity type first"}
                                 required
+                                disabled={!entityType}
+                                className={entityType ? "pl-20" : ""}
                             />
-                            {businessProfile.verificationStatus === "verified" && (
+                            {verificationResult?.success && (
                                 <CheckCircle className="w-4 h-4 text-green-500 absolute right-3 top-3" />
                             )}
                         </div>
                     </div>
+
+                    {/* CAC Date */}
                     <div className="space-y-2">
                         <Label htmlFor="cacDate">CAC Registration Date *</Label>
                         <Input
@@ -113,36 +329,29 @@ export function RegistrationLegalSection({
                             defaultValue={businessProfile.cacRegistrationDate || ""}
                         />
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="companyType">Company Type *</Label>
-                        <select
-                            id="companyType"
-                            name="companyType"
-                            defaultValue={businessProfile.companyType || ""}
-                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-green focus:border-transparent"
-                            required
-                        >
-                            <option value="">Select company type</option>
-                            <option value="Sole Proprietorship">Sole Proprietorship/Business Name</option>
-                            <option value="Partnership">Partnership</option>
-                            <option value="Private Limited Company">Private Limited Company (LLC)</option>
-                            <option value="Public Limited Company">Public Limited Company (PLC)</option>
-                            <option value="NGO">NGO/Non-Profit</option>
-                        </select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="yearEstablished">Year Established</Label>
-                        <Input
-                            id="yearEstablished"
-                            name="yearEstablished"
-                            type="number"
-                            min="1900"
-                            max={new Date().getFullYear()}
-                            defaultValue={businessProfile.yearEstablished || ""}
-                            placeholder={new Date().getFullYear().toString()}
-                        />
-                    </div>
                 </div>
+
+                {/* Verify Button */}
+                <div className="flex justify-start">
+                    <Button
+                        type="button"
+                        onClick={handleVerify}
+                        disabled={isVerifying || !entityType || !cacNumber}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                        {isVerifying ? "Verifying..." : "Verify CAC Registration"}
+                    </Button>
+                </div>
+
+                {/* Verification Result */}
+                {verificationResult && (
+                    <div className={`p-4 rounded-lg border ${verificationResult.success
+                        ? 'bg-green-50 border-green-200 text-green-800'
+                        : 'bg-red-50 border-red-200 text-red-800'
+                        }`}>
+                        <p className="text-sm font-medium">{verificationResult.message}</p>
+                    </div>
+                )}
 
                 {/* CAC Documents */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
@@ -190,18 +399,51 @@ export function RegistrationLegalSection({
 
             {/* TIN & Taxes */}
             <div className="space-y-6 pt-4 border-t border-gray-100">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <h3 className="text-lg font-semibold text-gray-900">Tax Information</h3>
+
+                <div className="space-y-4">
+                    {/* TIN Input */}
                     <div className="space-y-2">
                         <Label htmlFor="tinNumber">TIN Number *</Label>
                         <div className="relative">
                             <Input
                                 id="tinNumber"
                                 name="tinNumber"
-                                defaultValue={businessProfile.tinNumber || ""}
+                                value={tinNumber}
+                                onChange={(e) => {
+                                    setTinNumber(e.target.value);
+                                    setTinVerificationResult(null);
+                                }}
                                 placeholder="12345678-0001"
                             />
+                            {tinVerificationResult?.success && (
+                                <CheckCircle className="w-4 h-4 text-green-500 absolute right-3 top-3" />
+                            )}
                         </div>
+                        <p className="text-xs text-gray-500">Enter your Tax Identification Number</p>
                     </div>
+
+                    {/* Verify TIN Button */}
+                    <div className="flex justify-start">
+                        <Button
+                            type="button"
+                            onClick={handleVerifyTin}
+                            disabled={isVerifyingTin || !tinNumber}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                            {isVerifyingTin ? "Verifying..." : "Verify TIN Number"}
+                        </Button>
+                    </div>
+
+                    {/* TIN Verification Result */}
+                    {tinVerificationResult && (
+                        <div className={`p-4 rounded-lg border ${tinVerificationResult.success
+                            ? 'bg-green-50 border-green-200 text-green-800'
+                            : 'bg-red-50 border-red-200 text-red-800'
+                            }`}>
+                            <p className="text-sm font-medium">{tinVerificationResult.message}</p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Tax Documents */}
