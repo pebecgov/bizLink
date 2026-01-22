@@ -1,14 +1,15 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser, SignInButton } from "@clerk/nextjs";
-import { Building2, MapPin, Users, TrendingUp, Phone, Mail, Globe, Calendar, Shield, Lock, ArrowLeft, ExternalLink, Verified, Briefcase } from "lucide-react";
+import { Building2, MapPin, Users, TrendingUp, Phone, Mail, Globe, Calendar, Shield, Lock, ArrowLeft, ExternalLink, Verified, Briefcase, Loader2, Check } from "lucide-react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
 import { Id } from "@/convex/_generated/dataModel";
-import { BUSINESS_STAGES } from "@/components/dashboard/business/lib/sectorData";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export default function PublicBusinessProfilePage() {
     const params = useParams();
@@ -19,6 +20,38 @@ export default function PublicBusinessProfilePage() {
         id: businessId as Id<"businesses">
     });
     const currentUser = useQuery(api.users.getCurrentUser);
+
+    // Connections & Mutations
+    const initiateConnect = useMutation(api.connections.initiateConnection);
+    const myConnections = useQuery(api.connections.getMyConnections);
+    const [isConnecting, setIsConnecting] = useState(false);
+    const recordView = useMutation(api.businessProfile.recordProfileView);
+
+    useEffect(() => {
+        if (businessId) {
+            recordView({ businessId: businessId as Id<"businesses"> }).catch(console.error);
+        }
+    }, [businessId, recordView]);
+
+    // Check if any connection exists for this business
+    const existingConnection = myConnections?.find(c => c.businessId === businessId);
+    const hasExpressedInterest = !!existingConnection;
+    const connectionStatus = existingConnection?.status; // 'lead' | 'connected' | etc.
+
+    const handleExpressInterest = async () => {
+        if (!isSignedIn || isConnecting) return;
+
+        setIsConnecting(true);
+        try {
+            await initiateConnect({ businessId: businessId as Id<"businesses"> });
+            toast.success("Interest expressed! The business has been notified.");
+        } catch (error) {
+            console.error("Connection error:", error);
+            toast.error("Failed to express interest. Please try again.");
+        } finally {
+            setIsConnecting(false);
+        }
+    };
 
     if (business === undefined) {
         return (
@@ -247,12 +280,31 @@ export default function PublicBusinessProfilePage() {
                                     <p className="text-3xl font-bold mb-2">{business.fundingAmount}</p>
                                 )}
                                 {isSignedIn ? (
-                                    <button className="w-full mt-4 py-3 bg-white text-green-600 font-semibold rounded-lg hover:bg-green-50 transition-colors">
-                                        Express Interest
+                                    <button
+                                        onClick={handleExpressInterest}
+                                        disabled={isConnecting || hasExpressedInterest}
+                                        className={`w-full mt-4 py-3 font-semibold rounded-lg transition-all flex items-center justify-center gap-2 ${hasExpressedInterest
+                                            ? "bg-green-100/20 text-white cursor-default border border-white/20"
+                                            : "bg-white text-green-600 hover:bg-green-50 shadow-md"
+                                            }`}
+                                    >
+                                        {isConnecting ? (
+                                            <>
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                Processing...
+                                            </>
+                                        ) : hasExpressedInterest ? (
+                                            <>
+                                                <Check className="w-4 h-4" />
+                                                {connectionStatus === "connected" ? "Already Connected" : "Interest Sent"}
+                                            </>
+                                        ) : (
+                                            "Express Interest"
+                                        )}
                                     </button>
                                 ) : (
                                     <SignInButton mode="modal">
-                                        <button className="w-full mt-4 py-3 bg-white text-green-600 font-semibold rounded-lg hover:bg-green-50 transition-colors">
+                                        <button className="w-full mt-4 py-3 bg-white text-green-600 font-semibold rounded-lg hover:bg-green-50 transition-colors shadow-md">
                                             Sign In to Connect
                                         </button>
                                     </SignInButton>

@@ -14,6 +14,20 @@ export const getBusinessProfile = query({
 });
 
 /**
+ * Get profile view count for a business
+ */
+export const getProfileViewsCount = query({
+    args: { businessId: v.id("businesses") },
+    handler: async (ctx, args) => {
+        const views = await ctx.db
+            .query("profile_views")
+            .withIndex("by_businessId", (q) => q.eq("businessId", args.businessId))
+            .collect();
+        return views.length;
+    },
+});
+
+/**
  * Get business by ID (for public profile access)
  */
 export const getBusinessById = query({
@@ -53,15 +67,17 @@ export const getMyBusinessProfile = query({
  */
 export const getAllBusinesses = query({
     handler: async (ctx) => {
-        // In a real app, you would add pagination and filtering here
         const businesses = await ctx.db
             .query("businesses")
-            // .withIndex("by_businessName") // Assuming we might want to sort by name, but default order is fine for now
-            .take(50);
+            .take(100);
 
-        // Filter out incomplete profiles or return all
-        // For now, let's return those that at least have a business name
-        return businesses.filter((b) => b.businessName);
+        // Filter: Business must have complete "Identity" section to be discoverable
+        return businesses.filter((b) =>
+            b.businessName &&
+            b.logoUrl &&
+            b.companyTagline &&
+            b.companyDescription
+        );
     },
 });
 
@@ -74,15 +90,15 @@ export const getProfileCompleteness = query({
         const business = await ctx.db.get(args.businessId);
         if (!business) return 0;
 
-        // Required fields (60% weight)
+        // Required fields (60% weight) - Needed for listing visibility
         const requiredFields = [
-            'businessName', 'sector', 'subsector', 'companyDescription',
-            'contactPhone', 'state', 'lga', 'registrationNumber'
+            'businessName', 'logoUrl', 'companyTagline', 'companyDescription',
+            'sector', 'subsector', 'contactPhone', 'state', 'lga', 'registrationNumber'
         ];
 
         // Important optional fields (40% weight)
         const optionalFields = [
-            'logoUrl', 'tradingName', 'companyTagline', 'website', 'primaryEmail',
+            'tradingName', 'website', 'primaryEmail',
             'missionStatement', 'visionStatement', 'imageGallery', 'numberOfEmployees',
             'annualRevenue', 'yearEstablished', 'businessStage'
         ];
@@ -676,6 +692,28 @@ export const updateFullProfile = mutation({
         });
 
         return args.businessId;
+    },
+});
+
+/**
+ * Record a profile view
+ */
+export const recordProfileView = mutation({
+    args: { businessId: v.id("businesses") },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+
+        // Don't count owner's own views
+        const business = await ctx.db.get(args.businessId);
+        if (business && identity && business.ownerId === identity.subject) {
+            return;
+        }
+
+        await ctx.db.insert("profile_views", {
+            businessId: args.businessId,
+            viewerId: identity?.subject,
+            timestamp: Date.now(),
+        });
     },
 });
 /**
