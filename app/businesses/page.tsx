@@ -8,21 +8,10 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
 import { BUSINESS_STAGES } from "@/components/dashboard/business/lib/sectorData";
-import { NIGERIAN_STATES } from "@/components/onboarding/constants/locations";
-import { SECTORS } from "@/components/onboarding/constants/sectors";
-
-// Helper to get stage label from value
-const getStageLabel = (stageValue: string) => {
-    const stage = BUSINESS_STAGES.find(s => s.value === stageValue);
-    return stage ? stage.label : stageValue;
-};
 
 export default function PublicBusinessesPage() {
     const businesses = useQuery(api.businessProfile.getAllBusinesses);
-    const { user } = useUser();
-
-    // Check if user is an investor
-    const isInvestor = user?.publicMetadata?.role === "investor";
+    const currentUser = useQuery(api.users.getCurrentUser);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedSector, setSelectedSector] = useState("");
@@ -276,6 +265,14 @@ export default function PublicBusinessesPage() {
                                                 </div>
                                             )}
                                         </div>
+                                        {currentUser?.role === "investor" && business.businessStage && (
+                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${business.businessStage === "Startup" ? "bg-purple-100 text-purple-700" :
+                                                business.businessStage === "Growth" ? "bg-blue-100 text-blue-700" :
+                                                    "bg-green-100 text-green-700"
+                                                }`}>
+                                                {BUSINESS_STAGES.find(s => s.value === business.businessStage)?.label || business.businessStage}
+                                            </span>
+                                        )}
                                     </div>
 
                                     <p className="text-sm text-gray-600 mb-4 line-clamp-3 min-h-[60px]">
@@ -304,7 +301,7 @@ export default function PublicBusinessesPage() {
                                                 <span>{business.numberOfEmployees}</span>
                                             </div>
                                         )}
-                                        {isInvestor && business.fundingAmount && (
+                                        {business.seekingFunding && business.fundingAmount && (
                                             <div className="font-semibold text-green-600">
                                                 {business.fundingAmount}
                                             </div>

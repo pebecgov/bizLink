@@ -26,7 +26,7 @@ export function TopMetrics() {
     const activeDeals = myConnections.filter(c => ["connected", "contract"].includes(c.status)).length;
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className={seekingFunding ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
             {/* Card 1: Profile Views */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-4">

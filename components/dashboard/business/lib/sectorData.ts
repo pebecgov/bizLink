@@ -24,24 +24,24 @@ export const BUSINESS_MODELS = [
 ]
 
 export const TARGET_MARKETS = [
-    { value: "mass_market", label: "Mass Market" },
-    { value: "niche", label: "Niche Market" },
-    { value: "enterprise", label: "large Enterprise" },
-    { value: "sme", label: "SMEs (Small & Medium Enterprises)" },
-    { value: "public_sector", label: "Public Sector/Government" },
-    { value: "youth", label: "Youth/Gen Z" },
-    { value: "rural", label: "Rural Communities" },
-    { value: "urban", label: "Urban Professionals" },
-    { value: "low_income", label: "Low Income/Base of Pyramid" }
+  { value: "mass_market", label: "Mass Market" },
+  { value: "niche", label: "Niche Market" },
+  { value: "enterprise", label: "large Enterprise" },
+  { value: "sme", label: "SMEs (Small & Medium Enterprises)" },
+  { value: "public_sector", label: "Public Sector/Government" },
+  { value: "youth", label: "Youth/Gen Z" },
+  { value: "rural", label: "Rural Communities" },
+  { value: "urban", label: "Urban Professionals" },
+  { value: "low_income", label: "Low Income/Base of Pyramid" }
 ];
 
 export const AFRICAN_COUNTRIES = [
-    "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde", "Cameroon",
-    "Central African Republic", "Chad", "Comoros", "Democratic Republic of the Congo", "Republic of the Congo",
-    "Cote d'Ivoire", "Djibouti", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia",
-    "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", "Liberia", "Libya",
-    "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", "Mozambique", "Namibia",
-    "Niger", "Nigeria", "Rwanda", "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone",
-    "Somalia", "South Africa", "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia", "Uganda",
-    "Zambia", "Zimbabwe"
+  "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde", "Cameroon",
+  "Central African Republic", "Chad", "Comoros", "Democratic Republic of the Congo", "Republic of the Congo",
+  "Cote d'Ivoire", "Djibouti", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia",
+  "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", "Liberia", "Libya",
+  "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", "Mozambique", "Namibia",
+  "Niger", "Nigeria", "Rwanda", "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone",
+  "Somalia", "South Africa", "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia", "Uganda",
+  "Zambia", "Zimbabwe"
 ];

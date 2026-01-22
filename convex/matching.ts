@@ -285,9 +285,98 @@ export const getMatchedInvestors = query({
             // IMPORTANT: Require sector match (sector score > 0) as mandatory filter
             .filter((m) => m.factors.sector > 0)
             .sort((a, b) => b.score - a.score)
-            .slice(0, 10);
-
         return scoredMatches;
+    },
+});
+
+// AI-powered recommendation for Business User
+export const getRecommendedInvestors = query({
+    args: {
+        searchQuery: v.optional(v.string()),
+        type: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            return [];
+        }
+
+        // Get user's business
+        const business = await ctx.db
+            .query("businesses")
+            .withIndex("by_ownerId", (q) => q.eq("ownerId", identity.subject))
+            .first();
+
+        if (!business) {
+            return [];
+        }
+
+        // Get all investors
+        const allInvestors = await ctx.db.query("investor_profiles").collect();
+
+        // Calculate scores
+        let recommended = allInvestors
+            .map((investor) => {
+                const factors = {
+                    sector: calculateSectorScore(
+                        investor.sectors || [],
+                        business.sector || "",
+                        business.secondarySectors
+                    ),
+                    location: calculateLocationScore(
+                        investor.regions || [],
+                        business.state || ""
+                    ),
+                    capital: calculateCapitalScore(
+                        investor.capitalRange || "10k-50k",
+                        business.fundingAmount
+                    ),
+                    risk: calculateRiskScore(
+                        investor.riskAppetite || "medium",
+                        business.businessStage
+                    ),
+                    stage: calculateStageScore(
+                        business.businessStage,
+                        business.verificationStatus
+                    ),
+                };
+
+                const score = factors.sector + factors.location + factors.capital + factors.risk + factors.stage;
+                const capitalRangeData = CAPITAL_RANGES[investor.capitalRange || "10k-50k"] || { min: 0, max: 0 };
+
+                // Transform to frontend model
+                return {
+                    id: investor._id,
+                    name: investor.registeredName || "Private Investor",
+                    type: "Angel Investor", // Defaulting as schema lacks type
+                    location: investor.jurisdiction || (investor.regions && investor.regions.length > 0 ? investor.regions[0] : "Global"),
+                    description: `Interested in ${investor.sectors.join(", ")} sectors. Risk appetite: ${investor.riskAppetite}.`, // Generated description
+                    focus: investor.sectors,
+                    minCheque: capitalRangeData.min,
+                    maxCheque: capitalRangeData.max === Infinity ? 1000000 : capitalRangeData.max, // Cap infinity for display
+                    matchScore: Math.min(score, 100), // Cap at 100
+                    factors: factors,
+                };
+            })
+            // Filter by relevance (score > 0)
+            .filter((inv) => inv.matchScore > 0)
+            .sort((a, b) => b.matchScore - a.matchScore);
+
+        // Client-side filtering (search & type)
+        if (args.searchQuery) {
+            const query = args.searchQuery.toLowerCase();
+            recommended = recommended.filter(inv =>
+                inv.name.toLowerCase().includes(query) ||
+                inv.location.toLowerCase().includes(query) ||
+                inv.focus.some(f => f.toLowerCase().includes(query))
+            );
+        }
+
+        if (args.type) {
+            recommended = recommended.filter(inv => inv.type === args.type);
+        }
+
+        return recommended.slice(0, 20);
     },
 });
 

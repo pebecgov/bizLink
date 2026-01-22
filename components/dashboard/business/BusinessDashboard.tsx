@@ -53,7 +53,7 @@ export function BusinessDashboard() {
 
                     {/* Row 1: Top Metrics */}
                     <section>
-                        <TopMetrics />
+                        <TopMetrics seekingFunding={myBusiness?.seekingFunding} />
                     </section>
                     {/* Verification Progress Banner (Seeking Funding Users) */}
                     {shouldShowBanner && (
@@ -74,36 +74,46 @@ export function BusinessDashboard() {
                     </section> */}
 
                     {/* Row 3: Financials */}
-                    <section>
-                        <FinancialCards />
-                    </section>
+                    {myBusiness?.seekingFunding === true && (
+                        <section>
+                            <FinancialCards />
+                        </section>
+                    )}
 
-                    {/* Row 4: Messages (Width control if needed, currently full) */}
-                    <section>
-                        <MessagesWidget />
-                    </section>
+                    {/* Layout for users seeking funding (Full Dashboard) */}
+                    {myBusiness?.seekingFunding === true ? (
+                        <>
+                            {/* Row 4: Messages */}
+                            <section>
+                                <MessagesWidget />
+                            </section>
 
-                    {/* Row 5: AI Matches */}
-                    <section>
-                        <AIMatches />
-                    </section>
+                            {/* Row 5: AI Matches */}
+                            <section>
+                                <AIMatches />
+                            </section>
 
-                    {/* Info Grid: Pipeline, Events, Chart, Intel */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {/* Column 1 */}
-                        <div className="space-y-8">
-                            <DealPipeline />
-                        </div>
-
-                        {/* Column 2 */}
-                        <div className="space-y-8">
+                            {/* Info Grid: Pipeline & Events */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div className="space-y-8">
+                                    <DealPipeline />
+                                </div>
+                                <div className="space-y-8">
+                                    <EventsWidget />
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        /* Layout for users NOT seeking funding (Simplified Dashboard) */
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <MessagesWidget />
                             <EventsWidget />
                         </div>
-                    </div>
+                    )}
 
                     {/* Row 10: Quick Actions */}
                     <section>
-                        <QuickActions />
+                        <QuickActions seekingFunding={myBusiness?.seekingFunding} />
                     </section>
                 </>
             )}
