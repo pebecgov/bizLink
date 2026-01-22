@@ -13,6 +13,7 @@ import type * as adminVerification from "../adminVerification.js";
 import type * as audit from "../audit.js";
 import type * as bootstrap from "../bootstrap.js";
 import type * as businessProfile from "../businessProfile.js";
+import type * as concierge from "../concierge.js";
 import type * as connections from "../connections.js";
 import type * as debug from "../debug.js";
 import type * as investorActions from "../investorActions.js";
@@ -21,6 +22,7 @@ import type * as messages from "../messages.js";
 import type * as notifications from "../notifications.js";
 import type * as onboarding from "../onboarding.js";
 import type * as seed from "../seed.js";
+import type * as seed_all_mdas from "../seed_all_mdas.js";
 import type * as users from "../users.js";
 import type * as verificationScore from "../verificationScore.js";
 
@@ -36,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   audit: typeof audit;
   bootstrap: typeof bootstrap;
   businessProfile: typeof businessProfile;
+  concierge: typeof concierge;
   connections: typeof connections;
   debug: typeof debug;
   investorActions: typeof investorActions;
@@ -44,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   notifications: typeof notifications;
   onboarding: typeof onboarding;
   seed: typeof seed;
+  seed_all_mdas: typeof seed_all_mdas;
   users: typeof users;
   verificationScore: typeof verificationScore;
 }>;

@@ -3,8 +3,9 @@ import {
     Shield, Link, FileText, Bell, Award, CheckCircle, Briefcase, MessageSquare,
     FileCheck, Calendar, TrendingUp, AlertCircle, HeadphonesIcon, Database,
     Activity, Key, Webhook, Bug, CreditCard, Repeat, Wallet, FileBarChart,
-    Search, Lock, Receipt, Boxes, Zap, BookOpen, LogOut
+    Search, Lock, Receipt, Boxes, Zap, BookOpen, LogOut, Sparkles
 } from "lucide-react";
+
 
 export interface SidebarSubItem {
     label: string;
@@ -449,6 +450,12 @@ export const roleConfigs: RoleConfig[] = [
         role: "INVESTOR USER",
         items: [
             { icon: Home, label: "Dashboard", path: "/dashboard" },
+            {
+                icon: Sparkles,
+                label: "Investor Concierge",
+                path: "/dashboard/investor/concierge"
+            },
+
             {
                 icon: Search,
                 label: "Discover Opportunities",
