@@ -30,7 +30,7 @@ export function FundingPreferencesModal({
             });
             onClose();
         } catch (error) {
-            console.error("Failed to update funding preferences:", error);
+            console.error("Failed to update partnership preferences:", error);
         } finally {
             setIsSubmitting(false);
         }
@@ -46,7 +46,7 @@ export function FundingPreferencesModal({
                     </div>
                     <div className="relative z-10">
                         <h2 className="text-2xl font-bold mb-2">Welcome to BizLink!</h2>
-                        <p className="text-green-50">Let&apos;s understand your funding needs</p>
+                        <p className="text-green-50">Let&apos;s understand your partnership needs</p>
                     </div>
                 </div>
 
@@ -55,7 +55,7 @@ export function FundingPreferencesModal({
                     {/* Question */}
                     <div className="text-center py-4">
                         <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                            Are you looking for funding?
+                            Are you looking for partnership?
                         </h3>
                         <p className="text-gray-600">
                             This helps us tailor your experience and connect you with the right investors
@@ -109,7 +109,7 @@ export function FundingPreferencesModal({
                             className="bg-primary-green hover:bg-green-700 text-white h-auto py-4 rounded-xl"
                         >
                             <div className="text-center">
-                                <p className="font-bold text-lg">Yes, I&apos;m Seeking Funding</p>
+                                <p className="font-bold text-lg">Yes, I&apos;m Seeking Partnership</p>
                                 <p className="text-xs text-green-100 mt-1">
                                     I want to connect with investors
                                 </p>

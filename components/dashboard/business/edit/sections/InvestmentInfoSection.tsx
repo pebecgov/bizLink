@@ -83,11 +83,49 @@ export function InvestmentInfoSection({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                     <Label htmlFor="fundingAmount">Funding Amount</Label>
-                    <Input id="fundingAmount" name="fundingAmount" defaultValue={businessProfile.fundingAmount || ""} placeholder="e.g., $500,000" />
+                    <select
+                        id="fundingAmount"
+                        name="fundingAmount"
+                        defaultValue={businessProfile.fundingAmount || ""}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        <option value="">Select funding amount</option>
+                        <option value="5m-50m">₦5M - ₦50M</option>
+                        <option value="50m-250m">₦50M - ₦250M</option>
+                        <option value="250m-1b">₦250M - ₦1B</option>
+                        <option value="1b+">₦1B+</option>
+                    </select>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="equityOffered">Equity Offered</Label>
-                    <Input id="equityOffered" name="equityOffered" defaultValue={businessProfile.equityOffered || ""} placeholder="e.g., 15%" />
+                    <select
+                        id="equityOffered"
+                        name="equityOffered"
+                        defaultValue={businessProfile.equityOffered || ""}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        <option value="">Select equity percentage</option>
+                        <option value="5%">5%</option>
+                        <option value="10%">10%</option>
+                        <option value="15%">15%</option>
+                        <option value="20%">20%</option>
+                        <option value="25%">25%</option>
+                        <option value="30%">30%</option>
+                        <option value="35%">35%</option>
+                        <option value="40%">40%</option>
+                        <option value="45%">45%</option>
+                        <option value="50%">50%</option>
+                        <option value="55%">55%</option>
+                        <option value="60%">60%</option>
+                        <option value="65%">65%</option>
+                        <option value="70%">70%</option>
+                        <option value="75%">75%</option>
+                        <option value="80%">80%</option>
+                        <option value="85%">85%</option>
+                        <option value="90%">90%</option>
+                        <option value="95%">95%</option>
+                        <option value="100%">100%</option>
+                    </select>
                 </div>
             </div>
 

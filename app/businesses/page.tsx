@@ -2,23 +2,54 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useUser } from "@clerk/nextjs";
 import { Building2, MapPin, Users, TrendingUp, Search, Filter, ChevronRight, Verified, ExternalLink } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
+import { BUSINESS_STAGES } from "@/components/dashboard/business/lib/sectorData";
+import { NIGERIAN_STATES } from "@/components/onboarding/constants/locations";
+import { SECTORS } from "@/components/onboarding/constants/sectors";
+
+// Helper to get stage label from value
+const getStageLabel = (stageValue: string) => {
+    const stage = BUSINESS_STAGES.find(s => s.value === stageValue);
+    return stage ? stage.label : stageValue;
+};
 
 export default function PublicBusinessesPage() {
     const businesses = useQuery(api.businessProfile.getAllBusinesses);
+    const { user } = useUser();
+
+    // Check if user is an investor
+    const isInvestor = user?.publicMetadata?.role === "investor";
 
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedSector, setSelectedSector] = useState("");
+    const [selectedSubsector, setSelectedSubsector] = useState("");
     const [selectedState, setSelectedState] = useState("");
+    const [selectedLga, setSelectedLga] = useState("");
     const [selectedStage, setSelectedStage] = useState("");
 
-    // Get unique values for filters
-    const sectors = [...new Set(businesses?.map(b => b.sector).filter(Boolean) || [])];
-    const states = [...new Set(businesses?.map(b => b.state).filter(Boolean) || [])];
-    const stages = [...new Set(businesses?.map(b => b.businessStage).filter(Boolean) || [])];
+    // Get filter options from constants
+    const sectors = SECTORS.map(s => s.name);
+    const states = NIGERIAN_STATES.map(s => s.name);
+
+    // Get subsectors based on selected sector
+    const subsectors = useMemo(() => {
+        if (!selectedSector) return [];
+        const sector = SECTORS.find(s => s.name === selectedSector);
+        return sector ? sector.subsectors : [];
+    }, [selectedSector]);
+
+    // Get LGAs based on selected state
+    const lgas = useMemo(() => {
+        if (!selectedState) return [];
+        const state = NIGERIAN_STATES.find(s => s.name === selectedState);
+        return state ? state.lgas : [];
+    }, [selectedState]);
+
+    const stages = BUSINESS_STAGES.map(s => s.value);
 
     // Filter businesses
     const filteredBusinesses = businesses?.filter(b => {
@@ -26,7 +57,9 @@ export default function PublicBusinessesPage() {
         if (searchQuery && !b.businessName.toLowerCase().includes(searchQuery.toLowerCase()) &&
             !(b.companyDescription || "").toLowerCase().includes(searchQuery.toLowerCase())) return false;
         if (selectedSector && b.sector !== selectedSector) return false;
+        if (selectedSubsector && b.subsector !== selectedSubsector) return false;
         if (selectedState && b.state !== selectedState) return false;
+        if (selectedLga && b.lga !== selectedLga) return false;
         if (selectedStage && b.businessStage !== selectedStage) return false;
         return true;
     }) || [];
@@ -34,7 +67,9 @@ export default function PublicBusinessesPage() {
     const clearFilters = () => {
         setSearchQuery("");
         setSelectedSector("");
+        setSelectedSubsector("");
         setSelectedState("");
+        setSelectedLga("");
         setSelectedStage("");
     };
 
@@ -85,7 +120,10 @@ export default function PublicBusinessesPage() {
                     <div className="flex flex-wrap items-center gap-3">
                         <select
                             value={selectedSector}
-                            onChange={(e) => setSelectedSector(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedSector(e.target.value);
+                                setSelectedSubsector(""); // Reset subsector when sector changes
+                            }}
                             className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
                         >
                             <option value="">All Sectors</option>
@@ -94,9 +132,25 @@ export default function PublicBusinessesPage() {
                             ))}
                         </select>
 
+                        {selectedSector && subsectors.length > 0 && (
+                            <select
+                                value={selectedSubsector}
+                                onChange={(e) => setSelectedSubsector(e.target.value)}
+                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
+                            >
+                                <option value="">All Subsectors</option>
+                                {subsectors.map(subsector => (
+                                    <option key={subsector} value={subsector}>{subsector}</option>
+                                ))}
+                            </select>
+                        )}
+
                         <select
                             value={selectedState}
-                            onChange={(e) => setSelectedState(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedState(e.target.value);
+                                setSelectedLga(""); // Reset LGA when state changes
+                            }}
                             className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
                         >
                             <option value="">All States</option>
@@ -105,18 +159,33 @@ export default function PublicBusinessesPage() {
                             ))}
                         </select>
 
-                        <select
-                            value={selectedStage}
-                            onChange={(e) => setSelectedStage(e.target.value)}
-                            className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
-                        >
-                            <option value="">All Stages</option>
-                            {stages.map(stage => (
-                                <option key={stage} value={stage}>{stage}</option>
-                            ))}
-                        </select>
+                        {selectedState && lgas.length > 0 && (
+                            <select
+                                value={selectedLga}
+                                onChange={(e) => setSelectedLga(e.target.value)}
+                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
+                            >
+                                <option value="">All LGAs</option>
+                                {lgas.map(lga => (
+                                    <option key={lga} value={lga}>{lga}</option>
+                                ))}
+                            </select>
+                        )}
 
-                        {(searchQuery || selectedSector || selectedState || selectedStage) && (
+                        {isInvestor && (
+                            <select
+                                value={selectedStage}
+                                onChange={(e) => setSelectedStage(e.target.value)}
+                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
+                            >
+                                <option value="">All Stages</option>
+                                {stages.map(stage => (
+                                    <option key={stage} value={stage}>{getStageLabel(stage)}</option>
+                                ))}
+                            </select>
+                        )}
+
+                        {(searchQuery || selectedSector || selectedSubsector || selectedState || selectedLga || selectedStage) && (
                             <button
                                 onClick={clearFilters}
                                 className="text-sm text-red-600 hover:text-red-700 font-medium"
@@ -167,30 +236,46 @@ export default function PublicBusinessesPage() {
                             >
                                 {/* Card Header */}
                                 <div className="p-5">
-                                    <div className="flex items-start justify-between mb-3">
-                                        <div className="flex-1">
+                                    <div className="flex items-start justify-between gap-4 mb-3">
+                                        <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2">
                                                 <h3 className="font-bold text-gray-900 group-hover:text-green-600 transition-colors line-clamp-1">
                                                     {business.businessName}
                                                 </h3>
                                                 {business.verificationStatus === "verified" && (
-                                                    <Verified className="w-4 h-4 text-blue-500" />
+                                                    <Verified className="w-4 h-4 text-blue-500 flex-shrink-0" />
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
-                                                <MapPin className="w-3.5 h-3.5" />
-                                                {business.state || "Nigeria"}
-                                                {business.lga && `, ${business.lga}`}
+                                                <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                                                <span className="truncate">
+                                                    {business.state || "Nigeria"}
+                                                    {business.lga && `, ${business.lga}`}
+                                                </span>
                                             </div>
+                                            {isInvestor && business.businessStage && (
+                                                <span className="inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                                                    {getStageLabel(business.businessStage)}
+                                                </span>
+                                            )}
                                         </div>
-                                        {business.businessStage && (
-                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${business.businessStage === "Startup" ? "bg-purple-100 text-purple-700" :
-                                                business.businessStage === "Growth" ? "bg-blue-100 text-blue-700" :
-                                                    "bg-green-100 text-green-700"
-                                                }`}>
-                                                {business.businessStage}
-                                            </span>
-                                        )}
+
+                                        {/* Business Logo */}
+                                        <div className="flex-shrink-0">
+                                            {business.logoUrl ? (
+                                                <div className="w-16 h-16 rounded-lg overflow-hidden border-2 border-gray-100 bg-white">
+                                                    <img
+                                                        src={business.logoUrl}
+                                                        alt={`${business.businessName} logo`}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-100 flex items-center justify-center">
+                                                    <Building2 className="w-8 h-8 text-green-600" />
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <p className="text-sm text-gray-600 mb-4 line-clamp-3 min-h-[60px]">
@@ -203,7 +288,7 @@ export default function PublicBusinessesPage() {
                                                 {business.sector}
                                             </span>
                                         )}
-                                        {business.seekingFunding && (
+                                        {isInvestor && business.seekingFunding && (
                                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                                                 <TrendingUp className="w-3 h-3" />
                                                 Seeking Investment
@@ -219,7 +304,7 @@ export default function PublicBusinessesPage() {
                                                 <span>{business.numberOfEmployees}</span>
                                             </div>
                                         )}
-                                        {business.fundingAmount && (
+                                        {isInvestor && business.fundingAmount && (
                                             <div className="font-semibold text-green-600">
                                                 {business.fundingAmount}
                                             </div>
