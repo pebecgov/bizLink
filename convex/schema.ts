@@ -386,5 +386,61 @@ export default defineSchema({
   })
     .index("by_businessId", ["businessId"])
     .index("by_timestamp", ["timestamp"]),
+
+  // Phase 3: Foreign Investor Onboarding & MDA Integration
+  mdas: defineTable({
+    name: v.string(),
+    acronym: v.string(),
+    description: v.optional(v.string()),
+    sectors: v.array(v.string()), // Sectors this MDA is relevant for
+    services: v.array(v.object({
+      name: v.string(),
+      timeline: v.string(),
+      requirements: v.string(),
+      cost: v.string(),
+      description: v.optional(v.string()),
+    })),
+    contactPerson: v.optional(v.object({
+      name: v.string(),
+      role: v.string(),
+      email: v.optional(v.string()),
+      phone: v.optional(v.string()),
+    })),
+  })
+    .index("by_acronym", ["acronym"]),
+
+  sector_requirements: defineTable({
+    sector: v.string(),
+    investorType: v.union(v.literal("local"), v.literal("foreign")),
+    requirements: v.array(v.object({
+      serviceName: v.string(),
+      issuingMda: v.string(), // Acronym of the MDA
+      description: v.string(),
+      isRequired: v.boolean(),
+      order: v.number(), // For sequencing the roadmap
+    })),
+  })
+    .index("by_sector_type", ["sector", "investorType"]),
+
+  concierge_cases: defineTable({
+    userId: v.string(), // Investor's Clerk ID
+    status: v.union(v.literal("not_started"), v.literal("in_progress"), v.literal("completed")),
+    currentStep: v.number(),
+    checklists: v.array(v.object({
+      requirementKey: v.string(), // serviceName from sector_requirements
+      isCompleted: v.boolean(),
+      documentUrl: v.optional(v.string()),
+      feedback: v.optional(v.string()),
+      completedAt: v.optional(v.number()),
+    })),
+    assignedFacilitatorId: v.optional(v.string()), // ID of the system admin/facilitator
+    sector: v.string(),
+    lastUpdated: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_user_sector", ["userId", "sector"])
+    .index("by_status", ["status"]),
+
 });
+
 
