@@ -72,12 +72,25 @@ export const getAllBusinesses = query({
             .take(100);
 
         // Filter: Business must have complete "Identity" section to be discoverable
-        return businesses.filter((b) =>
+        const discoverableBusinesses = businesses.filter((b) =>
             b.businessName &&
             b.logoUrl &&
             b.companyTagline &&
             b.companyDescription
         );
+
+        // Resolve logo URLs
+        const businessesWithUrls = await Promise.all(
+            discoverableBusinesses.map(async (business) => {
+                if (business.logoUrl) {
+                    const url = await ctx.storage.getUrl(business.logoUrl);
+                    return { ...business, logoUrl: url || business.logoUrl };
+                }
+                return business;
+            })
+        );
+
+        return businessesWithUrls;
     },
 });
 
@@ -716,6 +729,37 @@ export const recordProfileView = mutation({
         });
     },
 });
+
+/**
+ * Verify registration numbers (CAC and TIN)
+ * Called when business users verify their own CAC/TIN details
+ */
+export const verifyRegistrationNumbers = mutation({
+    args: {
+        businessId: v.id("businesses"),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Not authenticated");
+
+        const business = await ctx.db.get(args.businessId);
+        if (!business || business.ownerId !== identity.subject) {
+            throw new Error("Not authorized");
+        }
+
+        // Mark both CAC and TIN as verified
+        await ctx.db.patch(args.businessId, {
+            cacVerified: true,
+            cacVerifiedAt: Date.now(),
+            tinVerified: true,
+            tinVerifiedAt: Date.now(),
+            lastUpdated: Date.now(),
+        });
+
+        return { success: true, businessId: args.businessId };
+    },
+});
+
 /**
  * Generate upload URL for file uploads
  */

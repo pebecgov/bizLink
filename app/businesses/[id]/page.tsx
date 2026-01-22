@@ -10,11 +10,21 @@ import Navbar from "@/components/landing/Navbar";
 import { Id } from "@/convex/_generated/dataModel";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { BUSINESS_STAGES } from "@/components/dashboard/business/lib/sectorData";
+
+// Helper to get stage label from value
+const getStageLabel = (stageValue: string) => {
+    const stage = BUSINESS_STAGES.find(s => s.value === stageValue);
+    return stage ? stage.label : stageValue;
+};
 
 export default function PublicBusinessProfilePage() {
     const params = useParams();
     const businessId = params.id as string;
-    const { isSignedIn } = useUser();
+    const { isSignedIn, user } = useUser();
+
+    // Check if user is an investor
+    const isInvestor = user?.publicMetadata?.role === "investor";
 
     const business = useQuery(api.businessProfile.getBusinessById, {
         id: businessId as Id<"businesses">
@@ -270,7 +280,7 @@ export default function PublicBusinessProfilePage() {
                     {/* Sidebar */}
                     <div className="space-y-6">
                         {/* Investment Status */}
-                        {business.seekingFunding && (
+                        {isInvestor && business.seekingFunding && (
                             <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-6 text-white">
                                 <div className="flex items-center gap-2 mb-3">
                                     <TrendingUp className="w-5 h-5" />

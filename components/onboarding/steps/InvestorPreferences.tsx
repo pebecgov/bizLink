@@ -138,10 +138,10 @@ export function InvestorPreferences({ onNext, onBack, initialData = {} }: Invest
                             className="flex h-12 w-full appearance-none rounded-xl border border-gray-200 bg-white/60 px-4 py-2 text-sm ring-offset-background placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             <option value="" disabled>Select capital range</option>
-                            <option value="1k-10k">$1k - $10k</option>
-                            <option value="10k-50k">$10k - $50k</option>
-                            <option value="50k-200k">$50k - $200k</option>
-                            <option value="200k+">$200k+</option>
+                            <option value="5m-50m">₦5M - ₦50M</option>
+                            <option value="50m-250m">₦50M - ₦250M</option>
+                            <option value="250m-1b">₦250M - ₦1B</option>
+                            <option value="1b+">₦1B+</option>
                         </select>
                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
                             <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>

@@ -134,7 +134,7 @@ export default function BusinessOverviewPage() {
                         <div className="mt-4 text-right">
                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-yellow-50 text-yellow-700 rounded-full border border-yellow-200 text-sm font-medium mb-2">
                                 <Award className="w-4 h-4" />
-                                Credibility Score: {displayData.credibilityScore}/1000
+                                Credibility Score: {displayData.credibilityScore}/100
                             </div>
                             <div className="flex items-center justify-end gap-2 text-text-secondary text-sm">
                                 <MapPin className="w-4 h-4" />

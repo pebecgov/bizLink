@@ -5,7 +5,7 @@ import { TrendingUp, ArrowUp, Info, HelpCircle, Download } from "lucide-react";
 
 // Static mock data (to be replaced with backend data later)
 const scoreData = {
-    credibilityScore: 782,
+    credibilityScore: 78,
     scoreBreakdown: {
         verification: { label: "Verification", score: 92, max: 100 },
         financial: { label: "Financial Health", score: 78, max: 100 },
@@ -14,10 +14,10 @@ const scoreData = {
         reputation: { label: "Market Reputation", score: 75, max: 100 },
     },
     scoreHistory: [
-        { month: "Oct", score: 730 },
-        { month: "Nov", score: 748 },
-        { month: "Dec", score: 767 },
-        { month: "Jan", score: 782 },
+        { month: "Oct", score: 73 },
+        { month: "Nov", score: 75 },
+        { month: "Dec", score: 77 },
+        { month: "Jan", score: 78 },
     ],
 };
 
@@ -61,7 +61,7 @@ export default function CredibilityScorePage() {
                         </div>
                         <h2 className="text-4xl md:text-5xl font-bold">
                             {credibilityScore}
-                            <span className="text-2xl text-white/60 ml-2 font-normal">/ 1000</span>
+                            <span className="text-2xl text-white/60 ml-2 font-normal">/ 100</span>
                         </h2>
                         <div>
                             <p className="text-2xl font-semibold mb-1">Very Good</p>
@@ -79,7 +79,7 @@ export default function CredibilityScorePage() {
                         {/* Simple Bar Chart Visualization */}
                         <div className="h-32 flex items-end justify-between gap-2">
                             {scoreHistory.map((item, idx) => {
-                                const height = (item.score / 1000) * 100;
+                                const height = (item.score / 100) * 100;
                                 const isLatest = idx === scoreHistory.length - 1;
                                 return (
                                     <div key={idx} className="flex flex-col items-center gap-2 w-full">
@@ -141,7 +141,7 @@ export default function CredibilityScorePage() {
                                 <div className="w-12 text-sm font-bold text-right text-text-secondary">You</div>
                                 <div className="flex-1 h-8 bg-gray-100 rounded-r-full relative overflow-hidden">
                                     <div className="absolute top-0 left-0 h-full bg-primary-green flex items-center px-3 text-white font-bold text-xs" style={{ width: '78%' }}>
-                                        782
+                                        78
                                     </div>
                                 </div>
                             </div>
@@ -149,7 +149,7 @@ export default function CredibilityScorePage() {
                                 <div className="w-12 text-sm font-bold text-right text-text-secondary">Avg</div>
                                 <div className="flex-1 h-8 bg-gray-100 rounded-r-full relative overflow-hidden">
                                     <div className="absolute top-0 left-0 h-full bg-gray-400 flex items-center px-3 text-white font-bold text-xs" style={{ width: '64%' }}>
-                                        645
+                                        65
                                     </div>
                                 </div>
                             </div>
@@ -157,7 +157,7 @@ export default function CredibilityScorePage() {
                                 <div className="w-12 text-sm font-bold text-right text-text-secondary">Top 10%</div>
                                 <div className="flex-1 h-8 bg-gray-100 rounded-r-full relative overflow-hidden">
                                     <div className="absolute top-0 left-0 h-full bg-blue-500 flex items-center px-3 text-white font-bold text-xs" style={{ width: '89%' }}>
-                                        892
+                                        89
                                     </div>
                                 </div>
                             </div>

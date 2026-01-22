@@ -123,7 +123,21 @@ export const getBusinessDocuments = query({
             })
         );
 
-        return docsWithUrls.sort((a, b) => b.uploadedAt - a.uploadedAt);
+        // Get business profile data to include CAC/TIN information
+        const business = await ctx.db.get(args.businessId);
+
+        return {
+            documents: docsWithUrls.sort((a, b) => b.uploadedAt - a.uploadedAt),
+            businessProfile: business ? {
+                businessName: business.businessName,
+                registrationNumber: business.registrationNumber,
+                cacVerified: business.cacVerified,
+                cacVerifiedAt: business.cacVerifiedAt,
+                tinNumber: business.tinNumber,
+                tinVerified: business.tinVerified,
+                tinVerifiedAt: business.tinVerifiedAt,
+            } : null,
+        };
     },
 });
 
