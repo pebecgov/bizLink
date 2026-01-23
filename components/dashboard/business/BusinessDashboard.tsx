@@ -13,11 +13,99 @@ export function BusinessDashboard() {
     const myBusiness = useQuery(api.businessProfile.getMyBusinessProfile);
 
     return (
+<<<<<<< HEAD
         <div className="max-w-5xl mx-auto space-y-8 pb-12">
             {myBusiness?.plan !== "premium" && (
                 <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <UpgradeCard />
                 </section>
+=======
+        <div className="space-y-8 pb-12">
+            {/* Funding Preferences Modal (First-time users) */}
+            {shouldShowModal && myBusiness ? (
+                <FundingPreferencesModal
+                    businessId={myBusiness._id}
+                    onClose={() => setShowFundingModal(true)}
+                    currentPercentage={verificationScore?.totalPercentage || 0}
+                />
+            ) : null}
+
+            {/* Only show dashboard content if funding preference has been set */}
+            {!shouldShowModal && (
+                <>
+                    {/* Header / Welcome */}
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">Business Dashboard</h1>
+                        <p className="text-gray-500">Monitor your performance and manage investor relations</p>
+                    </div>
+
+
+                    {/* Row 1: Top Metrics */}
+                    <section>
+                        <TopMetrics seekingFunding={myBusiness?.seekingFunding} />
+                    </section>
+                    {/* Verification Progress Banner (Seeking Funding Users) */}
+                    {shouldShowBanner && (
+                        <section>
+                            <VerificationProgressBanner
+                                percentage={verificationScore.totalPercentage}
+                                tier={verificationScore.tier}
+                                canReceiveInvestment={verificationScore.canReceiveInvestment}
+                                missingCoreDocuments={verificationScore.missingCoreDocuments}
+                                missingSectorDocuments={verificationScore.missingSectorDocuments}
+                            />
+                        </section>
+                    )}
+
+                    {/* Row 2: Verification */}
+                    {/* <section>
+                        <VerificationWidget />
+                    </section> */}
+
+                    {/* Row 3: Financials */}
+                    {myBusiness?.seekingFunding === true && (
+                        <section>
+                            <FinancialCards />
+                        </section>
+                    )}
+
+                    {/* Layout for users seeking funding (Full Dashboard) */}
+                    {myBusiness?.seekingFunding === true ? (
+                        <>
+                            {/* Row 4: Messages */}
+                            <section>
+                                <MessagesWidget />
+                            </section>
+
+                            {/* Row 5: AI Matches */}
+                            <section>
+                                <AIMatches />
+                            </section>
+
+                            {/* Info Grid: Pipeline & Events */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div className="space-y-8">
+                                    <DealPipeline />
+                                </div>
+                                <div className="space-y-8">
+                                    <EventsWidget />
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        /* Layout for users NOT seeking funding (Simplified Dashboard) */
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <MessagesWidget />
+                            <EventsWidget />
+                        </div>
+                    )}
+
+                    {/* Row 10: Quick Actions */}
+                    <section>
+                        <QuickActions seekingFunding={myBusiness?.seekingFunding} />
+                    </section>
+                </>
+>>>>>>> origin
             )}
             {/* Header / Welcome */}
             <div className="bg-gradient-to-br from-green-600 to-emerald-800 text-white p-10 rounded-3xl shadow-xl relative overflow-hidden">

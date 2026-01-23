@@ -132,7 +132,7 @@ export default function PendingVerificationsPage() {
 
 // Document Review Modal Component
 function DocumentReviewModal({ businessId, onClose }: { businessId: Id<"businesses">; onClose: () => void }) {
-    const documents = useQuery(api.adminVerification.getBusinessDocuments, { businessId });
+    const data = useQuery(api.adminVerification.getBusinessDocuments, { businessId });
     const approveDoc = useMutation(api.adminVerification.approveDocument);
     const rejectDoc = useMutation(api.adminVerification.rejectDocument);
 
@@ -175,7 +175,7 @@ function DocumentReviewModal({ businessId, onClose }: { businessId: Id<"business
         }
     };
 
-    if (!documents) {
+    if (!data) {
         return (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                 <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
@@ -190,6 +190,10 @@ function DocumentReviewModal({ businessId, onClose }: { businessId: Id<"business
             </div>
         );
     }
+
+    // Handle both old structure (array) and new structure (object with documents and businessProfile)
+    const documents = Array.isArray(data) ? data : (data?.documents || []);
+    const businessProfile = Array.isArray(data) ? null : (data?.businessProfile || null);
 
     const pendingDocs = documents.filter(d => d.status === "pending");
     const verifiedDocs = documents.filter(d => d.status === "verified");
@@ -216,6 +220,66 @@ function DocumentReviewModal({ businessId, onClose }: { businessId: Id<"business
 
                 {/* Documents List */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                    {/* Registration Information */}
+                    {businessProfile && (
+                        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <TrendingUp className="w-5 h-5 text-primary-green" />
+                                Registration Information
+                            </h3>
+                            <div className="space-y-3">
+                                <div>
+                                    <p className="text-sm text-gray-600 mb-1">Business Name</p>
+                                    <p className="font-semibold text-gray-900">{businessProfile.businessName}</p>
+                                </div>
+
+                                <div>
+                                    <p className="text-sm text-gray-600 mb-1">CAC Number</p>
+                                    <div className="flex items-center gap-2">
+                                        <p className="font-semibold text-gray-900">{businessProfile.registrationNumber || "Not provided"}</p>
+                                        {businessProfile.cacVerified ? (
+                                            <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full flex items-center gap-1">
+                                                <CheckCircle className="w-3 h-3" />
+                                                Verified by user
+                                            </span>
+                                        ) : (
+                                            <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                                                ❌ Not verified
+                                            </span>
+                                        )}
+                                    </div>
+                                    {businessProfile.cacVerified && businessProfile.cacVerifiedAt && (
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            Verified on {new Date(businessProfile.cacVerifiedAt).toLocaleDateString()}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <p className="text-sm text-gray-600 mb-1">TIN Number</p>
+                                    <div className="flex items-center gap-2">
+                                        <p className="font-semibold text-gray-900">{businessProfile.tinNumber || "Not provided"}</p>
+                                        {businessProfile.tinVerified ? (
+                                            <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full flex items-center gap-1">
+                                                <CheckCircle className="w-3 h-3" />
+                                                Verified by user
+                                            </span>
+                                        ) : (
+                                            <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                                                ❌ Not verified
+                                            </span>
+                                        )}
+                                    </div>
+                                    {businessProfile.tinVerified && businessProfile.tinVerifiedAt && (
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            Verified on {new Date(businessProfile.tinVerifiedAt).toLocaleDateString()}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Pending Documents */}
                     {pendingDocs.length > 0 && (
                         <div>

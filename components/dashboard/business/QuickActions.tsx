@@ -1,6 +1,6 @@
 import { Upload, Edit, Search, MessageSquare, Calendar, FileText, PieChart, HelpCircle } from "lucide-react";
 
-export function QuickActions() {
+export function QuickActions({ seekingFunding }: { seekingFunding?: boolean }) {
     return (
         <div className="bg-gray-900 p-6 rounded-2xl shadow-lg text-white">
             <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
@@ -11,10 +11,17 @@ export function QuickActions() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <ActionBtn icon={Upload} label="Upload Doc" />
                 <ActionBtn icon={Edit} label="Update Profile" />
+<<<<<<< HEAD
                 <ActionBtn icon={Search} label="Search Partners" />
                 <ActionBtn icon={MessageSquare} label="Message" />
                 <ActionBtn icon={Calendar} label="Schedule Meeting" />
                 <ActionBtn icon={FileText} label="View Contracts" />
+=======
+                {seekingFunding && <ActionBtn icon={Search} label="Search Investors" />}
+                <ActionBtn icon={MessageSquare} label="Message" />
+                {seekingFunding && <ActionBtn icon={Calendar} label="Schedule Pitch" />}
+                {seekingFunding && <ActionBtn icon={FileText} label="View Contracts" />}
+>>>>>>> origin
                 <ActionBtn icon={PieChart} label="Reports" />
                 <ActionBtn icon={HelpCircle} label="Get Support" />
             </div>

@@ -74,6 +74,12 @@ export default defineSchema({
     cacRegistrationDate: v.optional(v.string()),
     yearEstablished: v.optional(v.number()),
 
+    // User self-verification tracking
+    cacVerified: v.optional(v.boolean()),        // User verified CAC number
+    cacVerifiedAt: v.optional(v.number()),       // Timestamp when verified
+    tinVerified: v.optional(v.boolean()),        // User verified TIN number  
+    tinVerifiedAt: v.optional(v.number()),       // Timestamp when verified
+
     // 4. Location & Contact
     primaryEmail: v.optional(v.string()),
     website: v.optional(v.string()),

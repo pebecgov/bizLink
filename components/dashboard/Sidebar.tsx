@@ -132,6 +132,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <nav className="flex-1 overflow-y-auto py-4 px-3">
                     <div className="space-y-1">
                         {currentRoleConfig?.items.map((item) => {
+                            // Filter out items that require seeking funding if the user isn't seeking funding
+                            if (item.seekingFundingOnly && !myBusiness?.seekingFunding) {
+                                return null;
+                            }
+
                             const Icon = item.icon;
                             const isExpanded = expandedItems.has(item.label);
                             const hasSubItems = item.subItems && item.subItems.length > 0;
