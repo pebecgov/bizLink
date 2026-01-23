@@ -10,7 +10,9 @@ export const sendMessage = mutation({
         content: v.string(),
         type: v.optional(v.union(
             v.literal("text"),
-            v.literal("system")
+            v.literal("system"),
+            v.literal("milestone_proposal"),
+            v.literal("document_request")
         )),
         metadata: v.optional(v.any()),
     },

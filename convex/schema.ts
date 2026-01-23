@@ -154,17 +154,12 @@ export default defineSchema({
     sustainabilityInitiatives: v.optional(v.array(v.string())),
     esgCompliance: v.optional(v.string()),
 
-    // Additional fields from mock data
-    credibilityScore: v.optional(v.number()), // 0-1000
-    verificationLevel: v.optional(v.string()), // "Basic", "Intermediate", "Advanced"
-
-    // Verification
-    verificationPercentage: v.optional(v.number()), // 0-100, cached calculation
-
     // Metadata
     profileCompleteness: v.optional(v.number()), // 0-100%
     lastUpdated: v.optional(v.number()),
     plan: v.optional(v.union(v.literal("free"), v.literal("premium"))),
+    seekingFunding: v.optional(v.boolean()),
+    fundingAmount: v.optional(v.string()),
   })
     .index("by_ownerId", ["ownerId"])
     .index("by_status", ["verificationStatus"])
@@ -173,6 +168,8 @@ export default defineSchema({
   conversations: defineTable({
     participantIds: v.array(v.string()), // Combined [userId1, userId2]
     lastMessageAt: v.number(),
+    connectionId: v.optional(v.string()),
+    connectionStatus: v.optional(v.string()),
   }),
 
   messages: defineTable({
@@ -181,44 +178,23 @@ export default defineSchema({
     content: v.string(),
     type: v.union(
       v.literal("text"),
-      v.literal("system")
+      v.literal("system"),
+      v.literal("milestone_proposal"),
+      v.literal("document_request")
     ),
     metadata: v.optional(v.any()),
     createdAt: v.number(),
   })
     .index("by_conversationId", ["conversationId"]),
 
-  // Phase 1: Verification Documents
-  verification_documents: defineTable({
-    businessId: v.id("businesses"),
-    documentType: v.string(),
-    category: v.union(v.literal("core"), v.literal("sector_specific"), v.literal("additional")),
-    fileUrl: v.string(), // Storage ID
-    fileName: v.string(),
-    fileSize: v.number(),
-    status: v.union(
-      v.literal("pending"),
-      v.literal("verified"),
-      v.literal("rejected"),
-      v.literal("expired")
-    ),
-    uploadedAt: v.number(),
-    verifiedAt: v.optional(v.number()),
-    verifiedBy: v.optional(v.string()),
-    rejectionReason: v.optional(v.string()),
-    rejectedAt: v.optional(v.number()),
-    rejectedBy: v.optional(v.string()),
-    metadata: v.optional(v.any()),
-  })
-    .index("by_businessId", ["businessId"])
-    .index("by_status", ["status"])
-    .index("by_business_type", ["businessId", "documentType"]),
+
 
   notifications: defineTable({
     userId: v.string(), // Recipient ClerkId
     type: v.union(
       v.literal("message"),
-      v.literal("system")
+      v.literal("system"),
+      v.literal("milestone")
     ),
     title: v.string(),
     message: v.string(),
@@ -271,6 +247,70 @@ export default defineSchema({
     })),
   })
     .index("by_sector_type", ["sector", "entityType"]),
+
+  // Legacy/Internal tables required for schema compliance
+  investor_profiles: defineTable({
+    userId: v.string(),
+    registeredName: v.optional(v.string()),
+    sectors: v.array(v.string()),
+    regions: v.array(v.string()),
+    capitalRange: v.string(),
+    riskAppetite: v.string(),
+    jurisdiction: v.optional(v.string()),
+    bio: v.optional(v.string()),
+    incorporationDocs: v.optional(v.array(v.string())),
+    taxIdType: v.optional(v.string()),
+    taxIdentificationNumber: v.optional(v.string()),
+    taxIssuingCountry: v.optional(v.string()),
+  }).index("by_userId", ["userId"]),
+
+  matches: defineTable({
+    investorId: v.string(),
+    businessId: v.id("businesses"),
+    score: v.number(),
+    factors: v.object({
+      sector: v.number(),
+      location: v.number(),
+      capital: v.number(),
+      risk: v.number(),
+      stage: v.number(),
+    }),
+    status: v.union(
+      v.literal("new"),
+      v.literal("viewed"),
+      v.literal("contacted"),
+      v.literal("dismissed")
+    ),
+    createdAt: v.number(),
+    updatedAt: v.optional(v.number()),
+  }).index("by_investor_business", ["investorId", "businessId"]),
+
+  connections: defineTable({
+    participantIds: v.optional(v.array(v.string())),
+    status: v.string(),
+    businessId: v.optional(v.id("businesses")),
+    investorId: v.optional(v.string()),
+    initiatedBy: v.optional(v.string()),
+    lastActivity: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.optional(v.number()),
+  }),
+
+  milestones: defineTable({
+    connectionId: v.id("connections"),
+    title: v.string(),
+    description: v.string(),
+    deadline: v.number(),
+    status: v.string(),
+    requiresDocument: v.boolean(),
+    documentType: v.optional(v.string()),
+    documentStatus: v.optional(v.string()),
+    templateUrl: v.optional(v.string()),
+    documentUrl: v.optional(v.string()),
+    proposedBy: v.string(),
+    agreedBy: v.optional(v.string()),
+    createdAt: v.optional(v.number()),
+  }).index("by_connectionId", ["connectionId"]),
 
 });
 

@@ -8,7 +8,6 @@ import { Wizard } from "@/components/onboarding/Wizard";
 import { RoleSelection } from "@/components/onboarding/steps/RoleSelection";
 import { BusinessProfile } from "@/components/onboarding/steps/BusinessProfile";
 import { BusinessLocation } from "@/components/onboarding/steps/BusinessLocation";
-import { DocumentUpload } from "@/components/onboarding/steps/DocumentUpload";
 import AnimatedBackground from "@/components/onboarding/AnimatedBackground";
 
 export default function OnboardingPage() {
@@ -82,9 +81,7 @@ export default function OnboardingPage() {
             case 1:
                 return <BusinessProfile onNext={handleNext} onBack={handleBack} initialData={formData} />;
             case 2:
-                return <BusinessLocation onNext={handleNext} onBack={handleBack} initialData={formData} />;
-            case 3:
-                return <DocumentUpload onNext={handleBusinessSubmit} onBack={handleBack} />;
+                return <BusinessLocation onNext={handleBusinessSubmit} onBack={handleBack} initialData={formData} />;
             default:
                 return null;
         }
@@ -100,7 +97,7 @@ export default function OnboardingPage() {
                     <div className="h-1.5 w-full bg-green-100/50 rounded-full overflow-hidden backdrop-blur-sm">
                         <div
                             className="h-full bg-gradient-to-r from-green-400 to-emerald-500 transition-all duration-700 ease-out rounded-full shadow-[0_0_10px_rgba(74,222,128,0.3)]"
-                            style={{ width: `${((step + 1) / 4) * 100}%` }}
+                            style={{ width: `${((step + 1) / 3) * 100}%` }}
                         />
                     </div>
                 </div>

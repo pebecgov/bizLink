@@ -9,6 +9,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 import { useClerk } from "@clerk/nextjs";
+import AppImage from "@/components/ui/AppImage";
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const { signOut } = useClerk();
@@ -110,7 +111,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <div className="border-b border-gray-200">
                     <div className="flex items-center justify-center">
                         <Link href="/" className="flex items-center gap-2">
-                            <Image
+                            <AppImage
                                 src="/logo.png"
                                 alt="BizLink Logo"
                                 width={120}

@@ -3,7 +3,7 @@
 import { SignInButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Globe2, Handshake, BadgeCheck, Check } from "lucide-react";
-import Image from "next/image";
+import AppImage from "@/components/ui/AppImage";
 
 interface HeroProps {
     isAuthenticated?: boolean;
@@ -23,7 +23,7 @@ export default function Hero({ isAuthenticated }: HeroProps) {
             {/* Court of Arms Background Watermark */}
             <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
                 <div className="relative w-full h-full max-w-[800px] opacity-[0.08]">
-                    <Image
+                    <AppImage
                         src="/courtofarm.png"
                         alt="Court of Arms"
                         fill
@@ -38,7 +38,7 @@ export default function Hero({ isAuthenticated }: HeroProps) {
                     <div className="inline-flex items-center gap-3 bg-[#E8F0E8] px-3 py-1 rounded-lg mb-6">
                         <div className="w-8 h-6 bg-[#009F62] rounded-full flex items-center justify-center p-1">
                             <div className="relative w-full h-full">
-                                <Image
+                                <AppImage
                                     src="/courtofarm.png"
                                     alt="Court of Arms"
                                     fill
@@ -166,7 +166,7 @@ export default function Hero({ isAuthenticated }: HeroProps) {
 
                             {/* Stylized Africa Map */}
                             <div className="relative w-[80%] h-[80%] z-10 animate-float">
-                                <Image
+                                <AppImage
                                     src="/african_map.png"
                                     alt="Africa Map"
                                     fill

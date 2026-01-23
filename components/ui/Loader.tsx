@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import AppImage from "@/components/ui/AppImage";
 
 export default function Loader() {
     return (
@@ -8,7 +8,7 @@ export default function Loader() {
             <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-300">
                 {/* Pulsing Logo */}
                 <div className="animate-pulse">
-                    <Image
+                    <AppImage
                         src="/logo.png"
                         alt="BizLink Logo"
                         width={120}

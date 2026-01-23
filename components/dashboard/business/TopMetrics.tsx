@@ -9,12 +9,7 @@ export function TopMetrics() {
         api.businessProfile.getProfileViewsCount,
         myBusiness?._id ? { businessId: myBusiness._id } : "skip"
     );
-    const verificationScore = useQuery(
-        api.verificationScore.calculateVerificationScore,
-        myBusiness?._id ? { businessId: myBusiness._id } : "skip"
-    );
-
-    if (profileViewsCount === undefined || verificationScore === undefined) {
+    if (profileViewsCount === undefined) {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3].map((i) => (

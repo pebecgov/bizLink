@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, ChevronRight, Upload, AlertCircle, Save, Building2, Plus, X, Sparkles, Loader2 } from "lucide-react";
+import { Check, ChevronRight, Upload, AlertCircle, Save, Building2, Plus, X, Sparkles, Loader2, Lock } from "lucide-react";
 
 import { SECTORS } from "@/components/onboarding/constants/sectors";
 import { BUSINESS_STAGES, BUSINESS_MODELS, TARGET_MARKETS, AFRICAN_COUNTRIES } from "@/components/dashboard/business/lib/sectorData";
@@ -505,7 +505,7 @@ export default function EditProfilePage() {
                             <div>
                                 <h3 className="text-sm font-bold text-amber-900">Profile Not Listed</h3>
                                 <p className="text-xs text-amber-700 mt-1">
-                                    Your business will not appear in the public directory search or reach new partners until the <strong>Business Identity</strong> section is complete (Name, Logo, Tagline, and Description).
+                                    Your business will not appear in the public directory search or reach new partners until the <strong>Business Identity</strong> section is complete (Name, Logo, Tagline).
                                 </p>
                             </div>
                             <Button

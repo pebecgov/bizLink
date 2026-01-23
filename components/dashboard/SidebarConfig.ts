@@ -331,12 +331,8 @@ export const roleConfigs: RoleConfig[] = [
                 subItems: [
                     { label: "Company Overview", path: "/dashboard/business/overview" },
                     { label: "Edit Profile", path: "/dashboard/business/edit" },
-                    { label: "Compliance & Documentation", path: "/dashboard/business/documents" },
-                    { label: "Verification Status", path: "/dashboard/business/verification" },
-                    { label: "Credibility Score", path: "/dashboard/business/score" }
                 ]
             },
-            ...commonItems.filter(item => item.label !== "Messages"),
             ...commonItems
         ]
     },
