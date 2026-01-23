@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { SignInButton, useUser, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
-import Image from "next/image";
+import AppImage from "@/components/ui/AppImage";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -36,7 +36,7 @@ export default function Navbar() {
                     {/* Logo Section */}
                     <div className="flex items-center gap-4">
                         <Link href="/" className="flex items-center gap-2">
-                            <Image
+                            <AppImage
                                 src="/logo.png"
                                 alt="BizLink Logo"
                                 width={120}

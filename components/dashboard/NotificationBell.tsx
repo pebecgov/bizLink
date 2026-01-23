@@ -11,7 +11,7 @@ export function NotificationBell() {
 
     return (
         <button
-            onClick={() => router.push("/dashboard/matching/requests")}
+            onClick={() => router.push("/dashboard/notifications")}
             className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
             title="Notifications"
         >

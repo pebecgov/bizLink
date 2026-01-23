@@ -43,8 +43,8 @@ export default function Stats() {
         {
             value: "500",
             suffix: "M+",
-            label: "Investment Deals",
-            description: "Total value facilitated through the platform"
+            label: "Partnership Connections",
+            description: "Total networking connections facilitated through the platform"
         },
         {
             value: "75",
@@ -61,8 +61,8 @@ export default function Stats() {
         {
             value: "200",
             suffix: "+",
-            label: "Active Investors",
-            description: "Global and local investors seeking opportunities"
+            label: "Regulatory Agencies",
+            description: "Global and regional MDAs ensuring business compliance"
         }
     ];
 
@@ -74,7 +74,7 @@ export default function Stats() {
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Platform Impact</h2>
                     <p className="text-lg md:text-xl opacity-90 text-light-gold max-w-2xl mx-auto">
-                        Transforming Africa&apos;s investment landscape through digital innovation
+                        Transforming Africa&apos;s business ecosystem through digital innovation
                     </p>
                 </div>
 
@@ -103,7 +103,7 @@ export default function Stats() {
                     <div className="relative z-10">
                         <h3 className="text-2xl md:text-3xl font-bold mb-4">Be Part of Africa&apos;s Growth Story</h3>
                         <p className="text-white/90 text-lg mb-0 max-w-2xl mx-auto">
-                            Join thousands of businesses and investors leveraging PEBEC BIZ LINK to unlock opportunities across the continent
+                            Join thousands of businesses and organizations leveraging PEBEC BIZ LINK to unlock opportunities across the continent
                         </p>
                     </div>
                 </div>

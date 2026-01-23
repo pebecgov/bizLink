@@ -11,7 +11,7 @@ const instrumentSans = Instrument_Sans({
 
 export const metadata: Metadata = {
   title: "BIZLINK - Pan-African Investment & Business Facilitation Platform",
-  description: "The leading digital platform connecting African businesses with global investors. Verified business registry, AI-powered matchmaking, and seamless regulatory compliance across Africa.",
+  description: "The digital gateway for verified African businesses. Connect with partners, ensure regulatory compliance, and browse a trusted directory of businesses across the continent.",
 };
 
 export default function RootLayout({

@@ -28,6 +28,20 @@ export const getProfileViewsCount = query({
 });
 
 /**
+ * Get recent profile views for a business
+ */
+export const getRecentProfileViews = query({
+    args: { businessId: v.id("businesses") },
+    handler: async (ctx, args) => {
+        return await ctx.db
+            .query("profile_views")
+            .withIndex("by_businessId", (q) => q.eq("businessId", args.businessId))
+            .order("desc")
+            .take(5);
+    },
+});
+
+/**
  * Get business by ID (for public profile access)
  */
 export const getBusinessById = query({
@@ -460,40 +474,6 @@ export const removeBranch = mutation({
     },
 });
 
-/**
- * Update investment information
- */
-export const updateInvestmentInfo = mutation({
-    args: {
-        businessId: v.id("businesses"),
-        seekingFunding: v.optional(v.boolean()),
-        fundingAmount: v.optional(v.string()),
-        equityOffered: v.optional(v.string()),
-        useOfFunds: v.optional(v.string()),
-    },
-    handler: async (ctx, args) => {
-        const { businessId, ...data } = args;
-
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Not authenticated");
-
-        const business = await ctx.db.get(businessId);
-        if (!business || business.ownerId !== identity.subject) {
-            throw new Error("Not authorized");
-        }
-
-        const updateData = Object.fromEntries(
-            Object.entries(data).filter(([_, v]) => v !== undefined)
-        );
-
-        await ctx.db.patch(businessId, {
-            ...updateData,
-            lastUpdated: Date.now(),
-        });
-
-        return businessId;
-    },
-});
 
 /**
  * Update products and services

@@ -8,30 +8,23 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
-import Image from "next/image";
-
-interface SidebarProps {
-    isOpen: boolean;
-    onClose: () => void;
-}
+import { useClerk } from "@clerk/nextjs";
+import AppImage from "@/components/ui/AppImage";
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+    const { signOut } = useClerk();
     const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
     const pathname = usePathname();
     const currentUser = useQuery(api.users.getCurrentUser);
     const unreadNotifications = useQuery(api.notifications.getMyNotifications)?.filter(n => !n.isRead) || [];
-    const myConnections = useQuery(api.connections.getMyConnections);
+
+    const handleLogout = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        await signOut();
+        window.location.href = "/";
+    };
 
     const getBadgeCount = (label: string) => {
-        if (label === "Investor Matching") {
-            // Use actual connection data to be consistent with TopMetrics
-            if (!myConnections) return 0;
-            return myConnections.filter(c =>
-                c.status === "lead" &&
-                c.business?.ownerId === currentUser?.clerkId &&
-                c.initiatedBy !== currentUser?.clerkId
-            ).length;
-        }
         if (label === "Messages & Networking" || label === "Messages") {
             return unreadNotifications.filter(n => ["message", "milestone"].includes(n.type)).length;
         }
@@ -42,15 +35,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     };
 
     const getSubItemBadgeCount = (label: string) => {
-        if (label === "Match Requests") {
-            // Consistent with parent
-            if (!myConnections) return 0;
-            return myConnections.filter(c =>
-                c.status === "lead" &&
-                c.business?.ownerId === currentUser?.clerkId &&
-                c.initiatedBy !== currentUser?.clerkId
-            ).length;
-        }
         if (label === "Inbox" || label === "Active Conversations") {
             return unreadNotifications.filter(n => ["message", "milestone"].includes(n.type)).length;
         }
@@ -63,7 +47,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             case "admin": return "SUPER ADMIN";
             case "system_admin": return "SYSTEM ADMIN";
             case "business_owner": return "BUSINESS USER";
-            case "investor": return "INVESTOR USER";
             case "regulator": return "REGULATORY OFFICER";
             case "verification_officer": return "VERIFICATION OFFICER";
             case "data_analyst": return "DATA ANALYST";
@@ -128,7 +111,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <div className="border-b border-gray-200">
                     <div className="flex items-center justify-center">
                         <Link href="/" className="flex items-center gap-2">
-                            <Image
+                            <AppImage
                                 src="/logo.png"
                                 alt="BizLink Logo"
                                 width={120}
@@ -208,8 +191,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                                         </>
                                     ) : (
                                         <Link
-                                            href={item.path || "#"}
-                                            onClick={() => onClose()}
+                                            href={item.label === "Logout" ? "#" : (item.path || "#")}
+                                            onClick={(e) => {
+                                                if (item.label === "Logout") {
+                                                    handleLogout(e);
+                                                } else {
+                                                    onClose();
+                                                }
+                                            }}
                                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${isActive(item.path)
                                                 ? "bg-gradient-primary text-white shadow-green"
                                                 : "text-text-secondary hover:bg-very-light-green hover:text-primary-green"

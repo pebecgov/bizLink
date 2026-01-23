@@ -11,10 +11,10 @@ export function QuickActions({ seekingFunding }: { seekingFunding?: boolean }) {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <ActionBtn icon={Upload} label="Upload Doc" />
                 <ActionBtn icon={Edit} label="Update Profile" />
-                {seekingFunding && <ActionBtn icon={Search} label="Search Investors" />}
+                <ActionBtn icon={Search} label="Search Partners" />
                 <ActionBtn icon={MessageSquare} label="Message" />
-                {seekingFunding && <ActionBtn icon={Calendar} label="Schedule Pitch" />}
-                {seekingFunding && <ActionBtn icon={FileText} label="View Contracts" />}
+                <ActionBtn icon={Calendar} label="Schedule Meeting" />
+                <ActionBtn icon={FileText} label="View Contracts" />
                 <ActionBtn icon={PieChart} label="Reports" />
                 <ActionBtn icon={HelpCircle} label="Get Support" />
             </div>

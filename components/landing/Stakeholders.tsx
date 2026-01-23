@@ -6,15 +6,8 @@ export default function Stakeholders() {
             category: "Business Users",
             icon: "🏢",
             color: "stakeholder-business",
-            description: "African MSMEs and Corporates seeking growth and investment opportunities",
-            features: ["Business Registration", "Profile Verification", "Investment Matching", "Compliance Tools"]
-        },
-        {
-            category: "Investors",
-            icon: "💼",
-            color: "stakeholder-investor",
-            description: "Local and foreign investors looking for verified African business opportunities",
-            features: ["Deal Discovery", "Due Diligence Data", "Portfolio Tracking", "Market Intelligence"]
+            description: "African MSMEs and Corporates seeking growth and structural visibility",
+            features: ["Business Registration", "Profile Verification", "Directory Presence", "Compliance Tools"]
         },
         {
             category: "Regulators & MDAs",
@@ -27,8 +20,8 @@ export default function Stakeholders() {
             category: "Trade Agencies",
             icon: "🌐",
             color: "stakeholder-trade",
-            description: "Trade and investment promotion agencies across the continent",
-            features: ["Market Access", "Trade Facilitation", "Investment Promotion", "Cross-Border Support"]
+            description: "Trade and promotion agencies across the continent",
+            features: ["Market Access", "Trade Facilitation", "Business Promotion", "Cross-Border Support"]
         }
     ];
 
@@ -43,7 +36,6 @@ export default function Stakeholders() {
 
     const colorMap: Record<string, string> = {
         "stakeholder-business": "border-l-4 border-gold",
-        "stakeholder-investor": "border-l-4 border-primary-green",
         "stakeholder-regulator": "border-l-4 border-accent-blue",
         "stakeholder-trade": "border-l-4 border-dark-green"
     };
@@ -56,7 +48,7 @@ export default function Stakeholders() {
                         Who We Serve
                     </h2>
                     <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto">
-                        A unified platform connecting all stakeholders in Africa&apos;s investment ecosystem
+                        A unified platform connecting all stakeholders in Africa&apos;s business ecosystem
                     </p>
                 </div>
 

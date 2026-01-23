@@ -22,11 +22,11 @@ import { toast } from "sonner";
 export default function RegulatoryRequirementsPage() {
     const mdas = useQuery(api.concierge.listMdas, {});
     const [selectedSector, setSelectedSector] = useState("Manufacturing");
-    const [selectedInvestorType, setSelectedInvestorType] = useState<"local" | "foreign">("foreign");
+    const [selectedEntityType, setSelectedEntityType] = useState<"local" | "foreign">("foreign");
 
     const requirements = useQuery(api.concierge.getSectorRequirements, {
         sector: selectedSector,
-        investorType: selectedInvestorType
+        entityType: selectedEntityType
     });
 
     const updateSectorReqs = useMutation(api.concierge.updateSectorRequirements);
@@ -52,7 +52,7 @@ export default function RegulatoryRequirementsPage() {
         </div>;
     }
 
-    const filteredMdas = mdas.filter(m =>
+    const filteredMdas = mdas.filter((m: any) =>
         m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         m.acronym.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -61,7 +61,7 @@ export default function RegulatoryRequirementsPage() {
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-10">
                 <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Regulatory Content Hub</h1>
-                <p className="text-slate-500 mt-1 text-lg">Manage agencies, service SLAs, and investor roadmaps.</p>
+                <p className="text-slate-500 mt-1 text-lg">Manage agencies, service SLAs, and business onboarding roadmaps.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -87,7 +87,7 @@ export default function RegulatoryRequirementsPage() {
                         </div>
 
                         <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                            {filteredMdas.map((mda) => (
+                            {filteredMdas.map((mda: any) => (
                                 <div
                                     key={mda._id}
                                     className={`p-4 rounded-xl border transition-all cursor-pointer ${editingMda?._id === mda._id ? "border-blue-500 bg-blue-50/30" : "border-slate-100 bg-slate-50/30 hover:bg-slate-50"
@@ -105,7 +105,7 @@ export default function RegulatoryRequirementsPage() {
                                     {editingMda?._id === mda._id && (
                                         <div className="mt-4 pt-4 border-t border-blue-100 space-y-4" onClick={(e) => e.stopPropagation()}>
                                             <p className="text-xs text-slate-500 uppercase font-bold px-1">Active Services</p>
-                                            {mda.services.map((service, sIdx) => (
+                                            {mda.services.map((service: any, sIdx: number) => (
                                                 <div key={sIdx} className="bg-white p-3 rounded-lg border border-blue-100">
                                                     <div className="flex items-center justify-between mb-2">
                                                         <span className="text-sm font-bold text-slate-800">{service.name}</span>
@@ -150,23 +150,23 @@ export default function RegulatoryRequirementsPage() {
 
                             <div className="flex items-center bg-slate-50 p-1 rounded-xl border border-slate-200">
                                 <button
-                                    onClick={() => setSelectedInvestorType("foreign")}
-                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedInvestorType === "foreign" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
+                                    onClick={() => setSelectedEntityType("foreign")}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedEntityType === "foreign" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
                                 >
-                                    Foreign
+                                    International Entity
                                 </button>
                                 <button
-                                    onClick={() => setSelectedInvestorType("local")}
-                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedInvestorType === "local" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
+                                    onClick={() => setSelectedEntityType("local")}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedEntityType === "local" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
                                 >
-                                    Local
+                                    Local Entity
                                 </button>
                             </div>
                         </div>
 
                         {/* Drag-and-drop Roadmap Editor (Simplified) */}
                         <div className="space-y-4">
-                            {requirements.map((req, index) => (
+                            {requirements.map((req: any, index: number) => (
                                 <div key={index} className="flex items-center gap-4 p-5 bg-slate-50/30 border border-slate-100 rounded-2xl group hover:border-blue-200 hover:bg-slate-50 transition-all">
                                     <div className="flex flex-col gap-1">
                                         <button className="p-1 hover:bg-white rounded border border-transparent hover:border-slate-200 text-slate-400">
@@ -222,7 +222,7 @@ export default function RegulatoryRequirementsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-3xl text-white">
                             <h3 className="font-bold text-lg mb-1">Global Overlays</h3>
-                            <p className="text-indigo-100 text-xs mb-4">Steps mandatory for every single investor profile.</p>
+                            <p className="text-indigo-100 text-xs mb-4">Steps mandatory for every single business profile.</p>
                             <div className="space-y-2">
                                 <div className="bg-white/10 p-2 rounded-lg text-xs flex justify-between">
                                     <span>CAC Name Availability</span>
@@ -239,7 +239,7 @@ export default function RegulatoryRequirementsPage() {
                             <div className="flex items-center gap-4">
                                 <div className="text-4xl font-extrabold text-blue-400">94<span className="text-xl">%</span></div>
                                 <div className="text-xs text-slate-400 leading-tight">
-                                    Investors are seeing an average
+                                    Businesses are seeing an average
                                     onboarding time of <span className="text-white font-bold underline">12 Days</span> across {mdas.length} Agencies.
                                 </div>
                             </div>
@@ -250,3 +250,4 @@ export default function RegulatoryRequirementsPage() {
         </div>
     );
 }
+

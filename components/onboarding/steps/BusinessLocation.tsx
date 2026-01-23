@@ -82,7 +82,7 @@ export function BusinessLocation({ onNext, onBack, initialData = {} }: BusinessL
                         Back
                     </button>
                     <button type="submit" className="w-full h-12 inline-flex items-center justify-center rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400 disabled:opacity-50 bg-green-600 text-white hover:bg-green-700 shadow-md hover:shadow-lg hover:-translate-y-0.5">
-                        Next Step
+                        Finish Profile
                     </button>
                 </div>
             </form>

@@ -1,10 +1,10 @@
 # BIZLNK Platform
 
-PEBEC Business-Investment Direct Platform - Module 0 & 1: Foundation, Security & Identity
+PEBEC Business Directory - Module 0 & 1: Foundation, Security & Identity
 
 ## Overview
 
-This module establishes the infrastructure-grade foundation for the PEBEC Business–Investment Direct (P-BID) platform. It focuses on the "Single Source of Truth" architecture, global security rules, and the mapping of external identity to internal roles.
+This module establishes the infrastructure-grade foundation for the PEBEC Business Directory (P-BD) platform. It focuses on the "Single Source of Truth" architecture, global security rules, and the mapping of external identity to internal roles.
 
 ## Technical Stack
 
@@ -28,7 +28,7 @@ This module establishes the infrastructure-grade foundation for the PEBEC Busine
 ### 3. Identity Mapping
 - **User Schema:** Convex schema for users mapped to Clerk IDs
 - **Registration Flow:** `ensureUserExists` mutation that triggers upon first Clerk login to sync the user into Convex
-- **Role Assignment:** Controlled flow for assigning roles (Admin, Investor, Business, Regulator)
+- **Role Assignment:** Controlled flow for assigning roles (Admin, Business, Regulator)
 
 ## Setup Instructions
 
@@ -142,5 +142,5 @@ User management:
 ## Next Steps
 
 - Module 2: Business Verification
-- Module 3: Investment Matching
-- Module 4: Escrow & Payments
+- Module 3: Partnership & Networking
+- Module 4: Regulatory Facilitation

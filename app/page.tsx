@@ -12,6 +12,7 @@ import Hero from "@/components/landing/Hero";
 import Features from "@/components/landing/Features";
 import Stakeholders from "@/components/landing/Stakeholders";
 import Stats from "@/components/landing/Stats";
+import FAQ from "@/components/landing/FAQ";
 import CTA from "@/components/landing/CTA";
 import Footer from "@/components/landing/Footer";
 
@@ -48,6 +49,7 @@ function AuthenticatedContent() {
       <Features />
       <Stakeholders />
       <Stats />
+      <FAQ />
       <CTA />
       <Footer />
     </>
@@ -62,6 +64,7 @@ function UnauthenticatedContent() {
       <Features />
       <Stakeholders />
       <Stats />
+      <FAQ />
       <CTA />
       <Footer />
     </>

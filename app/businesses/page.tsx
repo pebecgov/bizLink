@@ -8,6 +8,8 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
 import { BUSINESS_STAGES } from "@/components/dashboard/business/lib/sectorData";
+import { SECTORS } from "@/components/onboarding/constants/sectors";
+import { NIGERIAN_STATES } from "@/components/onboarding/constants/locations";
 
 export default function PublicBusinessesPage() {
     const businesses = useQuery(api.businessProfile.getAllBusinesses);
@@ -74,7 +76,7 @@ export default function PublicBusinessesPage() {
                             Discover Nigerian Businesses
                         </h1>
                         <p className="text-lg text-green-100 max-w-2xl mx-auto mb-8">
-                            Explore verified businesses across Nigeria ready for investment opportunities and partnerships
+                            Explore verified businesses across Nigeria ready for strategic partnerships and collaborations
                         </p>
 
                         {/* Search Bar */}
@@ -106,81 +108,93 @@ export default function PublicBusinessesPage() {
                     </div>
 
                     {/* Filters */}
-                    <div className="flex flex-wrap items-center gap-3">
-                        <select
-                            value={selectedSector}
-                            onChange={(e) => {
-                                setSelectedSector(e.target.value);
-                                setSelectedSubsector(""); // Reset subsector when sector changes
-                            }}
-                            className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
-                        >
-                            <option value="">All Sectors</option>
-                            {sectors.map(sector => (
-                                <option key={sector} value={sector}>{sector}</option>
-                            ))}
-                        </select>
+                    {/* Filters */}
+                    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 w-full">
+                        <div className="flex items-center gap-2 mb-4 text-gray-900 font-semibold border-b border-gray-50 pb-2">
+                            <Filter className="w-4 h-4" />
+                            <span>Refine Businesses</span>
+                        </div>
 
-                        {selectedSector && subsectors.length > 0 && (
-                            <select
-                                value={selectedSubsector}
-                                onChange={(e) => setSelectedSubsector(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
-                            >
-                                <option value="">All Subsectors</option>
-                                {subsectors.map(subsector => (
-                                    <option key={subsector} value={subsector}>{subsector}</option>
-                                ))}
-                            </select>
-                        )}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                            {/* Sector Filter */}
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sector</label>
+                                <select
+                                    value={selectedSector}
+                                    onChange={(e) => {
+                                        setSelectedSector(e.target.value);
+                                        setSelectedSubsector("");
+                                    }}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
+                                >
+                                    <option value="">All Sectors</option>
+                                    {sectors.map(sector => (
+                                        <option key={sector} value={sector}>{sector}</option>
+                                    ))}
+                                </select>
+                            </div>
 
-                        <select
-                            value={selectedState}
-                            onChange={(e) => {
-                                setSelectedState(e.target.value);
-                                setSelectedLga(""); // Reset LGA when state changes
-                            }}
-                            className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
-                        >
-                            <option value="">All States</option>
-                            {states.map(state => (
-                                <option key={state} value={state}>{state}</option>
-                            ))}
-                        </select>
+                            {/* Subsector Filter */}
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Subsector</label>
+                                <select
+                                    disabled={!selectedSector}
+                                    value={selectedSubsector}
+                                    onChange={(e) => setSelectedSubsector(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white disabled:bg-gray-50 disabled:text-gray-400"
+                                >
+                                    <option value="">{selectedSector ? "All Subsectors" : "Select Sector First"}</option>
+                                    {subsectors.map(subsector => (
+                                        <option key={subsector} value={subsector}>{subsector}</option>
+                                    ))}
+                                </select>
+                            </div>
 
-                        {selectedState && lgas.length > 0 && (
-                            <select
-                                value={selectedLga}
-                                onChange={(e) => setSelectedLga(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
-                            >
-                                <option value="">All LGAs</option>
-                                {lgas.map(lga => (
-                                    <option key={lga} value={lga}>{lga}</option>
-                                ))}
-                            </select>
-                        )}
+                            {/* State Filter */}
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">State</label>
+                                <select
+                                    value={selectedState}
+                                    onChange={(e) => {
+                                        setSelectedState(e.target.value);
+                                        setSelectedLga("");
+                                    }}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
+                                >
+                                    <option value="">All States</option>
+                                    {states.map(state => (
+                                        <option key={state} value={state}>{state}</option>
+                                    ))}
+                                </select>
+                            </div>
 
-                        {isInvestor && (
-                            <select
-                                value={selectedStage}
-                                onChange={(e) => setSelectedStage(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
-                            >
-                                <option value="">All Stages</option>
-                                {stages.map(stage => (
-                                    <option key={stage} value={stage}>{getStageLabel(stage)}</option>
-                                ))}
-                            </select>
-                        )}
+                            {/* LGA Filter */}
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Local Government</label>
+                                <select
+                                    disabled={!selectedState}
+                                    value={selectedLga}
+                                    onChange={(e) => setSelectedLga(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white disabled:bg-gray-50 disabled:text-gray-400"
+                                >
+                                    <option value="">{selectedState ? "All LGAs" : "Select State First"}</option>
+                                    {lgas.map(lga => (
+                                        <option key={lga} value={lga}>{lga}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                        </div>
 
                         {(searchQuery || selectedSector || selectedSubsector || selectedState || selectedLga || selectedStage) && (
-                            <button
-                                onClick={clearFilters}
-                                className="text-sm text-red-600 hover:text-red-700 font-medium"
-                            >
-                                Clear All
-                            </button>
+                            <div className="mt-4 flex justify-end">
+                                <button
+                                    onClick={clearFilters}
+                                    className="text-sm text-red-600 hover:text-red-700 font-bold flex items-center gap-1.5"
+                                >
+                                    <span>Reset All Filters</span>
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -242,11 +256,6 @@ export default function PublicBusinessesPage() {
                                                     {business.lga && `, ${business.lga}`}
                                                 </span>
                                             </div>
-                                            {isInvestor && business.businessStage && (
-                                                <span className="inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
-                                                    {getStageLabel(business.businessStage)}
-                                                </span>
-                                            )}
                                         </div>
 
                                         {/* Business Logo */}
@@ -265,14 +274,6 @@ export default function PublicBusinessesPage() {
                                                 </div>
                                             )}
                                         </div>
-                                        {currentUser?.role === "investor" && business.businessStage && (
-                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${business.businessStage === "Startup" ? "bg-purple-100 text-purple-700" :
-                                                business.businessStage === "Growth" ? "bg-blue-100 text-blue-700" :
-                                                    "bg-green-100 text-green-700"
-                                                }`}>
-                                                {BUSINESS_STAGES.find(s => s.value === business.businessStage)?.label || business.businessStage}
-                                            </span>
-                                        )}
                                     </div>
 
                                     <p className="text-sm text-gray-600 mb-4 line-clamp-3 min-h-[60px]">
@@ -285,10 +286,10 @@ export default function PublicBusinessesPage() {
                                                 {business.sector}
                                             </span>
                                         )}
-                                        {isInvestor && business.seekingFunding && (
-                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                <TrendingUp className="w-3 h-3" />
-                                                Seeking Investment
+                                        {business.afcftaCompliant && (
+                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <Verified className="w-3 h-3" />
+                                                AfCFTA Ready
                                             </span>
                                         )}
                                     </div>
@@ -301,9 +302,9 @@ export default function PublicBusinessesPage() {
                                                 <span>{business.numberOfEmployees}</span>
                                             </div>
                                         )}
-                                        {business.seekingFunding && business.fundingAmount && (
+                                        {business.businessModel && (
                                             <div className="font-semibold text-green-600">
-                                                {business.fundingAmount}
+                                                {business.businessModel}
                                             </div>
                                         )}
                                     </div>
@@ -332,7 +333,7 @@ export default function PublicBusinessesPage() {
                         Ready to List Your Business?
                     </h2>
                     <p className="text-green-100 mb-8 text-lg">
-                        Join hundreds of Nigerian businesses connecting with investors through PEBEC BizLink
+                        Join hundreds of Nigerian businesses expanding their reach through PEBEC BizLink
                     </p>
                     <Link
                         href="/onboarding"

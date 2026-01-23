@@ -7,7 +7,6 @@ import { AlertTriangle, CheckCircle, Upload, TrendingUp, Lock, Star, ArrowRight 
 interface VerificationProgressBannerProps {
     percentage: number;
     tier: string;
-    canReceiveInvestment: boolean;
     missingCoreDocuments: string[];
     missingSectorDocuments: string[];
 }
@@ -15,14 +14,13 @@ interface VerificationProgressBannerProps {
 export function VerificationProgressBanner({
     percentage,
     tier,
-    canReceiveInvestment,
     missingCoreDocuments,
     missingSectorDocuments,
 }: VerificationProgressBannerProps) {
     const getTierColor = () => {
         if (percentage >= 95) return "from-purple-500 to-purple-700";
         if (percentage >= 85) return "from-blue-500 to-blue-700";
-        if (percentage >= 75) return "from-green-500 to-green-700";
+        if (percentage >= 75) return "from-primary-green to-dark-green";
         if (percentage >= 70) return "from-yellow-500 to-yellow-700";
         return "from-gray-100 to-gray-200";
     };
@@ -41,12 +39,13 @@ export function VerificationProgressBanner({
     const getProgressBarColor = () => {
         if (percentage >= 95) return "bg-gradient-to-r from-purple-500 to-purple-600";
         if (percentage >= 85) return "bg-gradient-to-r from-blue-500 to-blue-600";
-        if (percentage >= 75) return "bg-gradient-to-r from-green-500 to-green-600";
+        if (percentage >= 75) return "bg-gradient-to-r from-primary-green to-dark-green";
         if (percentage >= 70) return "bg-gradient-to-r from-yellow-500 to-yellow-600";
         return "bg-gradient-to-r from-gray-400 to-gray-500";
     };
 
     const totalMissing = missingCoreDocuments.length + missingSectorDocuments.length;
+    const isVerified = percentage >= 75;
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
@@ -68,8 +67,8 @@ export function VerificationProgressBanner({
 
                     <Link href="/dashboard/business/documents">
                         <Button className={`shadow-sm transition-all duration-300 hover:scale-105 font-semibold ${percentage >= 70
-                                ? "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm border border-white/20"
-                                : "bg-primary-green text-white hover:bg-green-700"
+                            ? "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm border border-white/20"
+                            : "bg-primary-green text-white hover:bg-green-700"
                             }`}>
                             <ArrowRight className="w-4 h-4 mr-2" />
                             Manage Documents
@@ -86,7 +85,7 @@ export function VerificationProgressBanner({
                         <span>0%</span>
                         <span>50%</span>
                         <span>70%</span>
-                        <span className="text-green-600">75%</span>
+                        <span className="text-primary-green">75%</span>
                         <span>85%</span>
                         <span>95%</span>
                     </div>
@@ -109,7 +108,7 @@ export function VerificationProgressBanner({
                     <div className="flex justify-between text-[10px] text-gray-400 mt-1">
                         <span>Basic</span>
                         <span>Viewing</span>
-                        <span className="text-green-600 font-bold">Investment Ready</span>
+                        <span className="text-primary-green font-bold">Directory Verified</span>
                         <span>Premium</span>
                     </div>
                 </div>
@@ -117,13 +116,13 @@ export function VerificationProgressBanner({
 
             {/* Status Message */}
             <div className="px-6 pb-6">
-                {canReceiveInvestment ? (
+                {isVerified ? (
                     <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
                         <div>
-                            <h4 className="font-semibold text-green-900 text-sm">Investment Features Unlocked! 🎉</h4>
+                            <h4 className="font-semibold text-green-900 text-sm">Full Directory Verification Achieved! 🎉</h4>
                             <p className="text-sm text-green-700 mt-1">
-                                You can now receive investment offers from investors. Keep uploading documents to increase your credibility.
+                                Your business is now fully verified for the national directory. You will have priority in search results and a public trust badge on your profile.
                             </p>
                         </div>
                     </div>
@@ -132,10 +131,10 @@ export function VerificationProgressBanner({
                         <Star className="w-5 h-5 text-yellow-600 mt-0.5 shrink-0" />
                         <div>
                             <h4 className="font-semibold text-yellow-900 text-sm">
-                                Almost There! Just {75 - percentage}% more to unlock investments
+                                Almost Verified! Just {75 - percentage}% more to reach Directory Hub status
                             </h4>
                             <p className="text-sm text-yellow-700 mt-1">
-                                You&apos;re very close to becoming investment-ready. Upload {totalMissing} more document{totalMissing !== 1 ? 's' : ''} to reach 75%.
+                                You&apos;re very close to full directory verification. Upload {totalMissing} more document{totalMissing !== 1 ? 's' : ''} to reach 75%.
                             </p>
                         </div>
                     </div>
@@ -144,10 +143,10 @@ export function VerificationProgressBanner({
                         <Lock className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
                         <div>
                             <h4 className="font-semibold text-green-900 text-sm">
-                                Complete Verification to Unlock Investment Features
+                                Complete Verification to Unlock High Trust Badge
                             </h4>
                             <p className="text-sm text-green-700 mt-1">
-                                Upload required documents to reach <strong>75% verification</strong> and start receiving investment offers.
+                                Upload required documents to reach <strong>75% verification</strong> and unlock full profile visibility and regulatory trust badges.
                             </p>
                             {totalMissing > 0 && (
                                 <div className="mt-3">

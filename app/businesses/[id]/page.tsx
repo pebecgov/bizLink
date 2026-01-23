@@ -3,8 +3,8 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser, SignInButton } from "@clerk/nextjs";
-import { Building2, MapPin, Users, TrendingUp, Phone, Mail, Globe, Calendar, Shield, Lock, ArrowLeft, ExternalLink, Verified, Briefcase, Loader2, Check } from "lucide-react";
-import { useParams } from "next/navigation";
+import { Building2, MapPin, Users, Phone, Mail, Globe, Calendar, Shield, Lock, ArrowLeft, ExternalLink, Verified, Briefcase, Loader2, Check, Sparkles } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
 import { Id } from "@/convex/_generated/dataModel";
@@ -23,19 +23,18 @@ export default function PublicBusinessProfilePage() {
     const businessId = params.id as string;
     const { isSignedIn, user } = useUser();
 
-    // Check if user is an investor
-    const isInvestor = user?.publicMetadata?.role === "investor";
+
 
     const business = useQuery(api.businessProfile.getBusinessById, {
         id: businessId as Id<"businesses">
     });
-    const currentUser = useQuery(api.users.getCurrentUser);
 
-    // Connections & Mutations
-    const initiateConnect = useMutation(api.connections.initiateConnection);
-    const myConnections = useQuery(api.connections.getMyConnections);
+
+    // Messaging & Mutations
+    const getOrCreateConversation = useMutation(api.messages.getOrCreateConversation);
     const [isConnecting, setIsConnecting] = useState(false);
     const recordView = useMutation(api.businessProfile.recordProfileView);
+    const router = useRouter();
 
     useEffect(() => {
         if (businessId) {
@@ -43,21 +42,16 @@ export default function PublicBusinessProfilePage() {
         }
     }, [businessId, recordView]);
 
-    // Check if any connection exists for this business
-    const existingConnection = myConnections?.find(c => c.businessId === businessId);
-    const hasExpressedInterest = !!existingConnection;
-    const connectionStatus = existingConnection?.status; // 'lead' | 'connected' | etc.
-
-    const handleExpressInterest = async () => {
-        if (!isSignedIn || isConnecting) return;
+    const handleMessageBusiness = async () => {
+        if (!isSignedIn || isConnecting || !business?.ownerId) return;
 
         setIsConnecting(true);
         try {
-            await initiateConnect({ businessId: businessId as Id<"businesses"> });
-            toast.success("Interest expressed! The business has been notified.");
+            const conversationId = await getOrCreateConversation({ participantId: business.ownerId });
+            router.push(`/dashboard/messages/active/${conversationId}`);
         } catch (error) {
-            console.error("Connection error:", error);
-            toast.error("Failed to express interest. Please try again.");
+            console.error("Messaging error:", error);
+            toast.error("Failed to start conversation. Please try again.");
         } finally {
             setIsConnecting(false);
         }
@@ -132,7 +126,7 @@ export default function PublicBusinessProfilePage() {
                                         {business.sector}
                                     </span>
                                 )}
-                                {currentUser?.role === "investor" && business.businessStage && (
+                                {business.businessStage && (
                                     <span className="px-3 py-1 bg-white/20 rounded-full text-sm">
                                         {BUSINESS_STAGES.find(s => s.value === business.businessStage)?.label || business.businessStage}
                                     </span>
@@ -150,18 +144,50 @@ export default function PublicBusinessProfilePage() {
                     <div className="lg:col-span-2 space-y-6">
                         {/* About */}
                         <div className="bg-white rounded-xl border border-gray-200 p-6">
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">About</h2>
-                            <p className="text-gray-600 leading-relaxed">
-                                {business.companyDescription || "No description provided."}
-                            </p>
+                            <div className="flex items-center gap-2 mb-4">
+                                <h2 className="text-lg font-bold text-gray-900">About</h2>
+                                {business.plan !== "premium" && (
+                                    <span className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-600 text-[10px] font-bold text-white rounded-full shadow-sm">
+                                        <Sparkles className="w-2 h-2" />
+                                        PREMIUM
+                                    </span>
+                                )}
+                            </div>
 
-                            {business.missionStatement && (
-                                <div className="mt-4 pt-4 border-t border-gray-100">
-                                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Mission</h3>
-                                    <p className="text-gray-600 text-sm">{business.missionStatement}</p>
+                            {business.plan === "premium" ? (
+                                <>
+                                    <p className="text-gray-600 leading-relaxed">
+                                        {business.companyDescription || "No description provided."}
+                                    </p>
+
+                                    {business.missionStatement && (
+                                        <div className="mt-4 pt-4 border-t border-gray-100">
+                                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Mission</h3>
+                                            <p className="text-gray-600 text-sm">{business.missionStatement}</p>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="bg-gray-50 rounded-lg p-6 text-center border border-dashed border-gray-200">
+                                    <Lock className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+                                    <p className="text-sm text-gray-500 italic">Detailed business description is a premium feature.</p>
                                 </div>
                             )}
                         </div>
+
+                        {/* Media Gallery - Premium Only */}
+                        {business.plan === "premium" && (business.imageGallery?.length || 0) > 0 && (
+                            <div className="bg-white rounded-xl border border-gray-200 p-6">
+                                <h2 className="text-lg font-bold text-gray-900 mb-4">Media Gallery</h2>
+                                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {business.imageGallery?.map((url, i) => (
+                                        <div key={i} className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                                            <img src={url} alt={`Gallery image ${i}`} className="w-full h-full object-cover" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Business Details - Public */}
                         <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -217,59 +243,74 @@ export default function PublicBusinessProfilePage() {
                                 {/* Contact Information - Only for signed in */}
                                 <div className="bg-white rounded-xl border border-gray-200 p-6">
                                     <h2 className="text-lg font-bold text-gray-900 mb-4">Contact Information</h2>
-                                    <div className="space-y-3">
-                                        {business.contactName && (
-                                            <div className="flex items-center gap-3">
-                                                <Users className="w-5 h-5 text-gray-400" />
-                                                <span className="text-gray-700">{business.contactName}</span>
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {business.contactName && (
+                                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                                    <Users className="w-5 h-5 text-green-600" />
+                                                    <span className="text-gray-700">{business.contactName}</span>
+                                                </div>
+                                            )}
+                                            {business.contactPhone && (
+                                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                                    <Phone className="w-5 h-5 text-green-600" />
+                                                    <span className="text-gray-700">{business.contactPhone}</span>
+                                                </div>
+                                            )}
+                                            {business.primaryEmail && (
+                                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                                    <Mail className="w-5 h-5 text-green-600" />
+                                                    <span className="text-gray-700 text-sm truncate">{business.primaryEmail}</span>
+                                                </div>
+                                            )}
+                                            {business.website && (
+                                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                                    <Globe className="w-5 h-5 text-green-600" />
+                                                    <a href={business.website} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline text-sm truncate">
+                                                        {business.website.replace(/^https?:\/\//, "")}
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Social Media - Premium Only */}
+                                        <div className="mt-4 pt-4 border-t border-gray-100">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <h3 className="text-sm font-bold text-gray-900">Connect with us</h3>
+                                                {business.plan !== "premium" && (
+                                                    <span className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-600 text-[10px] font-bold text-white rounded-full shadow-sm">
+                                                        PREMIUM
+                                                    </span>
+                                                )}
                                             </div>
-                                        )}
-                                        {business.contactPhone && (
-                                            <div className="flex items-center gap-3">
-                                                <Phone className="w-5 h-5 text-gray-400" />
-                                                <span className="text-gray-700">{business.contactPhone}</span>
-                                            </div>
-                                        )}
-                                        {business.primaryEmail && (
-                                            <div className="flex items-center gap-3">
-                                                <Mail className="w-5 h-5 text-gray-400" />
-                                                <span className="text-gray-700">{business.primaryEmail}</span>
-                                            </div>
-                                        )}
-                                        {business.website && (
-                                            <div className="flex items-center gap-3">
-                                                <Globe className="w-5 h-5 text-gray-400" />
-                                                <a href={business.website} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">
-                                                    {business.website}
-                                                </a>
-                                            </div>
-                                        )}
+                                            {business.plan === "premium" && business.socialMedia ? (
+                                                <div className="flex flex-wrap gap-3">
+                                                    {business.socialMedia.linkedin && (
+                                                        <a href={business.socialMedia.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
+                                                            <ExternalLink className="w-4 h-4" />
+                                                        </a>
+                                                    )}
+                                                    {/* Add other socials if needed, but for now external link is a good placeholder */}
+                                                </div>
+                                            ) : (
+                                                <div className="bg-gray-50 rounded-lg p-4 text-center border border-dashed border-gray-200">
+                                                    <Lock className="w-4 h-4 text-gray-300 mx-auto mb-1" />
+                                                    <p className="text-[10px] text-gray-400">Social media links are reserved for premium profiles.</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Financial Details - Only for signed in */}
-                                {((business.seekingFunding && business.fundingAmount) || business.annualRevenue || (business.seekingFunding && business.equityOffered)) && (
+                                {business.annualRevenue && (
                                     <div className="bg-white rounded-xl border border-gray-200 p-6">
                                         <h2 className="text-lg font-bold text-gray-900 mb-4">Financial Information</h2>
                                         <div className="grid grid-cols-2 gap-4">
-                                            {business.seekingFunding && business.fundingAmount && (
-                                                <div>
-                                                    <dt className="text-sm text-gray-500">Funding Sought</dt>
-                                                    <dd className="font-bold text-green-600 text-xl">{business.fundingAmount}</dd>
-                                                </div>
-                                            )}
-                                            {business.annualRevenue && (
-                                                <div>
-                                                    <dt className="text-sm text-gray-500">Annual Revenue</dt>
-                                                    <dd className="font-bold text-gray-900 text-xl">{business.annualRevenue}</dd>
-                                                </div>
-                                            )}
-                                            {business.seekingFunding && business.equityOffered && (
-                                                <div>
-                                                    <dt className="text-sm text-gray-500">Equity Offered</dt>
-                                                    <dd className="font-medium text-gray-900">{business.equityOffered}</dd>
-                                                </div>
-                                            )}
+                                            <div>
+                                                <dt className="text-sm text-gray-500">Annual Revenue</dt>
+                                                <dd className="font-bold text-gray-900 text-xl">{business.annualRevenue}</dd>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -279,48 +320,41 @@ export default function PublicBusinessProfilePage() {
 
                     {/* Sidebar */}
                     <div className="space-y-6">
-                        {/* Investment Status */}
-                        {isInvestor && business.seekingFunding && (
-                            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-6 text-white">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <TrendingUp className="w-5 h-5" />
-                                    <h3 className="font-bold">Seeking Investment</h3>
-                                </div>
-                                {business.fundingAmount && (
-                                    <p className="text-3xl font-bold mb-2">{business.fundingAmount}</p>
-                                )}
-                                {isSignedIn ? (
-                                    <button
-                                        onClick={handleExpressInterest}
-                                        disabled={isConnecting || hasExpressedInterest}
-                                        className={`w-full mt-4 py-3 font-semibold rounded-lg transition-all flex items-center justify-center gap-2 ${hasExpressedInterest
-                                            ? "bg-green-100/20 text-white cursor-default border border-white/20"
-                                            : "bg-white text-green-600 hover:bg-green-50 shadow-md"
-                                            }`}
-                                    >
-                                        {isConnecting ? (
-                                            <>
-                                                <Loader2 className="w-4 h-4 animate-spin" />
-                                                Processing...
-                                            </>
-                                        ) : hasExpressedInterest ? (
-                                            <>
-                                                <Check className="w-4 h-4" />
-                                                {connectionStatus === "connected" ? "Already Connected" : "Interest Sent"}
-                                            </>
-                                        ) : (
-                                            "Express Interest"
-                                        )}
-                                    </button>
-                                ) : (
-                                    <SignInButton mode="modal">
-                                        <button className="w-full mt-4 py-3 bg-white text-green-600 font-semibold rounded-lg hover:bg-green-50 transition-colors shadow-md">
-                                            Sign In to Connect
-                                        </button>
-                                    </SignInButton>
-                                )}
+                        {/* Partnership Opportunity */}
+                        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-6 text-white">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Briefcase className="w-5 h-5" />
+                                <h3 className="font-bold">Business Opportunity</h3>
                             </div>
-                        )}
+                            <p className="text-sm text-green-50 mb-4 opacity-90">
+                                Interested in collaborating or exploring a partnership with {business.businessName}?
+                            </p>
+                            {isSignedIn ? (
+                                <button
+                                    onClick={handleMessageBusiness}
+                                    disabled={isConnecting}
+                                    className="w-full mt-4 py-3 bg-white text-green-600 font-semibold rounded-lg hover:bg-green-50 transition-all shadow-md flex items-center justify-center gap-2"
+                                >
+                                    {isConnecting ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Mail className="w-4 h-4" />
+                                            Message Business
+                                        </>
+                                    )}
+                                </button>
+                            ) : (
+                                <SignInButton mode="modal">
+                                    <button className="w-full mt-4 py-3 bg-white text-green-600 font-semibold rounded-lg hover:bg-green-50 transition-colors shadow-md">
+                                        Sign In to Connect
+                                    </button>
+                                </SignInButton>
+                            )}
+                        </div>
 
                         {/* Quick Stats */}
                         <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -336,7 +370,7 @@ export default function PublicBusinessProfilePage() {
                                         <span className="font-medium text-gray-900 text-sm">{business.numberOfEmployees}</span>
                                     </div>
                                 )}
-                                {currentUser?.role === "investor" && business.businessStage && (
+                                {business.businessStage && (
                                     <div className="flex items-center justify-between">
                                         <span className="text-gray-500 text-sm">Stage</span>
                                         <span className="font-medium text-gray-900 text-sm">

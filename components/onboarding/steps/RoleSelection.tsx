@@ -4,7 +4,7 @@ import { Building2, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface RoleSelectionProps {
-    onSelect: (role: "business" | "investor") => void;
+    onSelect: (role: "business") => void;
 }
 
 export function RoleSelection({ onSelect }: RoleSelectionProps) {
@@ -19,38 +19,23 @@ export function RoleSelection({ onSelect }: RoleSelectionProps) {
                     Welcome to BizLink
                 </h2>
                 <p className="text-gray-500 text-lg">
-                    Choose your path to get started.
+                    Join Nigeria's premier business directory.
                 </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div className="flex justify-center mt-8">
                 <motion.button
                     whileHover={{ scale: 1.02, y: -5 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => onSelect("business")}
-                    className="relative flex flex-col items-center justify-center p-10 rounded-2xl bg-white/40 backdrop-blur-md border border-white/50 shadow-sm hover:shadow-xl hover:bg-white/60 transition-all duration-300 group"
+                    className="relative flex flex-col items-center justify-center p-10 max-w-md rounded-2xl bg-white/40 backdrop-blur-md border border-white/50 shadow-sm hover:shadow-xl hover:bg-white/60 transition-all duration-300 group"
                 >
                     <div className="p-5 rounded-full bg-green-50 group-hover:bg-green-100 mb-6 transition-colors shadow-inner">
                         <Building2 className="w-12 h-12 text-green-600 group-hover:text-green-700 transition-colors" />
                     </div>
-                    <h3 className="text-2xl font-semibold mb-3 text-gray-800">For Business</h3>
+                    <h3 className="text-2xl font-semibold mb-3 text-gray-800">For Business Owners</h3>
                     <p className="text-gray-500 text-center leading-relaxed">
-                        Raise capital, manage governance, and track compliance.
-                    </p>
-                </motion.button>
-
-                <motion.button
-                    whileHover={{ scale: 1.02, y: -5 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => onSelect("investor")}
-                    className="relative flex flex-col items-center justify-center p-10 rounded-2xl bg-white/40 backdrop-blur-md border border-white/50 shadow-sm hover:shadow-xl hover:bg-white/60 transition-all duration-300 group"
-                >
-                    <div className="p-5 rounded-full bg-green-50 group-hover:bg-green-100 mb-6 transition-colors shadow-inner">
-                        <TrendingUp className="w-12 h-12 text-green-600 group-hover:text-green-700 transition-colors" />
-                    </div>
-                    <h3 className="text-2xl font-semibold mb-3 text-gray-800">For Investors</h3>
-                    <p className="text-gray-500 text-center leading-relaxed">
-                        Discover opportunities, track portfolio, and manage deals.
+                        List your business, verify your documents, and increase your visibility to partners and regulators.
                     </p>
                 </motion.button>
             </div>
