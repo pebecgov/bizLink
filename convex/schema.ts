@@ -158,6 +158,7 @@ export default defineSchema({
     // Metadata
     profileCompleteness: v.optional(v.number()), // 0-100%
     lastUpdated: v.optional(v.number()),
+    plan: v.optional(v.union(v.literal("free"), v.literal("premium"))),
   })
     .index("by_ownerId", ["ownerId"])
     .index("by_status", ["verificationStatus"])
@@ -254,7 +255,7 @@ export default defineSchema({
 
   sector_requirements: defineTable({
     sector: v.string(),
-    investorType: v.union(v.literal("local"), v.literal("foreign")),
+    entityType: v.union(v.literal("local"), v.literal("foreign")),
     requirements: v.array(v.object({
       serviceName: v.string(),
       issuingMda: v.string(), // Acronym of the MDA
@@ -263,7 +264,7 @@ export default defineSchema({
       order: v.number(), // For sequencing the roadmap
     })),
   })
-    .index("by_sector_type", ["sector", "investorType"]),
+    .index("by_sector_type", ["sector", "entityType"]),
 
 });
 

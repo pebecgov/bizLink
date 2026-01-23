@@ -335,68 +335,7 @@ export const roleConfigs: RoleConfig[] = [
                     { label: "Credibility Score", path: "/dashboard/business/score" }
                 ]
             },
-            {
-                icon: DollarSign,
-                label: "Transactions",
-                subItems: [
-                    { label: "Transaction History", path: "/dashboard/transactions/history" },
-                    { label: "Pending Payments", path: "/dashboard/transactions/pending" },
-                    { label: "Payment Methods", path: "/dashboard/transactions/methods" },
-                    { label: "Financial Reports", path: "/dashboard/transactions/reports" }
-                ]
-            },
-            {
-                icon: FileCheck,
-                label: "Compliance Center",
-                subItems: [
-                    { label: "TIN Verification", path: "/dashboard/compliance/tin" },
-                    { label: "Tax Compliance Status", path: "/dashboard/compliance/tax" },
-                    { label: "Licenses & Permits", path: "/dashboard/compliance/licenses" },
-                    { label: "Document Expiry Alerts", path: "/dashboard/compliance/expiry" },
-                    { label: "Regulatory Requirements", path: "/dashboard/compliance/requirements" }
-                ]
-            },
-            {
-                icon: BarChart,
-                label: "Business Analytics",
-                subItems: [
-                    { label: "Profile Views", path: "/dashboard/analytics/views" },
-                    { label: "Engagement Metrics", path: "/dashboard/analytics/engagement" },
-                    { label: "Performance Reports", path: "/dashboard/analytics/reports" }
-                ]
-            },
-            {
-                icon: Calendar,
-                label: "Events & Opportunities",
-                subItems: [
-                    { label: "Upcoming Events", path: "/dashboard/events/upcoming" },
-                    { label: "Networking Events", path: "/dashboard/events/networking" },
-                    { label: "Webinars", path: "/dashboard/events/webinars" },
-                    { label: "Registered Events", path: "/dashboard/events/registered" },
-                    { label: "Past Events", path: "/dashboard/events/past" }
-                ]
-            },
-            {
-                icon: Globe,
-                label: "Market Intelligence",
-                subItems: [
-                    { label: "Industry Trends", path: "/dashboard/market/trends" },
-                    { label: "Sector Reports", path: "/dashboard/market/reports" },
-                    { label: "Economic Indicators", path: "/dashboard/market/indicators" },
-                    { label: "Competitor Analysis", path: "/dashboard/market/competitors" }
-                ]
-            },
-            {
-                icon: BookOpen,
-                label: "Resources & Support",
-                subItems: [
-                    { label: "Help Center", path: "/dashboard/resources/help" },
-                    { label: "Video Tutorials", path: "/dashboard/resources/tutorials" },
-                    { label: "FAQs", path: "/dashboard/resources/faqs" },
-                    { label: "Contact Support", path: "/dashboard/resources/support" }
-                ]
-            },
-            ...commonItems
+            ...commonItems.filter(item => item.label !== "Messages")
         ]
     },
     {

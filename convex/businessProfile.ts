@@ -28,6 +28,20 @@ export const getProfileViewsCount = query({
 });
 
 /**
+ * Get recent profile views for a business
+ */
+export const getRecentProfileViews = query({
+    args: { businessId: v.id("businesses") },
+    handler: async (ctx, args) => {
+        return await ctx.db
+            .query("profile_views")
+            .withIndex("by_businessId", (q) => q.eq("businessId", args.businessId))
+            .order("desc")
+            .take(5);
+    },
+});
+
+/**
  * Get business by ID (for public profile access)
  */
 export const getBusinessById = query({

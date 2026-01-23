@@ -6,13 +6,8 @@ export default function CTA() {
     const userTypes = [
         {
             title: "Business Owner",
-            description: "Register your business and access investment opportunities",
+            description: "Register your business and access growth and partnership opportunities",
             icon: "🏢"
-        },
-        {
-            title: "Investor",
-            description: "Discover verified African businesses ready for growth",
-            icon: "💼"
         },
         {
             title: "Regulator",
@@ -21,7 +16,7 @@ export default function CTA() {
         },
         {
             title: "Trade Agency",
-            description: "Promote cross-border trade and investment facilitation",
+            description: "Promote cross-border trade and partnership facilitation",
             icon: "🌐"
         }
     ];

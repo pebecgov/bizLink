@@ -381,7 +381,7 @@ export const seedComprehensiveMdas = mutation({
 
             const existing = await ctx.db
                 .query("sector_requirements")
-                .withIndex("by_sector_type", (q) => q.eq("sector", sector).eq("investorType", "foreign"))
+                .withIndex("by_sector_type", (q) => q.eq("sector", sector).eq("entityType", "foreign"))
                 .first();
 
             if (existing) {
@@ -389,7 +389,7 @@ export const seedComprehensiveMdas = mutation({
             } else {
                 await ctx.db.insert("sector_requirements", {
                     sector,
-                    investorType: "foreign",
+                    entityType: "foreign",
                     requirements
                 });
             }

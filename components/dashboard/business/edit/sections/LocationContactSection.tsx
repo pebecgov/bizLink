@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { MapPin, Phone, Mail, Globe, Plus, X } from "lucide-react";
+import { MapPin, Phone, Mail, Globe, Plus, X, Lock, Sparkles } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useState, useEffect } from "react";
@@ -341,52 +341,83 @@ export function LocationContactSection() {
 
             {/* Social Media */}
             <div className="space-y-4">
-                <h3 className="font-semibold text-gray-900">Social Media</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="linkedin">LinkedIn</Label>
-                        <Input
-                            id="linkedin"
-                            name="linkedin"
-                            defaultValue={businessProfile.socialMedia?.linkedin || ""}
-                            placeholder="https://linkedin.com/company/..."
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="twitter">Twitter</Label>
-                        <Input
-                            id="twitter"
-                            name="twitter"
-                            defaultValue={businessProfile.socialMedia?.twitter || ""}
-                            placeholder="https://twitter.com/..."
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="facebook">Facebook</Label>
-                        <Input
-                            id="facebook"
-                            name="facebook"
-                            defaultValue={businessProfile.socialMedia?.facebook || ""}
-                            placeholder="https://facebook.com/..."
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="instagram">Instagram</Label>
-                        <Input
-                            id="instagram"
-                            name="instagram"
-                            defaultValue={businessProfile.socialMedia?.instagram || ""}
-                            placeholder="https://instagram.com/..."
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="tiktok">TikTok</Label>
-                        <Input
-                            id="tiktok"
-                            name="tiktok"
-                            defaultValue={businessProfile.socialMedia?.tiktok || ""}
-                            placeholder="https://tiktok.com/@..."
-                        />
+                <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-gray-900">Social Media</h3>
+                    {businessProfile.plan !== "premium" && (
+                        <span className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-600 text-[10px] font-bold text-white rounded-full shadow-sm">
+                            <Sparkles className="w-2 h-2" />
+                            PREMIUM
+                        </span>
+                    )}
+                </div>
+                <div className="relative group">
+                    {businessProfile.plan !== "premium" && (
+                        <div className="absolute inset-0 z-10 bg-white/40 backdrop-blur-[1px] flex flex-col items-center justify-center text-center p-6 border border-amber-100 rounded-xl">
+                            <Lock className="w-8 h-8 text-amber-600 mb-2" />
+                            <p className="text-sm font-bold text-gray-900">Premium Branding</p>
+                            <p className="text-xs text-gray-600 max-w-[300px] mt-1">Upgrade to link your social media accounts and build trust with international partners.</p>
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                className="mt-4 border-amber-200 text-amber-700 hover:bg-amber-50"
+                                onClick={() => toast({ title: "Premium Feature", description: "Upgrade flow coming soon" })}
+                            >
+                                Unlock Social Links
+                            </Button>
+                        </div>
+                    )}
+                    <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${businessProfile.plan !== "premium" ? "opacity-40 grayscale-[0.5]" : ""}`}>
+                        <div className="space-y-2">
+                            <Label htmlFor="linkedin">LinkedIn</Label>
+                            <Input
+                                id="linkedin"
+                                name="linkedin"
+                                defaultValue={businessProfile.socialMedia?.linkedin || ""}
+                                placeholder="https://linkedin.com/company/..."
+                                disabled={businessProfile.plan !== "premium"}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="twitter">Twitter</Label>
+                            <Input
+                                id="twitter"
+                                name="twitter"
+                                defaultValue={businessProfile.socialMedia?.twitter || ""}
+                                placeholder="https://twitter.com/..."
+                                disabled={businessProfile.plan !== "premium"}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="facebook">Facebook</Label>
+                            <Input
+                                id="facebook"
+                                name="facebook"
+                                defaultValue={businessProfile.socialMedia?.facebook || ""}
+                                placeholder="https://facebook.com/..."
+                                disabled={businessProfile.plan !== "premium"}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="instagram">Instagram</Label>
+                            <Input
+                                id="instagram"
+                                name="instagram"
+                                defaultValue={businessProfile.socialMedia?.instagram || ""}
+                                placeholder="https://instagram.com/..."
+                                disabled={businessProfile.plan !== "premium"}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="tiktok">TikTok</Label>
+                            <Input
+                                id="tiktok"
+                                name="tiktok"
+                                defaultValue={businessProfile.socialMedia?.tiktok || ""}
+                                placeholder="https://tiktok.com/@..."
+                                disabled={businessProfile.plan !== "premium"}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

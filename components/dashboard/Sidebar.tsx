@@ -8,18 +8,20 @@ import { usePathname } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
-import Image from "next/image";
-
-interface SidebarProps {
-    isOpen: boolean;
-    onClose: () => void;
-}
+import { useClerk } from "@clerk/nextjs";
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+    const { signOut } = useClerk();
     const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
     const pathname = usePathname();
     const currentUser = useQuery(api.users.getCurrentUser);
     const unreadNotifications = useQuery(api.notifications.getMyNotifications)?.filter(n => !n.isRead) || [];
+
+    const handleLogout = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        await signOut();
+        window.location.href = "/";
+    };
 
     const getBadgeCount = (label: string) => {
         if (label === "Messages & Networking" || label === "Messages") {
@@ -183,8 +185,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                                         </>
                                     ) : (
                                         <Link
-                                            href={item.path || "#"}
-                                            onClick={() => onClose()}
+                                            href={item.label === "Logout" ? "#" : (item.path || "#")}
+                                            onClick={(e) => {
+                                                if (item.label === "Logout") {
+                                                    handleLogout(e);
+                                                } else {
+                                                    onClose();
+                                                }
+                                            }}
                                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${isActive(item.path)
                                                 ? "bg-gradient-primary text-white shadow-green"
                                                 : "text-text-secondary hover:bg-very-light-green hover:text-primary-green"

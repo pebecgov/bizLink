@@ -32,7 +32,7 @@ export default function VerificationPage() {
         );
     }
 
-    const { totalPercentage, tier, canReceiveInvestment, missingCoreDocuments, missingSectorDocuments } = verificationScore;
+    const { totalPercentage, tier, missingCoreDocuments, missingSectorDocuments } = verificationScore;
     const verifiedBadges = [
         { label: "CAC Verified", icon: Building2, verified: verificationDocs.some(d => d.documentType === "CAC_CERTIFICATE" && d.status === "verified") },
         { label: "TIN Verified", icon: FileText, verified: verificationDocs.some(d => d.documentType === "TIN_CERTIFICATE" && d.status === "verified") },
@@ -87,10 +87,10 @@ export default function VerificationPage() {
                             <div className="h-4 bg-gray-100 rounded-full overflow-hidden relative">
                                 <div
                                     className={`absolute top-0 left-0 h-full rounded-full transition-all duration-500 ${totalPercentage >= 95 ? "bg-gradient-to-r from-purple-500 to-purple-600" :
-                                            totalPercentage >= 85 ? "bg-gradient-to-r from-blue-500 to-blue-600" :
-                                                totalPercentage >= 75 ? "bg-gradient-to-r from-green-500 to-green-600" :
-                                                    totalPercentage >= 70 ? "bg-gradient-to-r from-yellow-500 to-yellow-600" :
-                                                        "bg-gradient-to-r from-gray-400 to-gray-500"
+                                        totalPercentage >= 85 ? "bg-gradient-to-r from-blue-500 to-blue-600" :
+                                            totalPercentage >= 75 ? "bg-gradient-to-r from-green-500 to-green-600" :
+                                                totalPercentage >= 70 ? "bg-gradient-to-r from-yellow-500 to-yellow-600" :
+                                                    "bg-gradient-to-r from-gray-400 to-gray-500"
                                         }`}
                                     style={{ width: `${totalPercentage}%` }}
                                 ></div>
@@ -112,17 +112,17 @@ export default function VerificationPage() {
                         <div className="grid grid-cols-1 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-gray-200">
                             {/* Tier thresholds */}
                             {[
-                                { name: "BASIC", threshold: 0, benefits: tierInfo.tier === "Basic Listing" ? tierInfo.benefits : ["Create profile", "Browse investors"] },
-                                { name: "VIEWING", threshold: 50, benefits: ["Full visibility", "Receive messages"] },
-                                { name: "INVESTMENT READY", threshold: 75, benefits: ["Receive offers", "Negotiate deals"] },
-                                { name: "HIGHLY VERIFIED", threshold: 85, benefits: ["Priority listings", "Advanced analytics"] },
-                                { name: "PREMIUM", threshold: 95, benefits: ["Featured top", "Institutional access"] },
+                                { name: "BASIC", threshold: 0, benefits: ["Create profile", "Basic directory listing"] },
+                                { name: "VERIFIED", threshold: 50, benefits: ["Full visibility", "Public trust badge"] },
+                                { name: "PARTNERSHIP READY", threshold: 75, benefits: ["Receive messages", "Explore partnerships"] },
+                                { name: "HIGHLY VERIFIED", threshold: 85, benefits: ["Featured listing", "Advanced analytics"] },
+                                { name: "PREMIUM", threshold: 95, benefits: ["Top rankings", "Continental reach"] },
                             ].map((t, idx) => (
                                 <div
                                     key={idx}
                                     className={`p-4 flex flex-col items-center text-center ${totalPercentage >= t.threshold && totalPercentage < (idx < 4 ? [50, 75, 85, 95][idx] : 100)
-                                            ? "bg-white border-b-4 border-primary-green"
-                                            : totalPercentage >= t.threshold ? "opacity-60" : ""
+                                        ? "bg-white border-b-4 border-primary-green"
+                                        : totalPercentage >= t.threshold ? "opacity-60" : ""
                                         }`}
                                 >
                                     <div className={`flex items-center gap-2 mb-2 font-bold text-xs ${totalPercentage >= t.threshold ? "text-primary-green" : "text-gray-400"
@@ -157,10 +157,10 @@ export default function VerificationPage() {
                         const status = badge.verified ? "Verified" : "Not Started";
                         return (
                             <div key={idx} className={`rounded-xl border p-4 flex flex-col items-center justify-center text-center gap-3 transition-all hover:shadow-md ${status === "Verified" ? "bg-green-50 border-green-200" :
-                                    "bg-gray-50 border-gray-200 grayscale opacity-70"
+                                "bg-gray-50 border-gray-200 grayscale opacity-70"
                                 }`}>
                                 <div className={`w-12 h-12 rounded-full flex items-center justify-center ${status === "Verified" ? "bg-white text-green-600 shadow-sm" :
-                                        "bg-white text-gray-400"
+                                    "bg-white text-gray-400"
                                     }`}>
                                     <Icon className="w-6 h-6" />
                                 </div>
@@ -223,20 +223,13 @@ export default function VerificationPage() {
             <div className="bg-gradient-to-r from-primary-green to-green-600 text-white rounded-xl p-6">
                 <h3 className="text-lg font-bold mb-3">Current Benefits ({tier})</h3>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {tierInfo.benefits.map((benefit, idx) => (
+                    {tierInfo.benefits.map((benefit: string, idx: number) => (
                         <li key={idx} className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 shrink-0" />
                             <span className="text-sm">{benefit}</span>
                         </li>
                     ))}
                 </ul>
-                {!canReceiveInvestment && (
-                    <div className="mt-4 pt-4 border-t border-green-400">
-                        <p className="text-sm opacity-90">
-                            🔒 Upload <strong>{75 - totalPercentage}% more</strong> to unlock investment features
-                        </p>
-                    </div>
-                )}
             </div>
         </div>
     );

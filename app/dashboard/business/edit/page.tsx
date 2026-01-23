@@ -600,28 +600,53 @@ export default function EditProfilePage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <div className="flex justify-between">
-                                        <Label htmlFor="description">Company Description *</Label>
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center gap-2">
+                                            <Label htmlFor="description">Company Description *</Label>
+                                            {businessProfile.plan !== "premium" && (
+                                                <span className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-600 text-[10px] font-bold text-white rounded-full shadow-sm">
+                                                    <Sparkles className="w-2 h-2" />
+                                                    PREMIUM
+                                                </span>
+                                            )}
+                                        </div>
                                         <span className="text-xs text-gray-400">500/2000 words</span>
                                     </div>
-                                    <div className="border border-gray-200 rounded-lg overflow-hidden">
+                                    <div className={`border border-gray-200 rounded-lg overflow-hidden relative ${businessProfile.plan !== "premium" ? "opacity-60 grayscale-[0.5]" : ""}`}>
+                                        {businessProfile.plan !== "premium" && (
+                                            <div className="absolute inset-0 z-10 bg-white/40 backdrop-blur-[1px] flex flex-col items-center justify-center text-center p-4">
+                                                <Lock className="w-8 h-8 text-amber-600 mb-2" />
+                                                <p className="text-sm font-bold text-gray-900">Premium Feature</p>
+                                                <p className="text-[10px] text-gray-600 max-w-[200px]">Upgrade to add a detailed business description and boost your search ranking.</p>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    className="mt-3 h-7 text-[10px] border-amber-200 text-amber-700 hover:bg-amber-50"
+                                                    onClick={() => toast.info("Upgrade flow coming soon")}
+                                                >
+                                                    Upgrade Now
+                                                </Button>
+                                            </div>
+                                        )}
                                         {/* Mock Toolbar */}
                                         <div className="bg-gray-50 px-3 py-2 border-b border-gray-200 flex gap-2">
                                             <div className="flex gap-1 border-r border-gray-300 pr-2">
-                                                <button className="p-1 hover:bg-gray-200 rounded text-xs font-bold">B</button>
-                                                <button className="p-1 hover:bg-gray-200 rounded text-xs italic">I</button>
-                                                <button className="p-1 hover:bg-gray-200 rounded text-xs underline">U</button>
+                                                <button className="p-1 hover:bg-gray-200 rounded text-xs font-bold" disabled={businessProfile.plan !== "premium"}>B</button>
+                                                <button className="p-1 hover:bg-gray-200 rounded text-xs italic" disabled={businessProfile.plan !== "premium"}>I</button>
+                                                <button className="p-1 hover:bg-gray-200 rounded text-xs underline" disabled={businessProfile.plan !== "premium"}>U</button>
                                             </div>
                                             <div className="flex gap-1">
-                                                <button className="p-1 hover:bg-gray-200 rounded text-xs">List</button>
-                                                <button className="p-1 hover:bg-gray-200 rounded text-xs">Link</button>
+                                                <button className="p-1 hover:bg-gray-200 rounded text-xs" disabled={businessProfile.plan !== "premium"}>List</button>
+                                                <button className="p-1 hover:bg-gray-200 rounded text-xs" disabled={businessProfile.plan !== "premium"}>Link</button>
                                             </div>
                                         </div>
                                         <Textarea
                                             id="description"
                                             value={companyDescription}
                                             onChange={(e) => setCompanyDescription(e.target.value)}
-                                            className="min-h-[200px] border-none focus-visible:ring-0 rounded-none p-4"
+                                            disabled={businessProfile.plan !== "premium"}
+                                            placeholder={businessProfile.plan !== "premium" ? "Upgrade to premium to share your business story..." : "Tell the world about your business..."}
+                                            className="min-h-[200px] border-none focus-visible:ring-0 rounded-none p-4 disabled:cursor-not-allowed"
                                         />
                                     </div>
                                 </div>

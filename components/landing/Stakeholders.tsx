@@ -36,7 +36,6 @@ export default function Stakeholders() {
 
     const colorMap: Record<string, string> = {
         "stakeholder-business": "border-l-4 border-gold",
-        "stakeholder-investor": "border-l-4 border-primary-green",
         "stakeholder-regulator": "border-l-4 border-accent-blue",
         "stakeholder-trade": "border-l-4 border-dark-green"
     };
@@ -49,7 +48,7 @@ export default function Stakeholders() {
                         Who We Serve
                     </h2>
                     <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto">
-                        A unified platform connecting all stakeholders in Africa&apos;s investment ecosystem
+                        A unified platform connecting all stakeholders in Africa&apos;s business ecosystem
                     </p>
                 </div>
 

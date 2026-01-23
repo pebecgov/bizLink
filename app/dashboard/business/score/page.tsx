@@ -34,7 +34,7 @@ export default function CredibilityScorePage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-text-primary">Credibility Score</h1>
-                    <p className="text-text-secondary">Understand how investors and partners view your business</p>
+                    <p className="text-text-secondary">Understand how partners and stakeholders view your business</p>
                 </div>
                 <Button variant="outline" className="gap-2">
                     <Download className="w-4 h-4" /> Download Report

@@ -22,11 +22,11 @@ import { toast } from "sonner";
 export default function RegulatoryRequirementsPage() {
     const mdas = useQuery(api.concierge.listMdas, {});
     const [selectedSector, setSelectedSector] = useState("Manufacturing");
-    const [selectedInvestorType, setSelectedInvestorType] = useState<"local" | "foreign">("foreign");
+    const [selectedEntityType, setSelectedEntityType] = useState<"local" | "foreign">("foreign");
 
     const requirements = useQuery(api.concierge.getSectorRequirements, {
         sector: selectedSector,
-        investorType: selectedInvestorType
+        entityType: selectedEntityType
     });
 
     const updateSectorReqs = useMutation(api.concierge.updateSectorRequirements);
@@ -52,7 +52,7 @@ export default function RegulatoryRequirementsPage() {
         </div>;
     }
 
-    const filteredMdas = mdas.filter(m =>
+    const filteredMdas = mdas.filter((m: any) =>
         m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         m.acronym.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -87,7 +87,7 @@ export default function RegulatoryRequirementsPage() {
                         </div>
 
                         <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                            {filteredMdas.map((mda) => (
+                            {filteredMdas.map((mda: any) => (
                                 <div
                                     key={mda._id}
                                     className={`p-4 rounded-xl border transition-all cursor-pointer ${editingMda?._id === mda._id ? "border-blue-500 bg-blue-50/30" : "border-slate-100 bg-slate-50/30 hover:bg-slate-50"
@@ -105,7 +105,7 @@ export default function RegulatoryRequirementsPage() {
                                     {editingMda?._id === mda._id && (
                                         <div className="mt-4 pt-4 border-t border-blue-100 space-y-4" onClick={(e) => e.stopPropagation()}>
                                             <p className="text-xs text-slate-500 uppercase font-bold px-1">Active Services</p>
-                                            {mda.services.map((service, sIdx) => (
+                                            {mda.services.map((service: any, sIdx: number) => (
                                                 <div key={sIdx} className="bg-white p-3 rounded-lg border border-blue-100">
                                                     <div className="flex items-center justify-between mb-2">
                                                         <span className="text-sm font-bold text-slate-800">{service.name}</span>
@@ -150,14 +150,14 @@ export default function RegulatoryRequirementsPage() {
 
                             <div className="flex items-center bg-slate-50 p-1 rounded-xl border border-slate-200">
                                 <button
-                                    onClick={() => setSelectedInvestorType("foreign")}
-                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedInvestorType === "foreign" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
+                                    onClick={() => setSelectedEntityType("foreign")}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedEntityType === "foreign" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
                                 >
-                                    Foreign-Owned
+                                    International Entity
                                 </button>
                                 <button
-                                    onClick={() => setSelectedInvestorType("local")}
-                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedInvestorType === "local" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
+                                    onClick={() => setSelectedEntityType("local")}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedEntityType === "local" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
                                 >
                                     Local Entity
                                 </button>
@@ -166,7 +166,7 @@ export default function RegulatoryRequirementsPage() {
 
                         {/* Drag-and-drop Roadmap Editor (Simplified) */}
                         <div className="space-y-4">
-                            {requirements.map((req, index) => (
+                            {requirements.map((req: any, index: number) => (
                                 <div key={index} className="flex items-center gap-4 p-5 bg-slate-50/30 border border-slate-100 rounded-2xl group hover:border-blue-200 hover:bg-slate-50 transition-all">
                                     <div className="flex flex-col gap-1">
                                         <button className="p-1 hover:bg-white rounded border border-transparent hover:border-slate-200 text-slate-400">
@@ -250,3 +250,4 @@ export default function RegulatoryRequirementsPage() {
         </div>
     );
 }
+

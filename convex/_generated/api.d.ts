@@ -13,6 +13,7 @@ import type * as adminVerification from "../adminVerification.js";
 import type * as audit from "../audit.js";
 import type * as bootstrap from "../bootstrap.js";
 import type * as businessProfile from "../businessProfile.js";
+import type * as concierge from "../concierge.js";
 import type * as debug from "../debug.js";
 import type * as messages from "../messages.js";
 import type * as notifications from "../notifications.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   audit: typeof audit;
   bootstrap: typeof bootstrap;
   businessProfile: typeof businessProfile;
+  concierge: typeof concierge;
   debug: typeof debug;
   messages: typeof messages;
   notifications: typeof notifications;

@@ -1,8 +1,8 @@
-# P-BID Architecture: Module 0 & 1
+# P-BD Architecture: Module 0 & 1
 
 ## Architecture Overview
 
-This document describes the infrastructure-grade foundation architecture for the P-BID platform.
+This document describes the infrastructure-grade foundation architecture for the PEBEC Business Directory platform.
 
 ## Core Principles
 
@@ -68,7 +68,7 @@ This document describes the infrastructure-grade foundation architecture for the
 {
   clerkId: string,        // External identity link
   email: string,
-  role: "admin" | "regulator" | "investor" | "business_owner",
+  role: "admin" | "regulator" | "business_owner",
   jurisdiction?: string,  // For regulator scoping
   status: "active" | "suspended"
 }
@@ -101,8 +101,7 @@ This document describes the infrastructure-grade foundation architecture for the
 |------|-------------|
 | `admin` | Full access to all entities, can change roles, manage users |
 | `regulator` | Read-only access to businesses in their jurisdiction |
-| `investor` | Can view businesses, create investment proposals |
-| `business_owner` | Can create/edit own business, view own deals |
+| `business_owner` | Can create/edit own business, communicate with partners |
 
 ## Mutation Patterns
 
@@ -224,6 +223,6 @@ const unauthorizedAttempts = await ctx.db
 ## Next Steps
 
 - Module 2: Business Verification
-- Module 3: Investment Matching
-- Module 4: Escrow & Payments
+- Module 3: Partnership & Networking
+- Module 4: Regulatory Facilitation
 

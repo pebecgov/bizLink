@@ -10,8 +10,6 @@ export const sendMessage = mutation({
         content: v.string(),
         type: v.optional(v.union(
             v.literal("text"),
-            v.literal("milestone_proposal"),
-            v.literal("document_request"),
             v.literal("system")
         )),
         metadata: v.optional(v.any()),
@@ -37,9 +35,6 @@ export const sendMessage = mutation({
         });
 
         await ctx.db.patch(args.conversationId, { lastMessageAt: Date.now() });
-
-        // Update connection last activity
-        await ctx.db.patch(conversation.connectionId, { lastActivity: Date.now() });
 
         // Send notification to recipient
         const recipientId = conversation.participantIds.find(id => id !== identity.subject);
@@ -98,333 +93,85 @@ export const getConversation = query({
         const conversation = await ctx.db.get(args.conversationId);
         if (!conversation) return null;
 
-        const connection = await ctx.db.get(conversation.connectionId);
-
-        return {
-            ...conversation,
-            connectionStatus: connection?.status,
-        };
+        return conversation;
     },
 });
 
-// ==================== MILESTONES ====================
-
-export const getMilestone = query({
-    args: { milestoneId: v.id("milestones") },
-    handler: async (ctx, args) => {
-        const milestone = await ctx.db.get(args.milestoneId);
-        if (!milestone) return null;
-
-        let resolvedDocumentUrl = milestone.documentUrl;
-        if (milestone.documentUrl) {
-            // Only resolve if it's not already a URL (Legacy/Mock support)
-            if (!milestone.documentUrl.includes("://")) {
-                const url = await ctx.storage.getUrl(milestone.documentUrl);
-                if (url) resolvedDocumentUrl = url;
-            }
-        }
-
-        return {
-            ...milestone,
-            documentUrl: resolvedDocumentUrl,
-        };
-    },
-});
-
-export const proposeMilestone = mutation({
-    args: {
-        connectionId: v.id("connections"),
-        title: v.string(),
-        description: v.string(),
-        deadline: v.number(),
-        requiresDocument: v.optional(v.boolean()),
-        documentType: v.optional(v.string()),
-        templateUrl: v.optional(v.string()),
-    },
-    handler: async (ctx, args) => {
+export const getMyConversations = query({
+    handler: async (ctx) => {
         const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Not authenticated");
+        if (!identity) return [];
 
-        const connection = await ctx.db.get(args.connectionId);
-        if (!connection) throw new Error("Connection not found");
-
-        const milestoneId = await ctx.db.insert("milestones", {
-            connectionId: args.connectionId,
-            title: args.title,
-            description: args.description,
-            deadline: args.deadline,
-            status: "proposed",
-            proposedBy: identity.subject,
-            requiresDocument: args.requiresDocument,
-            documentType: args.documentType,
-            templateUrl: args.templateUrl,
-            documentStatus: args.requiresDocument ? "pending" : undefined,
-        });
-
-        // Automatically send a system message in the chat
-        const conversation = await ctx.db
+        const conversations = await ctx.db
             .query("conversations")
-            .withIndex("by_connectionId", (q) => q.eq("connectionId", args.connectionId))
-            .first();
-
-        if (conversation) {
-            await ctx.db.insert("messages", {
-                conversationId: conversation._id,
-                senderId: identity.subject,
-                content: `Proposed milestone: ${args.title}${args.requiresDocument ? ` (Requires ${args.documentType})` : ""}`,
-                type: "milestone_proposal",
-                metadata: {
-                    milestoneId,
-                    requiresDocument: args.requiresDocument,
-                    documentType: args.documentType,
-                    hasTemplate: !!args.templateUrl,
-                },
-                createdAt: Date.now(),
-            });
-
-            // Send notification to recipient
-            const recipientId = conversation.participantIds.find(id => id !== identity.subject);
-            if (recipientId) {
-                await ctx.db.insert("notifications", {
-                    userId: recipientId,
-                    type: "milestone",
-                    title: "New Milestone Proposed",
-                    message: `A new milestone has been proposed: ${args.title}`,
-                    isRead: false,
-                    link: `/dashboard/messages/active/${conversation._id}`,
-                    createdAt: Date.now(),
-                });
-            }
-        }
-
-        return milestoneId;
-    },
-});
-
-export const agreeToMilestone = mutation({
-    args: { milestoneId: v.id("milestones") },
-    handler: async (ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Not authenticated");
-
-        const milestone = await ctx.db.get(args.milestoneId);
-        if (!milestone) throw new Error("Milestone not found");
-
-        if (milestone.proposedBy === identity.subject) {
-            throw new Error("You cannot agree to your own proposal");
-        }
-
-        await ctx.db.patch(args.milestoneId, {
-            status: "agreed",
-            agreedBy: identity.subject,
-        });
-
-        // Check if connection should transition to 'contract'
-        // If at least one milestone is agreed, we move to contract status? 
-        // Or all proposed milestones must be agreed? Let's say any agreement moves it to 'contract'.
-        const connection = await ctx.db.get(milestone.connectionId);
-        if (connection && connection.status === "connected") {
-            await ctx.db.patch(milestone.connectionId, { status: "contract", lastActivity: Date.now() });
-        }
-
-        return args.milestoneId;
-    },
-});
-
-export const completeMilestone = mutation({
-    args: { milestoneId: v.id("milestones") },
-    handler: async (ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Not authenticated");
-
-        const milestone = await ctx.db.get(args.milestoneId);
-        if (!milestone) throw new Error("Milestone not found");
-
-        await ctx.db.patch(args.milestoneId, {
-            status: "completed",
-            completedAt: Date.now(),
-        });
-
-        // Check if all milestones are completed to close the connection
-        const allMilestones = await ctx.db
-            .query("milestones")
-            .withIndex("by_connectionId", (q) => q.eq("connectionId", milestone.connectionId))
             .collect();
 
-        const allCompleted = allMilestones.every(m => m.status === "completed");
-        if (allCompleted && allMilestones.length > 0) {
-            await ctx.db.patch(milestone.connectionId, { status: "closed", lastActivity: Date.now() });
+        const myConversations = conversations.filter(c =>
+            c.participantIds.includes(identity.subject)
+        );
+
+        return await Promise.all(myConversations.map(async (conv) => {
+            const partnerId = conv.participantIds.find(id => id !== identity.subject);
+            let partnerName = "Other User";
+            let business = null;
+
+            if (partnerId) {
+                // Try to find if the partner is a business owner
+                business = await ctx.db
+                    .query("businesses")
+                    .withIndex("by_ownerId", (q) => q.eq("ownerId", partnerId))
+                    .first();
+
+                if (business) {
+                    partnerName = business.businessName;
+                } else {
+                    // Try to find by user email
+                    const user = await ctx.db
+                        .query("users")
+                        .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+                        .first();
+                    if (user) partnerName = user.email;
+                }
+            }
+
+            return {
+                ...conv,
+                partnerName,
+                business,
+            };
+        }));
+    },
+});
+
+export const getOrCreateConversation = mutation({
+    args: { participantId: v.string() },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Not authenticated");
+
+        if (identity.subject === args.participantId) {
+            throw new Error("Cannot message yourself");
         }
 
-        return args.milestoneId;
-    },
-});
-
-export const requestExtension = mutation({
-    args: {
-        milestoneId: v.id("milestones"),
-        reason: v.string(),
-        newDeadline: v.number(),
-    },
-    handler: async (ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Not authenticated");
-
-        const milestone = await ctx.db.get(args.milestoneId);
-        if (!milestone) throw new Error("Milestone not found");
-
-        return await ctx.db.insert("milestone_extensions", {
-            milestoneId: args.milestoneId,
-            requestedBy: identity.subject,
-            reason: args.reason,
-            newDeadline: args.newDeadline,
-            previousDeadline: milestone.deadline,
-            status: "pending",
-            createdAt: Date.now(),
-        });
-    },
-});
-
-export const approveExtension = mutation({
-    args: { extensionId: v.id("milestone_extensions") },
-    handler: async (ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Not authenticated");
-
-        const extension = await ctx.db.get(args.extensionId);
-        if (!extension) throw new Error("Extension not found");
-
-        if (extension.requestedBy === identity.subject) {
-            throw new Error("You cannot approve your own extension request");
-        }
-
-        await ctx.db.patch(args.extensionId, { status: "approved" });
-        await ctx.db.patch(extension.milestoneId, { deadline: extension.newDeadline });
-
-        return args.extensionId;
-    },
-});
-
-export const requestDocument = mutation({
-    args: {
-        conversationId: v.id("conversations"),
-        documentType: v.string(), // "NDA", "Tax Clearance", etc.
-        description: v.optional(v.string()),
-    },
-    handler: async (ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Not authenticated");
-
-        await ctx.db.insert("messages", {
-            conversationId: args.conversationId,
-            senderId: identity.subject,
-            content: `Requested document: ${args.documentType}`,
-            type: "document_request",
-            metadata: {
-                documentType: args.documentType,
-                description: args.description,
-                status: "pending"
-            },
-            createdAt: Date.now(),
-        });
-    },
-});
-
-export const submitDocument = mutation({
-    args: {
-        messageId: v.id("messages"),
-        documentUrl: v.string(),
-    },
-    handler: async (ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Not authenticated");
-
-        const message = await ctx.db.get(args.messageId);
-        if (!message || message.type !== "document_request") {
-            throw new Error("Invalid document request");
-        }
-
-        await ctx.db.patch(args.messageId, {
-            metadata: {
-                ...message.metadata,
-                documentUrl: args.documentUrl,
-                status: "submitted",
-                submittedAt: Date.now()
-            },
-        });
-
-        // Add a follow-up message
-        await ctx.db.insert("messages", {
-            conversationId: message.conversationId,
-            senderId: identity.subject,
-            content: `Submitted: ${message.metadata.documentType}`,
-            type: "text",
-            createdAt: Date.now(),
-        });
-    },
-});
-
-export const verifyDocument = mutation({
-    args: { messageId: v.id("messages"), approved: v.boolean() },
-    handler: async (ctx, args) => {
-        const message = await ctx.db.get(args.messageId);
-        if (!message) throw new Error("Message not found");
-
-        await ctx.db.patch(args.messageId, {
-            metadata: {
-                ...message.metadata,
-                status: args.approved ? "verified" : "rejected",
-                verifiedAt: Date.now()
-            },
-        });
-    },
-});
-
-export const submitMilestoneDocument = mutation({
-    args: {
-        milestoneId: v.id("milestones"),
-        documentUrl: v.string(),
-    },
-    handler: async (ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Not authenticated");
-
-        const milestone = await ctx.db.get(args.milestoneId);
-        if (!milestone) throw new Error("Milestone not found");
-
-        await ctx.db.patch(args.milestoneId, {
-            documentUrl: args.documentUrl,
-            documentStatus: "submitted",
-        });
-
-        const conversation = await ctx.db
+        // Check if conversation already exists
+        const existing = await ctx.db
             .query("conversations")
-            .withIndex("by_connectionId", (q) => q.eq("connectionId", milestone.connectionId))
-            .first();
+            .collect();
 
-        if (conversation) {
-            await ctx.db.insert("messages", {
-                conversationId: conversation._id,
-                senderId: identity.subject,
-                content: `Uploaded document for milestone: ${milestone.title}`,
-                type: "text",
-                createdAt: Date.now(),
-            });
-        }
-    },
-});
+        const conversation = existing.find(c =>
+            c.participantIds.includes(identity.subject) &&
+            c.participantIds.includes(args.participantId)
+        );
 
-export const verifyMilestoneDocument = mutation({
-    args: {
-        milestoneId: v.id("milestones"),
-        approved: v.boolean(),
-    },
-    handler: async (ctx, args) => {
-        const milestone = await ctx.db.get(args.milestoneId);
-        if (!milestone) throw new Error("Milestone not found");
+        if (conversation) return conversation._id;
 
-        await ctx.db.patch(args.milestoneId, {
-            documentStatus: args.approved ? "verified" : "rejected",
+        // Create new conversation
+        return await ctx.db.insert("conversations", {
+            participantIds: [identity.subject, args.participantId],
+            lastMessageAt: Date.now(),
         });
     },
 });
+
+
+

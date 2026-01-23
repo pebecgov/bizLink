@@ -1,6 +1,6 @@
-# P-BID – FULL COMPREHENSIVE DEVELOPMENT PLAYBOOK
+# P-BD – FULL COMPREHENSIVE DEVELOPMENT PLAYBOOK
 
-This document is the AUTHORITATIVE, end-to-end development guide for building the PEBEC Business–Investment Direct (P-BID) platform using Next.js (App Router), Convex, and Clerk.
+This document is the AUTHORITATIVE, end-to-end development guide for building the PEBEC Business Directory (P-BD) platform using Next.js (App Router), Convex, and Clerk.
 
 ## SECTION 0: NON-NEGOTIABLE ENGINEERING PRINCIPLES
 - Convex is the single source of truth for business state.
@@ -15,15 +15,11 @@ This document is the AUTHORITATIVE, end-to-end development guide for building th
 ## SECTION 1: SYSTEM MODULE MAP
 - Identity & Access Control Core
 - Business Registry & Verification Core
-- Investor Profiling & Matchmaking
-- Deal Lifecycle Engine
-- Escrow & Milestone Engine
+- Partnership & Networking Hub
 - Regulatory & Compliance Workflows
-- Dispute & Redress System
 - Audit, Governance & Observability
 - Market Intelligence & Analytics
 - Subscriptions & Monetization
-- Blockchain Proof Layer (Optional, Final Phase)
 
 ## SECTION 2: DAILY CODING CHECKLISTS (STRICT ORDER)
 
@@ -52,45 +48,14 @@ This document is the AUTHORITATIVE, end-to-end development guide for building th
 - Risk score calculation logic
 - Emit verification audit events
 
-### Phase 3 – Investors & Matching
-- Create investor profile schema
-- Capture preferences and risk tolerance
-- Implement rule-based matchmaking
+### Phase 3 – Partnerships & Networking
+- Create partnership request schema
+- Capture preferences and networking needs
+- Implement rule-based directory search
 - Exclude unverified/suspended businesses
-- Persist recommendation snapshots
+- Persist search configurations
 
-### Phase 4 – Deal Lifecycle
-- Implement deal schema and states
-- Restrict deal visibility to participants
-- Implement deal messaging
-- Lock terms before contract signing
-- Generate contract artifacts
-- Emit deal lifecycle events
-
-### Phase 5 – Escrow & Payments
-- Create escrow and milestone schemas
-- Integrate payment gateway
-- Verify webhook signatures
-- Ensure idempotent payment handling
-- Milestone verification flow
-- Controlled fund release logic
-- Financial audit logging
-
-### Phase 6 – Disputes & Redress
-- Implement dispute schema
-- Allow dispute filing at defined states
-- SLA timers and escalation rules
-- Admin/regulator resolution flow
-- Immutable dispute history
-
-### Phase 7 – Regulatory Workflows
-- Country regulatory data models
-- Application submission flows
-- Clarification cycles
-- Approval/rejection issuance
-- Digital license records
-
-### Phase 8 – Analytics & Governance
+### Phase 4 – Analytics & Governance
 - Aggregate audit logs
 - Admin dashboards
 - Country/sector KPIs
@@ -104,15 +69,6 @@ Generate a centralized RBAC utility for Convex that enforces role-based permissi
 
 ### Business Verification Prompt
 Generate Convex mutations and queries implementing a strict business verification state machine with document hashing, admin review, rejection reasons, and immutable audit logging.
-
-### Deal Lifecycle Prompt
-Generate Convex logic for a deal lifecycle engine with explicit states, permission checks, message scoping, and prevention of invalid transitions.
-
-### Escrow & Payments Prompt
-Generate escrow logic with milestone-based releases, idempotent payment webhooks, dual approval thresholds, and full financial audit logging.
-
-### Dispute System Prompt
-Generate a dispute management system with escalation rules, SLA timers, admin resolution, and non-destructive history tracking.
 
 ## SECTION 4: CONVEX MUTATION TEMPLATES
 

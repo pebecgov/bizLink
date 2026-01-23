@@ -1,4 +1,4 @@
-import { TrendingUp, Users, Briefcase, CircleDollarSign, Loader2, ArrowUpRight, CheckCircle, MessageSquare } from "lucide-react";
+import { Users, ArrowUpRight } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
@@ -25,47 +25,30 @@ export function TopMetrics() {
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="h-full">
             {/* Card 1: Profile Views */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-blue-50 rounded-xl">
-                        <Users className="w-6 h-6 text-blue-600" />
+            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col justify-between">
+                <div>
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="p-4 bg-primary-green/10 rounded-2xl">
+                            <Users className="w-8 h-8 text-primary-green" />
+                        </div>
                     </div>
+                    <h3 className="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-2">Total Profile Visitors</h3>
+                    <div className="mt-2 flex items-baseline gap-2">
+                        <span className="text-5xl font-black text-gray-900 tracking-tighter">{profileViewsCount || 0}</span>
+                    </div>
+                    <p className="text-gray-400 text-sm mt-4 font-medium leading-relaxed">
+                        Your business profile visibility has grown since joining the platform.
+                    </p>
                 </div>
-                <h3 className="text-gray-500 text-sm font-medium">Directory Visibility</h3>
-                <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-gray-900">{profileViewsCount || 0}</span>
-                </div>
-                <p className="text-xs text-gray-400 mt-2">Lifetime profile views</p>
-            </div>
 
-            {/* Card 2: Verification Score */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-green-50 rounded-xl">
-                        <CheckCircle className="w-6 h-6 text-green-600" />
+                <div className="mt-8 pt-6 border-t border-gray-50">
+                    <div className="flex items-center gap-2 text-primary-green font-bold text-xs">
+                        <ArrowUpRight className="w-4 h-4" />
+                        <span>Live Visibility</span>
                     </div>
                 </div>
-                <h3 className="text-gray-500 text-sm font-medium">Compliance Score</h3>
-                <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-gray-900">{verificationScore.totalPercentage}%</span>
-                </div>
-                <p className="text-xs text-gray-400 mt-2">Current verification level: {verificationScore.tier}</p>
-            </div>
-
-            {/* Card 3: Profile Completeness */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-purple-50 rounded-xl">
-                        <Briefcase className="w-6 h-6 text-purple-600" />
-                    </div>
-                </div>
-                <h3 className="text-gray-500 text-sm font-medium">Directory Status</h3>
-                <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-gray-900">Active</span>
-                </div>
-                <p className="text-xs text-gray-400 mt-2">Your profile is visible to the public</p>
             </div>
         </div>
     );
