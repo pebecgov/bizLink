@@ -15,6 +15,7 @@ import type * as bootstrap from "../bootstrap.js";
 import type * as businessProfile from "../businessProfile.js";
 import type * as concierge from "../concierge.js";
 import type * as debug from "../debug.js";
+import type * as matching from "../matching.js";
 import type * as messages from "../messages.js";
 import type * as notifications from "../notifications.js";
 import type * as onboarding from "../onboarding.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   businessProfile: typeof businessProfile;
   concierge: typeof concierge;
   debug: typeof debug;
+  matching: typeof matching;
   messages: typeof messages;
   notifications: typeof notifications;
   onboarding: typeof onboarding;

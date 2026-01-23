@@ -8,6 +8,8 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
 import { BUSINESS_STAGES } from "@/components/dashboard/business/lib/sectorData";
+import { SECTORS } from "@/components/onboarding/constants/sectors";
+import { NIGERIAN_STATES } from "@/components/onboarding/constants/locations";
 
 export default function PublicBusinessesPage() {
     const businesses = useQuery(api.businessProfile.getAllBusinesses);
@@ -161,19 +163,6 @@ export default function PublicBusinessesPage() {
                             </select>
                         )}
 
-                        {isInvestor && (
-                            <select
-                                value={selectedStage}
-                                onChange={(e) => setSelectedStage(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-green-500 focus:border-green-500 bg-white"
-                            >
-                                <option value="">All Stages</option>
-                                {stages.map(stage => (
-                                    <option key={stage} value={stage}>{getStageLabel(stage)}</option>
-                                ))}
-                            </select>
-                        )}
-
                         {(searchQuery || selectedSector || selectedSubsector || selectedState || selectedLga || selectedStage) && (
                             <button
                                 onClick={clearFilters}
@@ -242,11 +231,6 @@ export default function PublicBusinessesPage() {
                                                     {business.lga && `, ${business.lga}`}
                                                 </span>
                                             </div>
-                                            {isInvestor && business.businessStage && (
-                                                <span className="inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
-                                                    {getStageLabel(business.businessStage)}
-                                                </span>
-                                            )}
                                         </div>
 
                                         {/* Business Logo */}
@@ -265,14 +249,6 @@ export default function PublicBusinessesPage() {
                                                 </div>
                                             )}
                                         </div>
-                                        {currentUser?.role === "investor" && business.businessStage && (
-                                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${business.businessStage === "Startup" ? "bg-purple-100 text-purple-700" :
-                                                business.businessStage === "Growth" ? "bg-blue-100 text-blue-700" :
-                                                    "bg-green-100 text-green-700"
-                                                }`}>
-                                                {BUSINESS_STAGES.find(s => s.value === business.businessStage)?.label || business.businessStage}
-                                            </span>
-                                        )}
                                     </div>
 
                                     <p className="text-sm text-gray-600 mb-4 line-clamp-3 min-h-[60px]">
@@ -285,17 +261,10 @@ export default function PublicBusinessesPage() {
                                                 {business.sector}
                                             </span>
                                         )}
-<<<<<<< HEAD
                                         {business.afcftaCompliant && (
                                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                                 <Verified className="w-3 h-3" />
                                                 AfCFTA Ready
-=======
-                                        {isInvestor && business.seekingFunding && (
-                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                <TrendingUp className="w-3 h-3" />
-                                                Seeking Investment
->>>>>>> origin
                                             </span>
                                         )}
                                     </div>
@@ -308,11 +277,7 @@ export default function PublicBusinessesPage() {
                                                 <span>{business.numberOfEmployees}</span>
                                             </div>
                                         )}
-<<<<<<< HEAD
                                         {business.businessModel && (
-=======
-                                        {business.seekingFunding && business.fundingAmount && (
->>>>>>> origin
                                             <div className="font-semibold text-green-600">
                                                 {business.businessModel}
                                             </div>

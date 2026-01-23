@@ -25,11 +25,7 @@ export function TopMetrics() {
     }
 
     return (
-<<<<<<< HEAD
         <div className="h-full">
-=======
-        <div className={seekingFunding ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
->>>>>>> origin
             {/* Card 1: Profile Views */}
             <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 h-full flex flex-col justify-between">
                 <div>
