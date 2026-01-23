@@ -505,7 +505,7 @@ export default function EditProfilePage() {
                             <div>
                                 <h3 className="text-sm font-bold text-amber-900">Profile Not Listed</h3>
                                 <p className="text-xs text-amber-700 mt-1">
-                                    Your business will not appear in investor discovery or matches until the <strong>Business Identity</strong> section is complete (Name, Logo, Tagline, and Description).
+                                    Your business will not appear in the public directory search or reach new partners until the <strong>Business Identity</strong> section is complete (Name, Logo, Tagline, and Description).
                                 </p>
                             </div>
                             <Button
@@ -652,7 +652,7 @@ export default function EditProfilePage() {
                             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <div>
                                     <h2 className="text-xl font-bold text-text-primary pb-4 border-b border-gray-100">Business Classification</h2>
-                                    <p className="text-sm text-gray-500 mt-2">Help investors and partners find you by accurately classifying your business</p>
+                                    <p className="text-sm text-gray-500 mt-2">Help partners and authorities find you by accurately classifying your business</p>
                                 </div>
 
                                 {/* Primary Sector & Subsector */}

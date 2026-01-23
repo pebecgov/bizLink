@@ -20,18 +20,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
     const currentUser = useQuery(api.users.getCurrentUser);
     const unreadNotifications = useQuery(api.notifications.getMyNotifications)?.filter(n => !n.isRead) || [];
-    const myConnections = useQuery(api.connections.getMyConnections);
 
     const getBadgeCount = (label: string) => {
-        if (label === "Investor Matching") {
-            // Use actual connection data to be consistent with TopMetrics
-            if (!myConnections) return 0;
-            return myConnections.filter(c =>
-                c.status === "lead" &&
-                c.business?.ownerId === currentUser?.clerkId &&
-                c.initiatedBy !== currentUser?.clerkId
-            ).length;
-        }
         if (label === "Messages & Networking" || label === "Messages") {
             return unreadNotifications.filter(n => ["message", "milestone"].includes(n.type)).length;
         }
@@ -42,15 +32,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     };
 
     const getSubItemBadgeCount = (label: string) => {
-        if (label === "Match Requests") {
-            // Consistent with parent
-            if (!myConnections) return 0;
-            return myConnections.filter(c =>
-                c.status === "lead" &&
-                c.business?.ownerId === currentUser?.clerkId &&
-                c.initiatedBy !== currentUser?.clerkId
-            ).length;
-        }
         if (label === "Inbox" || label === "Active Conversations") {
             return unreadNotifications.filter(n => ["message", "milestone"].includes(n.type)).length;
         }
@@ -63,7 +44,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             case "admin": return "SUPER ADMIN";
             case "system_admin": return "SYSTEM ADMIN";
             case "business_owner": return "BUSINESS USER";
-            case "investor": return "INVESTOR USER";
             case "regulator": return "REGULATORY OFFICER";
             case "verification_officer": return "VERIFICATION OFFICER";
             case "data_analyst": return "DATA ANALYST";

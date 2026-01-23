@@ -1,7 +1,7 @@
 import { QueryCtx, MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 
-export type UserRole = "admin" | "system_admin" | "regulator" | "investor" | "business_owner" | "verification_officer" | "data_analyst" | "user";
+export type UserRole = "admin" | "system_admin" | "regulator" | "business_owner" | "verification_officer" | "data_analyst" | "user";
 
 /**
  * Helper to assert user is authenticated and get user record

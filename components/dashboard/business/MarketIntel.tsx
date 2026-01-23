@@ -20,12 +20,12 @@ export function MarketIntel() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                         <div className="flex justify-between items-center py-2 border-b border-gray-50">
-                            <span className="text-sm text-gray-500">Avg Deal Size (Tech)</span>
-                            <span className="font-bold text-gray-900">₦25M <span className="text-xs text-green-600 ml-1">↑ 12%</span></span>
+                            <span className="text-sm text-gray-500">Sector Growth Rate</span>
+                            <span className="font-bold text-gray-900">18.4% <span className="text-xs text-green-600 ml-1">↑ 2.1%</span></span>
                         </div>
                         <div className="flex justify-between items-center py-2 border-b border-gray-50">
-                            <span className="text-sm text-gray-500">Active Investors</span>
-                            <span className="font-bold text-gray-900">47 <span className="text-xs text-green-600 ml-1">New</span></span>
+                            <span className="text-sm text-gray-500">Verified Partners</span>
+                            <span className="font-bold text-gray-900">124 <span className="text-xs text-green-600 ml-1">New</span></span>
                         </div>
                     </div>
 

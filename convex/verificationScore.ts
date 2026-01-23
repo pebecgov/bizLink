@@ -41,7 +41,6 @@ export const calculateVerificationScore = query({
                 sectorScore: 0,
                 additionalScore: 0,
                 tier: "Basic Listing",
-                canReceiveInvestment: false,
                 missingCoreDocuments: [],
                 missingSectorDocuments: [],
             };
@@ -108,7 +107,6 @@ export const calculateVerificationScore = query({
 
         const totalPercentage = Math.round(coreScore + sectorScore + additionalScore);
         const tier = getTier(totalPercentage);
-        const canReceiveInvestment = totalPercentage >= 75;
 
         return {
             totalPercentage,
@@ -116,7 +114,6 @@ export const calculateVerificationScore = query({
             sectorScore: Math.round(sectorScore),
             additionalScore: Math.round(additionalScore),
             tier,
-            canReceiveInvestment,
             missingCoreDocuments,
             missingSectorDocuments,
             verifiedDocumentsCount: documents.length,
@@ -235,36 +232,6 @@ export const deleteVerificationDocument = mutation({
     },
 });
 
-/**
- * Update funding preferences
- */
-export const updateFundingPreferences = mutation({
-    args: {
-        businessId: v.id("businesses"),
-        seekingFunding: v.boolean(),
-        fundingAmount: v.optional(v.string()),
-        equityOffered: v.optional(v.string()),
-        useOfFunds: v.optional(v.string()),
-    },
-    handler: async (ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Not authenticated");
-
-        const business = await ctx.db.get(args.businessId);
-        if (!business || business.ownerId !== identity.subject) {
-            throw new Error("Not authorized");
-        }
-
-        const { businessId, ...updateData } = args;
-
-        await ctx.db.patch(businessId, {
-            ...updateData,
-            lastUpdated: Date.now(),
-        });
-
-        return businessId;
-    },
-});
 
 /**
  * Update cached verification percentage
@@ -348,14 +315,14 @@ export const updateVerificationPercentage = mutation({
 function getTier(percentage: number): string {
     if (percentage < 50) return "Basic Listing";
     if (percentage < 70) return "Verified for Viewing";
-    if (percentage < 85) return "Investment Ready";
+    if (percentage < 85) return "Directory Verified";
     if (percentage < 95) return "Highly Verified";
     return "Premium Verified";
 }
 
 function getNextTier(percentage: number): string | null {
     if (percentage < 50) return "Verified for Viewing";
-    if (percentage < 70) return "Investment Ready";
+    if (percentage < 70) return "Directory Verified";
     if (percentage < 85) return "Highly Verified";
     if (percentage < 95) return "Premium Verified";
     return null;
@@ -371,11 +338,11 @@ function getPercentageToNextTier(percentage: number): number {
 
 function getTierBenefits(tier: string): string[] {
     const benefits: Record<string, string[]> = {
-        "Basic Listing": ["Create profile", "Browse investors"],
-        "Verified for Viewing": ["Full profile visibility", "Receive messages from investors", "Apply to pitch events"],
-        "Investment Ready": ["Send investment requests", "Receive investment offers", "Negotiate deals", "Access premium investor matching"],
-        "Highly Verified": ["Priority listings", "Advanced analytics", "Featured in search results"],
-        "Premium Verified": ["Featured listings", "Top of search results", "Access to institutional investors", "Premium credibility badge"],
+        "Basic Listing": ["Create profile", "Basic directory presence"],
+        "Verified for Viewing": ["Full profile visibility", "Receive messages from partners", "Public trust badge"],
+        "Directory Verified": ["Verified status logo", "Priority in search results", "Regulatory compliance certificate"],
+        "Highly Verified": ["Featured profile", "Advanced analytics", "Priority support"],
+        "Premium Verified": ["Top-tier search rankings", "Continental reach badge", "Unlimited profile updates"],
     };
 
     return benefits[tier] || [];

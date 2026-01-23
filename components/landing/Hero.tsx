@@ -51,13 +51,13 @@ export default function Hero({ isAuthenticated }: HeroProps) {
 
                     <h1 className="text-2xl md:text-6xl lg:text-5xl font-bold mb-6 leading-[1.1]">
                         <span className="text-[#07492F]">The Digital Gateway</span><br />
-                        <span className="text-[#07492F]">for Pan-African</span><br />
-                        <span className="text-[#761912]">Investment</span>
+                        <span className="text-[#07492F]">for Verified African</span><br />
+                        <span className="text-[#761912]">Businesses</span>
                     </h1>
 
                     <p className="text-lg text-gray-700 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                        Connecting African businesses with global investors through verified data,
-                        intelligent matchmaking, and seamless regulatory compliance across the continent.
+                        Connecting African businesses with partners and regulators through verified data,
+                        standardized profiles, and seamless regulatory compliance across the continent.
                     </p>
 
                     <div className="flex flex-col gap-4 mb-8 justify-center lg:justify-start">
@@ -67,7 +67,7 @@ export default function Hero({ isAuthenticated }: HeroProps) {
                         </div>
                         <div className="flex items-center gap-2 text-[#07492F] text-[0.95rem]">
                             <BadgeCheck fill="#009F62" className="w-5 h-5 text-white" />
-                            <span className="text-[0.8rem]">AI-Powered Matching</span>
+                            <span className="text-[0.8rem]">Compliance Verification</span>
                         </div>
                         <div className="flex items-center gap-2 text-[#07492F] text-[0.95rem]">
                             <BadgeCheck fill="#009F62" className="w-5 h-5 text-white" />
@@ -124,18 +124,18 @@ export default function Hero({ isAuthenticated }: HeroProps) {
                         </div>
                         <div className="text-white">
                             <div className="font-bold text-lg leading-tight">54 Countries</div>
-                            <div className="text-xs md:text-sm text-white/90 font-medium">Pan-African Coverage</div>
+                            <div className="text-xs md:text-sm text-white/90 font-medium">Pan-African Directory</div>
                         </div>
                     </div>
 
-                    {/* Card 2: AI Matching */}
+                    {/* Card 2: Compliance */}
                     <div className="absolute top-[45%] right-[0%] md:right-[5%] bg-[#009F62] rounded-3xl p-4 md:p-5 flex items-center gap-4 animate-float [animation-delay:1.5s] shadow-lg z-10 hover:scale-105 transition-transform duration-300">
                         <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white/20 flex items-center justify-center">
                             <Handshake className="w-6 h-6 md:w-8 md:h-8 text-white" />
                         </div>
                         <div className="text-white">
-                            <div className="font-bold text-lg leading-tight">AI Matching</div>
-                            <div className="text-xs md:text-sm text-white/90 font-medium">Investor-Business</div>
+                            <div className="font-bold text-lg leading-tight">Trusted Data</div>
+                            <div className="text-xs md:text-sm text-white/90 font-medium">Business-Regulator</div>
                         </div>
                     </div>
 

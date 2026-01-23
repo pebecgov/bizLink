@@ -36,7 +36,7 @@ export default function ActiveConversationsPage() {
                 {activeEngagements.map((conn) => {
                     const isBusinessView = conn.business?.ownerId === userId;
                     const partnerName = isBusinessView
-                        ? (conn.investorProfile?.registeredName || "Investor")
+                        ? (conn.investorProfile?.registeredName || "Partner")
                         : (conn.business?.businessName || "Business");
 
                     const statusColor = conn.status === "contract" ? "text-orange-600 bg-orange-50" : "text-green-600 bg-green-50";
@@ -62,7 +62,7 @@ export default function ActiveConversationsPage() {
                                         <div className="flex items-center gap-4 text-sm text-gray-500">
                                             <div className="flex items-center gap-1">
                                                 <MessageSquare className="w-3.5 h-3.5" />
-                                                <span>{isBusinessView ? "Investor Engagement" : conn.business?.businessName}</span>
+                                                <span>{isBusinessView ? "Partner Engagement" : conn.business?.businessName}</span>
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 <Clock className="w-3.5 h-3.5" />
@@ -86,13 +86,13 @@ export default function ActiveConversationsPage() {
                         </div>
                         <h3 className="text-lg font-bold text-gray-900 mb-1">No active engagements yet</h3>
                         <p className="text-gray-500 max-w-sm mx-auto">
-                            Head over to your match requests to accept new connection interests and start collaborating.
+                            Head over to your requests to accept new connection interests and start collaborating.
                         </p>
                         <Button
-                            onClick={() => router.push("/dashboard/matching/requests")}
+                            onClick={() => router.push("/dashboard/requests")}
                             className="mt-6 bg-primary-green hover:bg-green-700 text-white"
                         >
-                            View Match Requests
+                            View Requests
                         </Button>
                     </div>
                 )}

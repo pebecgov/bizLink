@@ -151,7 +151,6 @@ export const roleConfigs: RoleConfig[] = [
                     { label: "National KPIs", path: "/dashboard/analytics/national" },
                     { label: "Continental KPIs", path: "/dashboard/analytics/continental" },
                     { label: "Performance Metrics", path: "/dashboard/analytics/performance" },
-                    { label: "Investment Analytics", path: "/dashboard/analytics/investment" },
                     { label: "Custom Reports", path: "/dashboard/analytics/reports" }
                 ]
             },
@@ -250,16 +249,6 @@ export const roleConfigs: RoleConfig[] = [
                 ]
             },
             {
-                icon: Briefcase,
-                label: "Investor Management",
-                subItems: [
-                    { label: "All Investors", path: "/dashboard/investors/all" },
-                    { label: "Active Investors", path: "/dashboard/investors/active" },
-                    { label: "KYC Status", path: "/dashboard/investors/kyc" },
-                    { label: "Investment Activity", path: "/dashboard/investors/activity" }
-                ]
-            },
-            {
                 icon: Shield,
                 label: "Content Moderation",
                 subItems: [
@@ -347,37 +336,6 @@ export const roleConfigs: RoleConfig[] = [
                 ]
             },
             {
-                icon: Award,
-                label: "Investor Matching",
-                subItems: [
-                    { label: "Recommended Investors", path: "/dashboard/matching/recommended" },
-                    { label: "Match Requests", path: "/dashboard/matching/requests" },
-                    { label: "Saved Investors", path: "/dashboard/matching/saved" },
-                    { label: "Match History", path: "/dashboard/matching/history" }
-                ]
-            },
-            {
-                icon: MessageSquare,
-                label: "Messages & Networking",
-                subItems: [
-                    { label: "Inbox", path: "/dashboard/messages/inbox" },
-                    { label: "Sent Messages", path: "/dashboard/messages/sent" },
-                    { label: "Active Conversations", path: "/dashboard/messages/active" },
-                    { label: "Archived Chats", path: "/dashboard/messages/archived" }
-                ]
-            },
-            {
-                icon: Handshake,
-                label: "Deals & Contracts",
-                subItems: [
-                    { label: "Active Deals", path: "/dashboard/deals/active" },
-                    { label: "Pending Contracts", path: "/dashboard/deals/pending" },
-                    { label: "Signed Contracts", path: "/dashboard/deals/signed" },
-                    { label: "Deal Pipeline", path: "/dashboard/deals/pipeline" },
-                    { label: "Deal History", path: "/dashboard/deals/history" }
-                ]
-            },
-            {
                 icon: DollarSign,
                 label: "Transactions",
                 subItems: [
@@ -403,7 +361,6 @@ export const roleConfigs: RoleConfig[] = [
                 label: "Business Analytics",
                 subItems: [
                     { label: "Profile Views", path: "/dashboard/analytics/views" },
-                    { label: "Investor Interest", path: "/dashboard/analytics/interest" },
                     { label: "Engagement Metrics", path: "/dashboard/analytics/engagement" },
                     { label: "Performance Reports", path: "/dashboard/analytics/reports" }
                 ]
@@ -413,7 +370,7 @@ export const roleConfigs: RoleConfig[] = [
                 label: "Events & Opportunities",
                 subItems: [
                     { label: "Upcoming Events", path: "/dashboard/events/upcoming" },
-                    { label: "Pitch Sessions", path: "/dashboard/events/pitch" },
+                    { label: "Networking Events", path: "/dashboard/events/networking" },
                     { label: "Webinars", path: "/dashboard/events/webinars" },
                     { label: "Registered Events", path: "/dashboard/events/registered" },
                     { label: "Past Events", path: "/dashboard/events/past" }
@@ -436,131 +393,6 @@ export const roleConfigs: RoleConfig[] = [
                     { label: "Help Center", path: "/dashboard/resources/help" },
                     { label: "Video Tutorials", path: "/dashboard/resources/tutorials" },
                     { label: "FAQs", path: "/dashboard/resources/faqs" },
-                    { label: "Contact Support", path: "/dashboard/resources/support" }
-                ]
-            },
-            ...commonItems
-        ]
-    },
-    {
-        role: "INVESTOR USER",
-        items: [
-            { icon: Home, label: "Dashboard", path: "/dashboard" },
-            {
-                icon: Sparkles,
-                label: "Investor Concierge",
-                path: "/dashboard/investor/concierge"
-            },
-
-            {
-                icon: Search,
-                label: "Discover Opportunities",
-                subItems: [
-                    { label: "AI-Matched Businesses", path: "/dashboard/discover/matched" },
-                    { label: "Browse All Businesses", path: "/dashboard/discover/browse" },
-                    { label: "Advanced Search", path: "/dashboard/discover/search" },
-                    { label: "Saved Searches", path: "/dashboard/discover/saved" },
-                    { label: "Watchlist", path: "/dashboard/discover/watchlist" }
-                ]
-            },
-            {
-                icon: Award,
-                label: "Investment Preferences",
-                subItems: [
-                    { label: "Edit All Preferences", path: "/dashboard/settings/preferences" }
-                ]
-            },
-            {
-                icon: Briefcase,
-                label: "My Investment Portfolio",
-                subItems: [
-                    { label: "Portfolio Overview", path: "/dashboard/portfolio/overview" },
-                    { label: "Active Investments", path: "/dashboard/portfolio/active" },
-                    { label: "Investment Performance", path: "/dashboard/portfolio/performance" },
-                    { label: "Portfolio Analytics", path: "/dashboard/portfolio/analytics" },
-                    { label: "Returns & ROI", path: "/dashboard/portfolio/roi" }
-                ]
-            },
-            {
-                icon: MessageSquare,
-                label: "Messages & Networking",
-                subItems: [
-                    { label: "Inbox", path: "/dashboard/messages/inbox" },
-                    { label: "Active Conversations", path: "/dashboard/messages/active" },
-                    { label: "Business Inquiries", path: "/dashboard/messages/inquiries" },
-                    { label: "Archived Chats", path: "/dashboard/messages/archived" }
-                ]
-            },
-            {
-                icon: Handshake,
-                label: "Deals & Contracts",
-                subItems: [
-                    { label: "Active Negotiations", path: "/dashboard/deals/negotiations" },
-                    { label: "Pending Contracts", path: "/dashboard/deals/pending" },
-                    { label: "Signed Contracts", path: "/dashboard/deals/signed" },
-                    { label: "Deal Pipeline", path: "/dashboard/deals/pipeline" },
-                    { label: "Deal History", path: "/dashboard/deals/history" }
-                ]
-            },
-            {
-                icon: DollarSign,
-                label: "Financial Management",
-                subItems: [
-                    { label: "Escrow Account", path: "/dashboard/financial/escrow" },
-                    { label: "Payment Methods", path: "/dashboard/financial/methods" },
-                    { label: "Transaction History", path: "/dashboard/financial/transactions" },
-                    { label: "Pending Transactions", path: "/dashboard/financial/pending" },
-                    { label: "Financial Reports", path: "/dashboard/financial/reports" }
-                ]
-            },
-            {
-                icon: TrendingUp,
-                label: "Market Intelligence",
-                subItems: [
-                    { label: "Sector Analysis", path: "/dashboard/market/sectors" },
-                    { label: "Country Reports", path: "/dashboard/market/countries" },
-                    { label: "Economic Indicators", path: "/dashboard/market/indicators" },
-                    { label: "Trade Flow Analytics", path: "/dashboard/market/trade" },
-                    { label: "Investment Trends", path: "/dashboard/market/trends" }
-                ]
-            },
-            {
-                icon: FileCheck,
-                label: "Due Diligence Center",
-                subItems: [
-                    { label: "Business Verification Reports", path: "/dashboard/diligence/verification" },
-                    { label: "Risk Assessment", path: "/dashboard/diligence/risk" },
-                    { label: "Financial Analysis", path: "/dashboard/diligence/financial" },
-                    { label: "Compliance Checks", path: "/dashboard/diligence/compliance" }
-                ]
-            },
-            {
-                icon: Calendar,
-                label: "Events & Networking",
-                subItems: [
-                    { label: "Upcoming Events", path: "/dashboard/events/upcoming" },
-                    { label: "Virtual Pitch Sessions", path: "/dashboard/events/pitch" },
-                    { label: "Investment Forums", path: "/dashboard/events/forums" },
-                    { label: "Registered Events", path: "/dashboard/events/registered" },
-                    { label: "Past Events", path: "/dashboard/events/past" }
-                ]
-            },
-            {
-                icon: Boxes,
-                label: "Saved & Bookmarked",
-                subItems: [
-                    { label: "Saved Businesses", path: "/dashboard/saved/businesses" },
-                    { label: "Bookmarked Opportunities", path: "/dashboard/saved/opportunities" },
-                    { label: "Favorite Sectors", path: "/dashboard/saved/sectors" }
-                ]
-            },
-            {
-                icon: BookOpen,
-                label: "Resources & Support",
-                subItems: [
-                    { label: "Investment Guides", path: "/dashboard/resources/guides" },
-                    { label: "Country Guides", path: "/dashboard/resources/countries" },
-                    { label: "Help Center", path: "/dashboard/resources/help" },
                     { label: "Contact Support", path: "/dashboard/resources/support" }
                 ]
             },
@@ -619,7 +451,6 @@ export const roleConfigs: RoleConfig[] = [
                 label: "Inquiries & Support",
                 subItems: [
                     { label: "Business Inquiries", path: "/dashboard/inquiries/business" },
-                    { label: "Investor Inquiries", path: "/dashboard/inquiries/investor" },
                     { label: "Pending Responses", path: "/dashboard/inquiries/pending" },
                     { label: "Inquiry History", path: "/dashboard/inquiries/history" }
                 ]
@@ -809,17 +640,6 @@ export const roleConfigs: RoleConfig[] = [
                     { label: "Trade Routes", path: "/dashboard/trade/routes" },
                     { label: "Import/Export Analysis", path: "/dashboard/trade/import-export" },
                     { label: "Trade Volume Trends", path: "/dashboard/trade/volume" }
-                ]
-            },
-            {
-                icon: Briefcase,
-                label: "Investment Analytics",
-                subItems: [
-                    { label: "Investment Flows", path: "/dashboard/investment/flows" },
-                    { label: "Deal Analytics", path: "/dashboard/investment/deals" },
-                    { label: "Investor Behavior", path: "/dashboard/investment/behavior" },
-                    { label: "Sector Performance", path: "/dashboard/investment/sectors" },
-                    { label: "Geographic Distribution", path: "/dashboard/investment/geographic" }
                 ]
             },
             {

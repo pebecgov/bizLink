@@ -61,7 +61,7 @@ export default function RegulatoryRequirementsPage() {
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-10">
                 <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Regulatory Content Hub</h1>
-                <p className="text-slate-500 mt-1 text-lg">Manage agencies, service SLAs, and investor roadmaps.</p>
+                <p className="text-slate-500 mt-1 text-lg">Manage agencies, service SLAs, and business onboarding roadmaps.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -153,13 +153,13 @@ export default function RegulatoryRequirementsPage() {
                                     onClick={() => setSelectedInvestorType("foreign")}
                                     className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedInvestorType === "foreign" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
                                 >
-                                    Foreign
+                                    Foreign-Owned
                                 </button>
                                 <button
                                     onClick={() => setSelectedInvestorType("local")}
                                     className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${selectedInvestorType === "local" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
                                 >
-                                    Local
+                                    Local Entity
                                 </button>
                             </div>
                         </div>
@@ -222,7 +222,7 @@ export default function RegulatoryRequirementsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-3xl text-white">
                             <h3 className="font-bold text-lg mb-1">Global Overlays</h3>
-                            <p className="text-indigo-100 text-xs mb-4">Steps mandatory for every single investor profile.</p>
+                            <p className="text-indigo-100 text-xs mb-4">Steps mandatory for every single business profile.</p>
                             <div className="space-y-2">
                                 <div className="bg-white/10 p-2 rounded-lg text-xs flex justify-between">
                                     <span>CAC Name Availability</span>
@@ -239,7 +239,7 @@ export default function RegulatoryRequirementsPage() {
                             <div className="flex items-center gap-4">
                                 <div className="text-4xl font-extrabold text-blue-400">94<span className="text-xl">%</span></div>
                                 <div className="text-xs text-slate-400 leading-tight">
-                                    Investors are seeing an average
+                                    Businesses are seeing an average
                                     onboarding time of <span className="text-white font-bold underline">12 Days</span> across {mdas.length} Agencies.
                                 </div>
                             </div>

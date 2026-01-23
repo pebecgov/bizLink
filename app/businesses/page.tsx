@@ -50,7 +50,7 @@ export default function PublicBusinessesPage() {
                             Discover Nigerian Businesses
                         </h1>
                         <p className="text-lg text-green-100 max-w-2xl mx-auto mb-8">
-                            Explore verified businesses across Nigeria ready for investment opportunities and partnerships
+                            Explore verified businesses across Nigeria ready for strategic partnerships and collaborations
                         </p>
 
                         {/* Search Bar */}
@@ -203,10 +203,10 @@ export default function PublicBusinessesPage() {
                                                 {business.sector}
                                             </span>
                                         )}
-                                        {business.seekingFunding && (
-                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                <TrendingUp className="w-3 h-3" />
-                                                Seeking Investment
+                                        {business.afcftaCompliant && (
+                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <Verified className="w-3 h-3" />
+                                                AfCFTA Ready
                                             </span>
                                         )}
                                     </div>
@@ -219,9 +219,9 @@ export default function PublicBusinessesPage() {
                                                 <span>{business.numberOfEmployees}</span>
                                             </div>
                                         )}
-                                        {business.fundingAmount && (
+                                        {business.businessModel && (
                                             <div className="font-semibold text-green-600">
-                                                {business.fundingAmount}
+                                                {business.businessModel}
                                             </div>
                                         )}
                                     </div>
@@ -250,7 +250,7 @@ export default function PublicBusinessesPage() {
                         Ready to List Your Business?
                     </h2>
                     <p className="text-green-100 mb-8 text-lg">
-                        Join hundreds of Nigerian businesses connecting with investors through PEBEC BizLink
+                        Join hundreds of Nigerian businesses expanding their reach through PEBEC BizLink
                     </p>
                     <Link
                         href="/onboarding"

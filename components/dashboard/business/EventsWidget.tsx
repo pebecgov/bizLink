@@ -15,7 +15,7 @@ export function EventsWidget() {
 
             <div className="space-y-4">
                 <EventItem
-                    title="Tech Investor Pitch Day"
+                    title="Tech Sector Networking Day"
                     date="Jan 25, 2026"
                     type="Virtual"
                     action="Register"
@@ -28,7 +28,7 @@ export function EventsWidget() {
                     registered={true}
                 />
                 <EventItem
-                    title="AfCFTA Investment Forum"
+                    title="AfCFTA Trade & Policy Forum"
                     date="Feb 2, 2026"
                     type="Accra"
                     action="Register"

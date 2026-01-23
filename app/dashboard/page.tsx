@@ -5,12 +5,8 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Users, Building, TrendingUp, DollarSign, Globe, BarChart } from "lucide-react";
 import { BusinessDashboard } from "@/components/dashboard/business/BusinessDashboard";
-import { InvestorDashboard } from "@/components/dashboard/investor/InvestorDashboard";
-
 export default function Dashboard() {
   const { user } = useUser();
-  // Fetch the Convex user to get the role from our DB
-  // Note: we might also rely on Clerk metadata if synced, but DB is safer for app logic
   const convexUser = useQuery(api.users.getCurrentUser);
 
   // Loading state
@@ -23,13 +19,7 @@ export default function Dashboard() {
     return <BusinessDashboard />;
   }
 
-  // --- INVESTOR DASHBOARD ---
-  if (convexUser?.role === "investor") {
-    return <InvestorDashboard />;
-  }
-
   // --- DEFAULT DASHBOARD (For now, kept as fallback/other roles) ---
-
   const stats = [
     {
       icon: Users,
@@ -45,8 +35,8 @@ export default function Dashboard() {
     },
     {
       icon: TrendingUp,
-      label: "Investments",
-      value: "0.00 USD",
+      label: "Partners",
+      value: "0",
       color: "bg-accent-blue",
     },
     {
@@ -127,7 +117,7 @@ export default function Dashboard() {
             Performance Metrics
           </h2>
           <div className="space-y-4">
-            {["User Engagement", "Business Verification", "Investment Activity"].map((metric) => (
+            {["User Engagement", "Business Verification", "Partner Networking"].map((metric) => (
               <div key={metric}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-text-secondary">{metric}</span>

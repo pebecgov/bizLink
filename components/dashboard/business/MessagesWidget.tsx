@@ -21,15 +21,15 @@ export function MessagesWidget() {
             <div className="space-y-4">
                 <MessageItem
                     name="John Adebayo"
-                    role="Investor"
-                    message="Interested in partnership opportunities with your firm..."
+                    role="Agency Rep"
+                    message="Your compliance documents have been received..."
                     time="2hrs ago"
                     unread={true}
                 />
                 <MessageItem
                     name="Sarah Chen"
-                    role="Investor"
-                    message="Request for financial projections for Q4 2025"
+                    role="Business Hub"
+                    message="Interested in listing collaboration for tech sector"
                     time="5hrs ago"
                     unread={true}
                 />
