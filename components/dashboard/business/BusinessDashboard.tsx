@@ -4,7 +4,6 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import { TierBadge } from "../TierBadge";
-import { UpgradeCard } from "./UpgradeCard";
 import { TopMetrics } from "./TopMetrics";
 import { RecentActivityWidget } from "./RecentActivityWidget";
 
@@ -14,11 +13,6 @@ export function BusinessDashboard() {
 
     return (
         <div className="max-w-5xl mx-auto space-y-8 pb-12">
-            {myBusiness?.plan !== "premium" && (
-                <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <UpgradeCard />
-                </section>
-            )}
             {/* Header / Welcome */}
             <div className="bg-gradient-to-br from-green-600 to-emerald-800 text-white p-10 rounded-3xl shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32 blur-3xl"></div>

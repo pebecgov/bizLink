@@ -6,7 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { Users, Building, TrendingUp, DollarSign, Globe, BarChart } from "lucide-react";
 import { BusinessDashboard } from "@/components/dashboard/business/BusinessDashboard";
 import { TierBadge } from "@/components/dashboard/TierBadge";
-import { UpgradeCard } from "@/components/dashboard/business/UpgradeCard";
+
 export default function Dashboard() {
   const { user } = useUser();
   const convexUser = useQuery(api.users.getCurrentUser);
@@ -35,12 +35,6 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
-      {/* Premium Upsell - Only for free tier */}
-      {myBusiness?.plan !== "premium" && (
-        <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <UpgradeCard />
-        </section>
-      )}
 
       {/* Welcome Section */}
       <div className="bg-gradient-to-br from-green-600 to-emerald-800 text-white p-10 rounded-3xl shadow-xl relative overflow-hidden">

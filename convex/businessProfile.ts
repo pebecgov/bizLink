@@ -89,8 +89,7 @@ export const getAllBusinesses = query({
         const discoverableBusinesses = businesses.filter((b) =>
             b.businessName &&
             b.logoUrl &&
-            b.companyTagline &&
-            b.companyDescription
+            b.companyTagline
         );
 
         // Resolve logo URLs
@@ -119,13 +118,13 @@ export const getProfileCompleteness = query({
 
         // Required fields (60% weight) - Needed for listing visibility
         const requiredFields = [
-            'businessName', 'logoUrl', 'companyTagline', 'companyDescription',
+            'businessName', 'logoUrl', 'companyTagline',
             'sector', 'subsector', 'contactPhone', 'state', 'lga', 'registrationNumber'
         ];
 
         // Important optional fields (40% weight)
         const optionalFields = [
-            'tradingName', 'website', 'primaryEmail',
+            'companyDescription', 'tradingName', 'website', 'primaryEmail',
             'missionStatement', 'visionStatement', 'imageGallery', 'numberOfEmployees',
             'annualRevenue', 'yearEstablished', 'businessStage'
         ];
