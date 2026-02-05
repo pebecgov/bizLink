@@ -27,44 +27,44 @@ export default function Stats() {
         };
     }, []);
 
-    const stats = [
-        {
-            value: "54",
-            suffix: "",
-            label: "African Countries",
-            description: "Pan-African coverage for seamless cross-border operations"
-        },
-        {
-            value: "10",
-            suffix: "K+",
-            label: "Verified Businesses",
-            description: "Comprehensive business profiles across sectors"
-        },
-        {
-            value: "500",
-            suffix: "M+",
-            label: "Partnership Connections",
-            description: "Total networking connections facilitated through the platform"
-        },
-        {
-            value: "75",
-            suffix: "%",
-            label: "Time Saved",
-            description: "Reduction in regulatory compliance processing"
-        },
-        {
-            value: "1",
-            suffix: "M+",
-            label: "TINs Generated",
-            description: "Expanding Africa's formal business ecosystem"
-        },
-        {
-            value: "200",
-            suffix: "+",
-            label: "Regulatory Agencies",
-            description: "Global and regional MDAs ensuring business compliance"
-        }
-    ];
+   const stats = [
+  {
+    value: "54",
+    suffix: "",
+    label: "African Countries",
+    description: "Pan-African coverage enabling cross-border business discovery"
+  },
+  {
+    value: "10",
+    suffix: "K+",
+    label: "Listed Businesses",
+    description: "Business profiles published across multiple sectors"
+  },
+  {
+    value: "500",
+    suffix: "K+",
+    label: "Business Connections",
+    description: "Discovery and engagement opportunities across the platform"
+  },
+  {
+    value: "75",
+    suffix: "%",
+    label: "Discovery Efficiency",
+    description: "Faster access to relevant business information"
+  },
+  {
+    value: "1",
+    suffix: "M+",
+    label: "Business Records",
+    description: "Structured business data available for exploration"
+  },
+  {
+    value: "200",
+    suffix: "+",
+    label: "Ecosystem Participants",
+    description: "Organizations and institutions represented on the platform"
+  }
+];
 
     return (
         <section id="stats-section" className="py-24 bg-gradient-primary text-white relative overflow-hidden">
