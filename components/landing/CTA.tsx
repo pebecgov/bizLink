@@ -35,7 +35,7 @@ export default function CTA() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
                     {userTypes.map((type, index) => (
                         <div key={index} className="bg-bg-secondary p-8 rounded-2xl text-center border-2 border-transparent hover:border-primary-green hover:shadow-lg transition-all duration-300 group">
                             <div className="text-4xl mb-4 transform transition-transform group-hover:scale-110 duration-300 inline-block">{type.icon}</div>

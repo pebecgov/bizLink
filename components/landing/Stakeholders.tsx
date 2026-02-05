@@ -52,12 +52,12 @@ export default function Stakeholders() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-24">
                     {stakeholders.map((stakeholder, index) => (
-                        <div key={index} className={`bg-white p-8 rounded-2xl shadow-sm hover:translate-y-[-5px] hover:shadow-md transition-all duration-300 ${colorMap[stakeholder.color] || ''}`}>
+                        <div key={index} className={`bg-white p-8 rounded-2xl shadow-sm hover:translate-y-[-5px] hover:shadow-md transition-all duration-300 flex flex-col h-full ${colorMap[stakeholder.color] || ''}`}>
                             <div className="text-4xl mb-6">{stakeholder.icon}</div>
                             <h3 className="text-2xl font-bold mb-4 text-text-primary">{stakeholder.category}</h3>
-                            <p className="text-text-secondary mb-8 leading-relaxed h-[3rem]">{stakeholder.description}</p>
+                            <p className="text-text-secondary mb-8 leading-relaxed flex-grow">{stakeholder.description}</p>
                             <ul className="space-y-3">
                                 {stakeholder.features.map((feature, idx) => (
                                     <li key={idx} className="flex items-center gap-3 text-sm font-medium text-text-primary/80">
@@ -72,7 +72,7 @@ export default function Stakeholders() {
                     ))}
                 </div>
 
-                <div className="text-center">
+                {/* <div className="text-center">
                     <h3 className="text-sm font-bold uppercase tracking-widest text-text-muted mb-8">Supported By</h3>
                     <div className="flex flex-wrap justify-center gap-6 md:gap-8">
                         {partners.map((partner, index) => (
@@ -85,7 +85,7 @@ export default function Stakeholders() {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div> */}
             </div>
         </section>
     );
