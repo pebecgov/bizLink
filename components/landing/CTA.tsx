@@ -9,11 +9,7 @@ export default function CTA() {
             description: "Register your business and access growth and partnership opportunities",
             icon: "🏢"
         },
-        {
-            title: "Regulator",
-            description: "Monitor compliance and facilitate business operations",
-            icon: "⚖️"
-        },
+
         {
             title: "Trade Agency",
             description: "Promote cross-border trade and partnership facilitation",

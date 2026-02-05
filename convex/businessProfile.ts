@@ -748,3 +748,19 @@ export const generateUploadUrl = mutation({
         return await ctx.storage.generateUploadUrl();
     },
 });
+
+/**
+ * Toggle business plan (Dev Utility)
+ */
+export const togglePremium = mutation({
+    args: { businessId: v.id("businesses") },
+    handler: async (ctx, args) => {
+        const business = await ctx.db.get(args.businessId);
+        if (!business) throw new Error("Business not found");
+
+        const newPlan = business.plan === "premium" ? "free" : "premium";
+        await ctx.db.patch(args.businessId, { plan: newPlan });
+
+        return { businessName: business.businessName, newPlan };
+    },
+});
