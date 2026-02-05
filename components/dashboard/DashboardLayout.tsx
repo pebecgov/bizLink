@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Sidebar from "./Sidebar";
-import { Menu } from "lucide-react";
+import { Menu, Sparkles } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
 import { NotificationBell } from "./NotificationBell";
+import { UpgradeModal } from "./business/UpgradeModal";
 
 interface DashboardLayoutProps {
     children: React.ReactNode;
@@ -15,6 +16,7 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
     const router = useRouter();
     const currentUser = useQuery(api.users.getCurrentUser);
 
@@ -50,6 +52,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* Sidebar */}
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
+            {/* Upgrade Modal */}
+            <UpgradeModal open={upgradeModalOpen} onOpenChange={setUpgradeModalOpen} />
+
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-w-0 h-full">
                 {/* Header */}
@@ -68,6 +73,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         </div>
 
                         <div className="flex items-center gap-4">
+                            {/* Try Premium Button */}
+                            <button
+                                onClick={() => setUpgradeModalOpen(true)}
+                                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white text-sm font-bold rounded-lg shadow-md hover:shadow-lg transition-all"
+                            >
+                                <Sparkles className="w-4 h-4" />
+                                Try Premium
+                            </button>
+
                             <NotificationBell />
                             <UserButton afterSignOutUrl="/" />
                         </div>

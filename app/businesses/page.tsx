@@ -3,7 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
-import { Building2, MapPin, Users, TrendingUp, Search, Filter, ChevronRight, Verified, ExternalLink } from "lucide-react";
+import { Building2, MapPin, Users, TrendingUp, Search, Filter, ChevronRight, Verified, ExternalLink, Sparkles } from "lucide-react";
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
@@ -292,6 +292,12 @@ export default function PublicBusinessesPage() {
                                                 AfCFTA Ready
                                             </span>
                                         )}
+                                        {business.plan === "premium" && (
+                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-sm">
+                                                <Sparkles className="w-3 h-3" />
+                                                PREMIUM
+                                            </span>
+                                        )}
                                     </div>
 
                                     {/* Business Stats */}
@@ -300,11 +306,6 @@ export default function PublicBusinessesPage() {
                                             <div className="flex items-center gap-1">
                                                 <Users className="w-4 h-4" />
                                                 <span>{business.numberOfEmployees}</span>
-                                            </div>
-                                        )}
-                                        {business.businessModel && (
-                                            <div className="font-semibold text-green-600">
-                                                {business.businessModel}
                                             </div>
                                         )}
                                     </div>

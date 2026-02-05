@@ -51,7 +51,7 @@ export default function Hero({ isAuthenticated }: HeroProps) {
 
                     <h1 className="text-2xl md:text-6xl lg:text-5xl font-bold mb-6 leading-[1.1]">
                         <span className="text-[#07492F]">The Digital Gateway</span><br />
-                        <span className="text-[#07492F]">for Verified African</span><br />
+                        <span className="text-[#07492F]">for Pan-African</span><br />
                         <span className="text-[#761912]">Businesses</span>
                     </h1>
 
@@ -67,7 +67,7 @@ export default function Hero({ isAuthenticated }: HeroProps) {
                         </div>
                         <div className="flex items-center gap-2 text-[#07492F] text-[0.95rem]">
                             <BadgeCheck fill="#009F62" className="w-5 h-5 text-white" />
-                            <span className="text-[0.8rem]">Compliance Verification</span>
+                            <span className="text-[0.8rem]">Statutory Verification</span>
                         </div>
                         <div className="flex items-center gap-2 text-[#07492F] text-[0.95rem]">
                             <BadgeCheck fill="#009F62" className="w-5 h-5 text-white" />
@@ -102,18 +102,7 @@ export default function Hero({ isAuthenticated }: HeroProps) {
                         </button>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start mt-4">
-                        <span className="text-[#07492F]/60 text-xs uppercase font-bold tracking-widest hidden md:block">Powered by</span>
-                        <div className="h-6 w-px bg-[#07492F]/10 hidden md:block"></div>
-                        <div className="flex gap-3 flex-wrap justify-center items-center">
-                            <span className="text-[#07492F]/60 text-xs uppercase font-bold tracking-widest md:hidden">Powered by</span>
-                            {['PEBEC', 'NRS', 'AfCFTA', 'NIPC', 'ECOWAS'].map((partner) => (
-                                <span key={partner} className="px-4 py-1.5 rounded-lg text-xs font-bold text-[#07492F] bg-[#009F62]/5 border border-[#009F62]/20 hover:bg-[#009F62] hover:text-white hover:border-[#009F62] transition-colors duration-300 cursor-default shadow-sm">
-                                    {partner}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
+
                 </div>
 
                 <div className="relative h-[300px] md:h-[500px] flex items-center justify-center">
@@ -145,7 +134,7 @@ export default function Hero({ isAuthenticated }: HeroProps) {
                             <BadgeCheck fill="#009F62" className="w-6 h-6 md:w-8 md:h-8 text-white" />
                         </div>
                         <div className="text-white">
-                            <div className="font-bold text-lg leading-tight">Verified</div>
+                            <div className="font-bold text-lg leading-tight">Listed</div>
                             <div className="text-xs md:text-sm text-white/90 font-medium">Secure & Trusted</div>
                         </div>
                     </div>

@@ -42,7 +42,7 @@ export default function EditProfilePage() {
 
         switch (id) {
             case "identity":
-                return (p.businessName && p.logoUrl && p.companyTagline && p.companyDescription) ? "complete" : "incomplete";
+                return (p.businessName && p.logoUrl && p.companyTagline) ? "complete" : "incomplete";
             case "classification":
                 return (p.sector && p.subsector && p.businessStage) ? "complete" : "incomplete";
             case "location":
@@ -505,7 +505,7 @@ export default function EditProfilePage() {
                             <div>
                                 <h3 className="text-sm font-bold text-amber-900">Profile Not Listed</h3>
                                 <p className="text-xs text-amber-700 mt-1">
-                                    Your business will not appear in the public directory search or reach new partners until the <strong>Business Identity</strong> section is complete (Name, Logo, Tagline).
+                                    Your business will not appear in the public directory search or reach new partners until the <strong>Business Identity</strong> section is complete (Name, Logo, and Tagline).
                                 </p>
                             </div>
                             <Button

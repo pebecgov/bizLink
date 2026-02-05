@@ -146,7 +146,7 @@ export default function PublicBusinessProfilePage() {
                         <div className="bg-white rounded-xl border border-gray-200 p-6">
                             <div className="flex items-center gap-2 mb-4">
                                 <h2 className="text-lg font-bold text-gray-900">About</h2>
-                                {business.plan !== "premium" && (
+                                {isSignedIn && user?.id === business.ownerId && business.plan !== "premium" && (
                                     <span className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-600 text-[10px] font-bold text-white rounded-full shadow-sm">
                                         <Sparkles className="w-2 h-2" />
                                         PREMIUM
@@ -168,10 +168,16 @@ export default function PublicBusinessProfilePage() {
                                     )}
                                 </>
                             ) : (
-                                <div className="bg-gray-50 rounded-lg p-6 text-center border border-dashed border-gray-200">
-                                    <Lock className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                                    <p className="text-sm text-gray-500 italic">Detailed business description is a premium feature.</p>
-                                </div>
+                                isSignedIn && user?.id === business.ownerId ? (
+                                    <div className="bg-gray-50 rounded-lg p-6 text-center border border-dashed border-gray-200">
+                                        <Lock className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+                                        <p className="text-sm text-gray-500 italic">Detailed business description is a premium feature.</p>
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-600 leading-relaxed">
+                                        {business.companyDescription || "No description provided."}
+                                    </p>
+                                )
                             )}
                         </div>
 
@@ -378,28 +384,19 @@ export default function PublicBusinessProfilePage() {
                                         </span>
                                     </div>
                                 )}
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-500 text-sm">Status</span>
-                                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${business.verificationStatus === "verified"
-                                        ? "bg-green-100 text-green-700"
-                                        : "bg-yellow-100 text-yellow-700"
-                                        }`}>
-                                        {business.verificationStatus === "verified" ? "Verified" : "Pending"}
-                                    </span>
-                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        {/* Trust Badge */}
-                        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-                            <div className="flex items-center gap-2 text-blue-700">
-                                <Shield className="w-5 h-5" />
-                                <span className="font-medium text-sm">PEBEC Verified Business</span>
-                            </div>
-                            <p className="text-xs text-blue-600 mt-1">
-                                This business has been verified through the PEBEC BizLink platform.
-                            </p>
+                    {/* Trust Badge */}
+                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+                        <div className="flex items-center gap-2 text-blue-700">
+                            <Shield className="w-5 h-5" />
+                            <span className="font-medium text-sm">PEBEC Verified Business</span>
                         </div>
+                        <p className="text-xs text-blue-600 mt-1">
+                            This business has been verified through the PEBEC BizLink platform.
+                        </p>
                     </div>
                 </div>
             </div>
