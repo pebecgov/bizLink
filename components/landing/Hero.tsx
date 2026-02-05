@@ -71,7 +71,7 @@ export default function Hero({ isAuthenticated }: HeroProps) {
                         </div>
                         <div className="flex items-center gap-2 text-[#07492F] text-[0.95rem]">
                             <BadgeCheck fill="#009F62" className="w-5 h-5 text-white" />
-                            <span className="text-[0.8rem]">Verified Business Registry</span>
+                            <span className="text-[0.8rem]">Business Registry</span>
                         </div>
                     </div>
 
