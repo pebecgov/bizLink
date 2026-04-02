@@ -1,20 +1,52 @@
 "use client";
 
-import { SignInButton } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { Globe2, Handshake, BadgeCheck, Check } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Globe2, Handshake, BadgeCheck } from "lucide-react";
 import AppImage from "@/components/ui/AppImage";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-interface HeroProps {
-    isAuthenticated?: boolean;
-}
+export default function Hero() {
+    const joinWaitlist = useMutation((api as any).waitlist.joinWaitlist);
 
-export default function Hero({ isAuthenticated }: HeroProps) {
-    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [message, setMessage] = useState<string | null>(null);
+    const [messageKind, setMessageKind] = useState<"success" | "already" | "error" | null>(null);
 
-    const handleCTA = () => {
-        if (isAuthenticated) {
-            router.push("/dashboard");
+    const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const trimmed = email.trim();
+        const isValidEmail = /^\S+@\S+\.\S+$/.test(trimmed);
+        if (!isValidEmail) {
+            setMessageKind("error");
+            setMessage("Please enter a valid email address.");
+            return;
+        }
+
+        setIsSubmitting(true);
+        setMessage(null);
+        setMessageKind(null);
+
+        try {
+            const res = await joinWaitlist({ email: trimmed } as any);
+            if (res?.alreadyRegistered) {
+                setMessageKind("already");
+                setMessage("This email is already registered.");
+            } else {
+                setMessageKind("success");
+                setMessage("Thanks! You're on the waitlist.");
+                setEmail("");
+            }
+        } catch (err) {
+            console.error("Failed to join waitlist:", err);
+            setMessageKind("error");
+            setMessage("Could not join the waitlist. Please try again.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -76,30 +108,43 @@ export default function Hero({ isAuthenticated }: HeroProps) {
                     </div>
 
                     <div className="flex gap-3 mb-12 flex-wrap justify-center lg:justify-start">
-                        {isAuthenticated ? (
-                            <button onClick={handleCTA} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 md:px-6 md:py-3 rounded-lg text-sm md:text-base font-medium transition-all duration-300 bg-[#009F62] text-white hover:bg-[#008554] hover:-translate-y-0.5 hover:shadow-xl shadow-md cursor-pointer">
-                                Get Started
-                                <svg className="w-4 h-4 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                </svg>
-                            </button>
-                        ) : (
-                            <SignInButton mode="modal">
-                                <button className="inline-flex items-center justify-center gap-2 px-5 py-2.5 md:px-6 md:py-3 rounded-lg text-sm md:text-base font-medium transition-all duration-300 bg-[#009F62] text-white hover:bg-[#008554] hover:-translate-y-0.5 hover:shadow-xl shadow-md cursor-pointer">
-                                    Get Started
+                        <form onSubmit={onSubmit} className="w-full max-w-[520px]">
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <Input
+                                    type="email"
+                                    name="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="Enter your email"
+                                    required
+                                    className="h-12"
+                                />
+                                <Button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="h-12 bg-[#009F62] hover:bg-[#008554] text-white px-6 rounded-lg shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                                >
+                                    {isSubmitting ? "Joining..." : "Join Waitlist"}
                                     <svg className="w-4 h-4 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                     </svg>
-                                </button>
-                            </SignInButton>
-                        )}
+                                </Button>
+                            </div>
 
-                        <button className="inline-flex items-center justify-center gap-2 px-5 py-2.5 md:px-6 md:py-3 rounded-lg text-sm md:text-base font-medium transition-all duration-300 bg-white text-[#009F62] border-2 border-[#009F62] hover:-translate-y-0.5 hover:bg-[#009F62] hover:text-white hover:shadow-xl shadow-sm cursor-pointer">
-                            Learn More
-                            <svg className="w-4 h-4 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
+                            {message && (
+                                <p
+                                    className={`mt-3 text-sm font-medium ${
+                                        messageKind === "success"
+                                            ? "text-[#009F62]"
+                                            : messageKind === "already"
+                                                ? "text-[#761912]"
+                                                : "text-red-600"
+                                    }`}
+                                >
+                                    {message}
+                                </p>
+                            )}
+                        </form>
                     </div>
 
 

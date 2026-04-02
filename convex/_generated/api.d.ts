@@ -23,6 +23,7 @@ import type * as seed from "../seed.js";
 import type * as seed_all_mdas from "../seed_all_mdas.js";
 import type * as users from "../users.js";
 import type * as verificationScore from "../verificationScore.js";
+import type * as waitlist from "../waitlist.js";
 
 import type {
   ApiFromModules,
@@ -46,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   seed_all_mdas: typeof seed_all_mdas;
   users: typeof users;
   verificationScore: typeof verificationScore;
+  waitlist: typeof waitlist;
 }>;
 
 /**

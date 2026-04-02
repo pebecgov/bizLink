@@ -6,13 +6,14 @@ export default defineSchema({
   users: defineTable({
     clerkId: v.string(), // External identity link
     email: v.string(),
-    role: v.union( // RBAC Role Map
+    role: v.union(
       v.literal("admin"),
       v.literal("system_admin"),
       v.literal("regulator"),
       v.literal("business_owner"),
       v.literal("verification_officer"),
       v.literal("data_analyst"),
+      v.literal("investor"), // ADD THIS
       v.literal("user")
     ),
     jurisdiction: v.optional(v.string()), // For scoping regulator access
@@ -34,6 +35,12 @@ export default defineSchema({
     .index("by_timestamp", ["timestamp"])
     .index("by_entityId", ["entityId"]),
 
+  // Public waitlist (no authentication required)
+  waitlist_entries: defineTable({
+    email: v.string(),
+    createdAt: v.number(),
+  }).index("by_email", ["email"]),
+
   // Phase 1: Business Profile
   businesses: defineTable({
     // Core fields (required)
@@ -53,14 +60,15 @@ export default defineSchema({
     })),
     verificationStatus: v.string(), // "pending", "verified", "rejected"
     riskScore: v.optional(v.number()),
-
+    equityOffered: v.optional(v.string()),
+    useOfFunds: v.optional(v.string()),
     // 1. Company Identity
     logoUrl: v.optional(v.string()),
     tradingName: v.optional(v.string()),
     companyTagline: v.optional(v.string()),
     companyDescription: v.optional(v.string()),
     companyType: v.optional(v.string()), // "Private Limited Company", etc.
-
+    
     // 2. Business Classification
     secondarySectors: v.optional(v.array(v.string())),
     businessStage: v.optional(v.string()), // "Startup", "Growth", "Established"
